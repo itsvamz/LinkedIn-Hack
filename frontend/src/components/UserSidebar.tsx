@@ -2,20 +2,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Video, BarChart3, Settings, LogOut, ArrowLeft } from 'lucide-react';
+import { User, Video, FileText, BarChart3, Settings, LogOut, ArrowLeft } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-interface DashboardSidebarProps {
+interface UserSidebarProps {
   activeSection: string;
   onSectionChange: (section: 'profile' | 'avatar' | 'pitch' | 'analytics' | 'settings') => void;
 }
 
-const DashboardSidebar = ({ activeSection, onSectionChange }: DashboardSidebarProps) => {
+const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
   const menuItems = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'avatar', label: 'Avatar', icon: Video },
-    { id: 'pitch', label: 'Pitch', icon: Video },
+    { id: 'pitch', label: 'Pitch', icon: FileText },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
@@ -45,11 +45,11 @@ const DashboardSidebar = ({ activeSection, onSectionChange }: DashboardSidebarPr
         <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback className="bg-blue-600 text-white">SJ</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white">JD</AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">Sarah Johnson</h3>
-            <p className="text-sm text-gray-600">UX Designer</p>
+            <h3 className="font-semibold text-gray-900">John Doe</h3>
+            <p className="text-sm text-gray-600">Software Developer</p>
           </div>
         </div>
 
@@ -92,4 +92,4 @@ const DashboardSidebar = ({ activeSection, onSectionChange }: DashboardSidebarPr
   );
 };
 
-export default DashboardSidebar;
+export default UserSidebar;

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, TrendingUp, Eye, Heart, Award, Crown, Medal } from 'lucide-react';
+import { Trophy, TrendingUp, Eye, Heart, Award, Crown, Medal, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 const Leaderboard = () => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
   const [category, setCategory] = useState<'views' | 'likes' | 'engagement'>('views');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'developer' | 'designer' | 'manager'>('all');
 
   // Mock leaderboard data
   const leaderboardData = [
@@ -17,6 +18,7 @@ const Leaderboard = () => {
       rank: 1,
       name: 'Sarah Johnson',
       title: 'Senior UX Designer',
+      role: 'designer',
       avatar: '/placeholder.svg',
       views: 2450,
       likes: 189,
@@ -28,6 +30,7 @@ const Leaderboard = () => {
       rank: 2,
       name: 'Emily Rodriguez',
       title: 'Product Manager',
+      role: 'manager',
       avatar: '/placeholder.svg',
       views: 2340,
       likes: 167,
@@ -39,6 +42,7 @@ const Leaderboard = () => {
       rank: 3,
       name: 'Michael Chen',
       title: 'Full Stack Developer',
+      role: 'developer',
       avatar: '/placeholder.svg',
       views: 2180,
       likes: 145,
@@ -50,6 +54,7 @@ const Leaderboard = () => {
       rank: 4,
       name: 'Lisa Wang',
       title: 'Marketing Director',
+      role: 'manager',
       avatar: '/placeholder.svg',
       views: 1980,
       likes: 134,
@@ -61,6 +66,7 @@ const Leaderboard = () => {
       rank: 5,
       name: 'David Park',
       title: 'Data Scientist',
+      role: 'developer',
       avatar: '/placeholder.svg',
       views: 1850,
       likes: 128,
@@ -72,6 +78,7 @@ const Leaderboard = () => {
       rank: 6,
       name: 'Alex Thompson',
       title: 'DevOps Engineer',
+      role: 'developer',
       avatar: '/placeholder.svg',
       views: 1720,
       likes: 115,
@@ -83,6 +90,7 @@ const Leaderboard = () => {
       rank: 7,
       name: 'Jessica Liu',
       title: 'Frontend Developer',
+      role: 'developer',
       avatar: '/placeholder.svg',
       views: 1650,
       likes: 108,
@@ -94,6 +102,7 @@ const Leaderboard = () => {
       rank: 8,
       name: 'Ryan Mitchell',
       title: 'Backend Developer',
+      role: 'developer',
       avatar: '/placeholder.svg',
       views: 1580,
       likes: 102,
@@ -102,6 +111,10 @@ const Leaderboard = () => {
       badge: null
     }
   ];
+
+  const filteredData = leaderboardData.filter(item => 
+    roleFilter === 'all' || item.role === roleFilter
+  );
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -145,11 +158,11 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Talent Leaderboard
           </h1>
           <p className="text-gray-600 text-lg">
@@ -158,21 +171,21 @@ const Leaderboard = () => {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="flex flex-col lg:flex-row gap-4 mb-8">
           {/* Timeframe Selector */}
           <Card className="flex-1">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Timeframe:</span>
-                <div className="flex bg-violet-50 rounded-lg p-1">
+                <div className="flex bg-gray-100 rounded-lg p-1">
                   {['week', 'month', 'all'].map((option) => (
                     <button
                       key={option}
                       onClick={() => setTimeframe(option as any)}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
                         timeframe === option
-                          ? 'bg-white text-violet-700 shadow-sm'
-                          : 'text-violet-600 hover:text-violet-700'
+                          ? 'bg-white text-blue-700 shadow-sm'
+                          : 'text-gray-600 hover:text-blue-700'
                       }`}
                     >
                       {option === 'all' ? 'All Time' : `This ${option.charAt(0).toUpperCase() + option.slice(1)}`}
@@ -188,7 +201,7 @@ const Leaderboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                <div className="flex bg-violet-50 rounded-lg p-1">
+                <div className="flex bg-gray-100 rounded-lg p-1">
                   {[
                     { key: 'views', label: 'Views', icon: Eye },
                     { key: 'likes', label: 'Likes', icon: Heart },
@@ -201,8 +214,8 @@ const Leaderboard = () => {
                         onClick={() => setCategory(option.key as any)}
                         className={`flex items-center px-3 py-1 rounded-md text-sm font-medium transition-all ${
                           category === option.key
-                            ? 'bg-white text-violet-700 shadow-sm'
-                            : 'text-violet-600 hover:text-violet-700'
+                            ? 'bg-white text-blue-700 shadow-sm'
+                            : 'text-gray-600 hover:text-blue-700'
                         }`}
                       >
                         <Icon className="w-4 h-4 mr-1" />
@@ -214,11 +227,40 @@ const Leaderboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Role Filter */}
+          <Card className="flex-1">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Role:</span>
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  {[
+                    { key: 'all', label: 'All' },
+                    { key: 'developer', label: 'Developer' },
+                    { key: 'designer', label: 'Designer' },
+                    { key: 'manager', label: 'Manager' }
+                  ].map((option) => (
+                    <button
+                      key={option.key}
+                      onClick={() => setRoleFilter(option.key as any)}
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                        roleFilter === option.key
+                          ? 'bg-white text-blue-700 shadow-sm'
+                          : 'text-gray-600 hover:text-blue-700'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Top 3 Podium */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {leaderboardData.slice(0, 3).map((item, index) => (
+          {filteredData.slice(0, 3).map((item, index) => (
             <motion.div
               key={item.rank}
               initial={{ opacity: 0, y: 20 }}
@@ -226,19 +268,19 @@ const Leaderboard = () => {
               transition={{ delay: index * 0.1 }}
               className={`${index === 0 ? 'md:order-2' : index === 1 ? 'md:order-1' : 'md:order-3'}`}
             >
-              <Card className={`border-2 ${item.rank === 1 ? 'border-yellow-300 shadow-lg' : 'border-violet-100'} hover:shadow-xl transition-all`}>
+              <Card className={`border-2 ${item.rank === 1 ? 'border-yellow-300 shadow-lg' : 'border-gray-200'} hover:shadow-xl transition-all`}>
                 <CardContent className="p-6 text-center">
                   <div className="flex justify-center mb-4">
                     {getRankIcon(item.rank)}
                   </div>
                   <Avatar className="w-20 h-20 mx-auto mb-4 border-4 border-white shadow-lg">
                     <AvatarImage src={item.avatar} alt={item.name} />
-                    <AvatarFallback className="bg-violet-500 text-white text-xl">
+                    <AvatarFallback className="bg-blue-600 text-white text-xl">
                       {item.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{item.name}</h3>
-                  <p className="text-violet-600 font-medium mb-3">{item.title}</p>
+                  <p className="text-blue-600 font-medium mb-3">{item.title}</p>
                   {item.badge && (
                     <Badge className={`mb-3 ${getBadgeColor(item.badge)}`}>
                       {item.badge.replace('-', ' ')}
@@ -257,23 +299,23 @@ const Leaderboard = () => {
         </div>
 
         {/* Full Leaderboard */}
-        <Card className="border-violet-100 shadow-lg">
+        <Card className="border-gray-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Trophy className="w-5 h-5 mr-2 text-violet-600" />
+              <Trophy className="w-5 h-5 mr-2 text-blue-600" />
               Full Rankings
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="space-y-0">
-              {leaderboardData.map((item, index) => (
+              {filteredData.map((item, index) => (
                 <motion.div
                   key={item.rank}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`flex items-center p-4 border-b border-gray-100 hover:bg-violet-50 transition-colors ${
-                    item.rank <= 3 ? 'bg-gradient-to-r from-violet-25 to-transparent' : ''
+                  className={`flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                    item.rank <= 3 ? 'bg-blue-25' : ''
                   }`}
                 >
                   <div className="flex items-center justify-center w-12 h-12 mr-4">
@@ -282,7 +324,7 @@ const Leaderboard = () => {
                   
                   <Avatar className="w-12 h-12 mr-4">
                     <AvatarImage src={item.avatar} alt={item.name} />
-                    <AvatarFallback className="bg-violet-500 text-white">
+                    <AvatarFallback className="bg-blue-600 text-white">
                       {item.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
@@ -311,7 +353,7 @@ const Leaderboard = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="ml-4 text-violet-600 hover:text-violet-700 hover:bg-violet-50"
+                    className="ml-4 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   >
                     View Profile
                   </Button>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, EffectCards } from 'swiper/modules';
 import { motion } from 'framer-motion';
-import { Play, Heart, X, Bookmark, MessageSquare, Calendar, Star, MapPin } from 'lucide-react';
+import { Play, Heart, X, Bookmark, MessageSquare, Calendar, Star, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,6 +30,25 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
 
   const handleNoteChange = (candidateId: number, note: string) => {
     setNotes(prev => ({ ...prev, [candidateId]: note }));
+  };
+
+  // Mock availability data - in real app, this would come from the candidate data
+  const getAvailabilityStatus = (candidateId: number) => {
+    const statuses = ['Immediately Available', 'Available in 2 weeks', 'Available in 1 month', 'Not Available'];
+    return statuses[candidateId % statuses.length];
+  };
+
+  const getAvailabilityColor = (status: string) => {
+    switch (status) {
+      case 'Immediately Available':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'Available in 2 weeks':
+        return 'bg-blue-100 text-blue-700';
+      case 'Available in 1 month':
+        return 'bg-orange-100 text-orange-700';
+      default:
+        return 'bg-red-100 text-red-700';
+    }
   };
 
   return (
@@ -59,7 +78,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
                   className="h-full"
                 >
                   <Card className="h-full border-0 shadow-2xl overflow-hidden">
-                    <div className="relative h-full bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50">
+                    <div className="relative h-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
                       {/* Header */}
                       <div className="p-6 pb-0">
                         <div className="flex items-center mb-4">
@@ -70,7 +89,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
                           />
                           <div className="flex-1">
                             <h3 className="text-2xl font-bold text-gray-900">{candidate.name}</h3>
-                            <p className="text-violet-600 font-semibold">{candidate.role}</p>
+                            <p className="text-blue-600 font-semibold">{candidate.role}</p>
                             <div className="flex items-center text-gray-500 text-sm mt-1">
                               <MapPin className="w-4 h-4 mr-1" />
                               {candidate.location}
@@ -85,10 +104,18 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
                           </div>
                         </div>
 
+                        {/* Availability Status */}
+                        <div className="mb-4">
+                          <Badge className={`${getAvailabilityColor(getAvailabilityStatus(candidate.id))} border-0`}>
+                            <Clock className="w-3 h-3 mr-1" />
+                            {getAvailabilityStatus(candidate.id)}
+                          </Badge>
+                        </div>
+
                         {/* Skills */}
                         <div className="flex flex-wrap gap-2 mb-4">
                           {candidate.skills.slice(0, 4).map((skill) => (
-                            <Badge key={skill} className="bg-violet-100 text-violet-700">
+                            <Badge key={skill} className="bg-blue-100 text-blue-700">
                               {skill}
                             </Badge>
                           ))}
@@ -165,15 +192,15 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
         {/* Side Panel - Notes & Actions */}
         <div className="space-y-6">
           {/* Current Candidate Info */}
-          <Card className="border-violet-100 shadow-lg">
+          <Card className="border-gray-200 shadow-lg">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <Button className="w-full bg-gradient-to-r from-violet-600 to-purple-600">
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Send Message
                 </Button>
-                <Button variant="outline" className="w-full border-violet-200 text-violet-600">
+                <Button variant="outline" className="w-full border-blue-200 text-blue-600">
                   <Calendar className="w-4 h-4 mr-2" />
                   Schedule Interview
                 </Button>
@@ -182,7 +209,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
           </Card>
 
           {/* Notes */}
-          <Card className="border-violet-100 shadow-lg">
+          <Card className="border-gray-200 shadow-lg">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Notes</h3>
               <Textarea
@@ -191,14 +218,14 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
                 onChange={(e) => handleNoteChange(candidatesData[currentIndex]?.id, e.target.value)}
                 className="min-h-[120px] resize-none"
               />
-              <Button className="w-full mt-3 bg-gradient-to-r from-violet-600 to-purple-600">
+              <Button className="w-full mt-3 bg-gradient-to-r from-blue-600 to-blue-700">
                 Save Notes
               </Button>
             </CardContent>
           </Card>
 
           {/* Action History */}
-          <Card className="border-violet-100 shadow-lg">
+          <Card className="border-gray-200 shadow-lg">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Actions</h3>
               <div className="space-y-2 text-sm">
