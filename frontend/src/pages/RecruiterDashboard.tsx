@@ -18,9 +18,9 @@ const RecruiterDashboard = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const stats = [
-    { title: 'Total Candidates', value: '1,247', icon: Users, color: 'from-blue-500 to-blue-600' },
+    { title: 'Total Candidates', value: '1,247', icon: Users, color: 'from-blue-600 to-blue-700' },
     { title: 'Shortlisted', value: '89', icon: Star, color: 'from-emerald-500 to-emerald-600' },
-    { title: 'Interviews Scheduled', value: '12', icon: Calendar, color: 'from-purple-500 to-purple-600' },
+    { title: 'Interviews Scheduled', value: '12', icon: Calendar, color: 'from-indigo-500 to-indigo-600' },
     { title: 'Bookmarked', value: '156', icon: Bookmark, color: 'from-orange-500 to-orange-600' },
   ];
 
@@ -33,7 +33,7 @@ const RecruiterDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div
@@ -43,7 +43,7 @@ const RecruiterDashboard = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-2">
                 Recruiter Dashboard
               </h1>
               <p className="text-gray-600 text-lg">Discover, engage, and hire top talent efficiently</p>
@@ -52,7 +52,7 @@ const RecruiterDashboard = () => {
               <Button
                 onClick={handleBackToOverview}
                 variant="outline"
-                className="border-violet-200 text-violet-600 hover:bg-violet-50"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Overview
@@ -69,7 +69,7 @@ const RecruiterDashboard = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
         >
           {stats.map((stat, index) => (
-            <Card key={stat.title} className="border-violet-100 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card key={stat.title} className="border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -106,7 +106,7 @@ const RecruiterDashboard = () => {
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
-                  className="border-violet-200 text-violet-600 hover:bg-violet-50"
+                  className="border-blue-200 text-blue-600 hover:bg-blue-50"
                 >
                   <Filter className="w-4 h-4 mr-2" />
                   Filters
