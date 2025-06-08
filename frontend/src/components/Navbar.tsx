@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -13,12 +12,10 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check if user is logged in (you can replace this with actual auth logic)
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     setIsLoggedIn(loggedIn);
-    
+
     if (loggedIn) {
-      // Get user profile from localStorage or API
       const profile = {
         name: localStorage.getItem('userName') || 'John Doe',
         role: localStorage.getItem('userRole') || 'user',
@@ -32,6 +29,7 @@ const Navbar = () => {
     { path: '/', label: 'Home' },
     { path: '/users', label: 'Talent' },
     { path: '/jobs', label: 'Jobs' },
+    { path: '/recruiters', label: 'Recruiters' },
     { path: '/leaderboard', label: 'Leaderboard' },
     { path: '/about', label: 'About' },
   ];
@@ -43,7 +41,6 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    // Navigate to appropriate dashboard based on role
     if (userProfile.role === 'recruiter') {
       window.location.href = '/recruiter-dashboard';
     } else {
@@ -67,9 +64,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-blue-600">
-              TalentFlow
-            </span>
+            <span className="text-2xl font-bold text-blue-600">TalentFlow</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -89,11 +84,14 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Auth Section */}
+          {/* Auth Section with Google Translate */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Google Translate Dropdown */}
+            <div id="google_translate_element" className="mr-2 text-sm" />
+
             {isLoggedIn ? (
               <div className="flex items-center space-x-3">
-                <Avatar 
+                <Avatar
                   className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
                   onClick={handleProfileClick}
                 >
@@ -161,7 +159,14 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
-              <div className="pt-4 space-y-2">
+
+              {/* Google Translate in mobile */}
+              <div className="px-3 py-2">
+                <div id="google_translate_element" className="text-sm mb-2" />
+              </div>
+
+              {/* Mobile Auth Section */}
+              <div className="pt-2 space-y-2">
                 {isLoggedIn ? (
                   <>
                     <div className="flex items-center px-3 py-2">

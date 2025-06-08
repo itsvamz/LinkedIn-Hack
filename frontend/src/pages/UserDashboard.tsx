@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Video, FileText, BarChart3, Settings, Upload, Eye, Briefcase, MessageSquare } from 'lucide-react';
@@ -11,9 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import UserSidebar from '@/components/UserSidebar';
+import MessagingSection from '@/components/MessagingSection';
 
 const UserDashboard = () => {
-  const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'pitch' | 'analytics' | 'settings'>('profile');
+  const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings'>('profile');
 
   const stats = [
     { title: 'Profile Views', value: '1,247', icon: Eye, trend: '+12%' },
@@ -237,6 +237,8 @@ const UserDashboard = () => {
         return renderAvatarSection();
       case 'pitch':
         return renderPitchSection();
+      case 'messaging':
+        return <MessagingSection />;
       case 'analytics':
         return renderAnalyticsSection();
       case 'settings':

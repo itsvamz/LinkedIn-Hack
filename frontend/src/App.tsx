@@ -19,9 +19,11 @@ import About from "./pages/About";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import BookmarkedCandidates from "./pages/BookmarkedCandidates";
 import JobManagement from "./pages/JobManagement";
+import JobApplication from "./pages/JobApplication";
 import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
 import Jobs from "./pages/Jobs";
+import Recruiters from "./pages/Recruiters";
 
 const queryClient = new QueryClient();
 
@@ -44,8 +46,10 @@ const App = () => (
               <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
               <Route path="/bookmarked-candidates" element={<BookmarkedCandidates />} />
               <Route path="/job-management" element={<JobManagement />} />
+              <Route path="/job-application" element={<JobApplication />} />
               <Route path="/users" element={<Users />} />
               <Route path="/jobs" element={<Jobs />} />
+              <Route path="/recruiters" element={<Recruiters />} />
               <Route path="/candidates" element={<ViewCandidates />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/carousel" element={<Carousel />} />

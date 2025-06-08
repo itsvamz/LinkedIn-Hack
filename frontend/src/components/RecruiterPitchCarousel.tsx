@@ -39,14 +39,14 @@ const RecruiterPitchCarousel = () => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center bg-gradient-to-r from-violet-50 via-purple-50 to-pink-50 text-violet-700 px-6 py-3 rounded-full text-sm font-medium mb-6 border border-violet-200 shadow-sm"
+          className="inline-flex items-center bg-gradient-to-r from-blue-50 via-blue-50 to-indigo-50 text-blue-700 px-6 py-3 rounded-full text-sm font-medium mb-6 border border-blue-200 shadow-sm"
         >
           <Target className="w-4 h-4 mr-2" />
           AI-Powered Talent Discovery
         </motion.div>
         
         <motion.h1 
-          className="text-5xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
+          className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -71,17 +71,17 @@ const RecruiterPitchCarousel = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="text-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">500+</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">500+</div>
             <div className="text-sm text-slate-500">Active Candidates</div>
           </div>
-          <div className="w-px h-8 bg-gradient-to-b from-violet-200 to-purple-200"></div>
+          <div className="w-px h-8 bg-gradient-to-b from-blue-200 to-blue-300"></div>
           <div className="text-center">
             <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent">95%</div>
             <div className="text-sm text-slate-500">Match Success</div>
           </div>
           <div className="w-px h-8 bg-gradient-to-b from-emerald-200 to-teal-200"></div>
           <div className="text-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-pink-600 bg-clip-text text-transparent">24h</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">24h</div>
             <div className="text-sm text-slate-500">Response Time</div>
           </div>
         </motion.div>
@@ -148,7 +148,7 @@ const RecruiterPitchCarousel = () => {
 
         {/* Custom Navigation Buttons */}
         <motion.button 
-          className="custom-swiper-button-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-violet-500 to-purple-600 shadow-xl rounded-full p-4 text-white hover:from-violet-600 hover:to-purple-700 transition-all duration-300 border border-violet-200"
+          className="custom-swiper-button-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-blue-500 to-blue-600 shadow-xl rounded-full p-4 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 border border-blue-200"
           whileHover={{ scale: 1.1, x: -2 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -156,7 +156,7 @@ const RecruiterPitchCarousel = () => {
         </motion.button>
         
         <motion.button 
-          className="custom-swiper-button-next absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-violet-500 to-purple-600 shadow-xl rounded-full p-4 text-white hover:from-violet-600 hover:to-purple-700 transition-all duration-300 border border-violet-200"
+          className="custom-swiper-button-next absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-blue-500 to-blue-600 shadow-xl rounded-full p-4 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 border border-blue-200"
           whileHover={{ scale: 1.1, x: 2 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -172,7 +172,7 @@ const RecruiterPitchCarousel = () => {
         className="text-center mt-16"
       >
         <motion.button
-          className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >

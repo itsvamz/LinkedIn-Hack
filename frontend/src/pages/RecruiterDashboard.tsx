@@ -1,149 +1,227 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Filter, Users, MessageSquare, Calendar, Bookmark, Star, ArrowLeft } from 'lucide-react';
+import { Users, Calendar, Star, TrendingUp, Upload, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PitchCarousel from '@/components/recruiter/PitchCarousel';
-import AvatarChatMode from '@/components/recruiter/AvatarChatMode';
-import CandidatePreview from '@/components/recruiter/CandidatePreview';
-import EngagementTools from '@/components/recruiter/EngagementTools';
-import FilterPanel from '@/components/recruiter/FilterPanel';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import RecruiterSidebar from '@/components/recruiter/RecruiterSidebar';
 import DashboardOverview from '@/components/recruiter/DashboardOverview';
+import JobsSection from '@/components/recruiter/JobsSection';
+import CandidatesSection from '@/components/recruiter/CandidatesSection';
+import MessagingSection from '@/components/recruiter/MessagingSection';
 
 const RecruiterDashboard = () => {
-  const [activeView, setActiveView] = useState('overview');
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics'>('overview');
 
   const stats = [
-    { title: 'Total Candidates', value: '1,247', icon: Users, color: 'from-blue-600 to-blue-700' },
-    { title: 'Shortlisted', value: '89', icon: Star, color: 'from-emerald-500 to-emerald-600' },
-    { title: 'Interviews Scheduled', value: '12', icon: Calendar, color: 'from-indigo-500 to-indigo-600' },
-    { title: 'Bookmarked', value: '156', icon: Bookmark, color: 'from-orange-500 to-orange-600' },
+    { title: 'Total Candidates', value: '1,247', icon: Users, trend: '+12%' },
+    { title: 'Shortlisted', value: '89', icon: Star, trend: '+8%' },
+    { title: 'Interviews Scheduled', value: '12', icon: Calendar, trend: '+15%' },
+    { title: 'Response Rate', value: '78%', icon: TrendingUp, trend: '+5%' },
   ];
 
-  const handleModeSelect = (mode: string) => {
-    setActiveView(mode);
-  };
+  const renderOverviewSection = () => (
+    <DashboardOverview onModeSelect={() => setActiveSection('jobs')} activeMode={activeSection} />
+  );
 
-  const handleBackToOverview = () => {
-    setActiveView('overview');
+  const renderProfileSection = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Recruiter Profile</CardTitle>
+          <CardDescription>Complete your profile to increase visibility to candidates</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Resume Upload */}
+          <div>
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">Resume Upload</Label>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+              <p className="text-sm text-gray-600 mb-2">Upload your resume to auto-fill profile</p>
+              <Button variant="outline" size="sm">Upload Resume</Button>
+              <p className="text-xs text-gray-500 mt-2">PDF, DOC up to 5MB</p>
+            </div>
+          </div>
+
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input id="fullName" placeholder="Jane Smith" />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input id="phone" placeholder="+1 (555) 123-4567" />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="jane@company.com" />
+            </div>
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input id="location" placeholder="San Francisco, CA" />
+            </div>
+          </div>
+
+          {/* Professional Profiles */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Professional Profiles</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="linkedin">LinkedIn</Label>
+                <Input id="linkedin" placeholder="linkedin.com/in/janesmith" />
+              </div>
+              <div>
+                <Label htmlFor="github">GitHub</Label>
+                <Input id="github" placeholder="github.com/janesmith" />
+              </div>
+              <div>
+                <Label htmlFor="leetcode">LeetCode</Label>
+                <Input id="leetcode" placeholder="leetcode.com/janesmith" />
+              </div>
+              <div>
+                <Label htmlFor="portfolio">Portfolio</Label>
+                <Input id="portfolio" placeholder="janesmith.dev" />
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          <div>
+            <Label htmlFor="skills">Skills</Label>
+            <Textarea id="skills" placeholder="Talent Acquisition, HR Management, Interviewing..." />
+          </div>
+
+          {/* Availability */}
+          <div>
+            <Label htmlFor="availability">Availability</Label>
+            <select className="w-full border border-gray-300 rounded-md px-3 py-2">
+              <option>Available immediately</option>
+              <option>Available in 2 weeks</option>
+              <option>Available in 1 month</option>
+              <option>Not actively recruiting</option>
+            </select>
+          </div>
+
+          <Button className="w-full">Save Profile</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const renderAvatarSection = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Avatar Creation</CardTitle>
+        <CardDescription>Create and manage your professional avatar</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Current Avatar */}
+          <div className="text-center">
+            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <Briefcase className="w-16 h-16 text-blue-600" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Current Avatar</h3>
+            <p className="text-gray-600 mb-4">Upload a clear photo to generate your professional avatar</p>
+          </div>
+
+          {/* Upload New Photo */}
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+            <p className="text-sm text-gray-600 mb-2">Upload a new photo</p>
+            <Button variant="outline" size="sm">Choose Photo</Button>
+            <p className="text-xs text-gray-500 mt-2">JPG, PNG up to 2MB</p>
+          </div>
+
+          {/* Previous Avatars */}
+          <div>
+            <h4 className="font-medium mb-3">Previous Avatars</h4>
+            <div className="grid grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-200">
+                  <Briefcase className="w-8 h-8 text-gray-400" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Button className="w-full">Generate New Avatar</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderAnalyticsSection = () => (
+    <Card>
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Analytics Dashboard</h3>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <h4 className="font-medium mb-2">Talent Response Rate</h4>
+                <p className="text-2xl font-bold text-blue-600">76%</p>
+                <p className="text-sm text-gray-600">Job click-through rate</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <h4 className="font-medium mb-2">Talent Acquisition Rate</h4>
+                <p className="text-2xl font-bold text-green-600">23%</p>
+                <p className="text-sm text-gray-600">Successful hires</p>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="h-64 flex items-center justify-center text-gray-500">
+            Detailed analytics charts coming soon...
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'profile':
+        return renderProfileSection();
+      case 'avatar':
+        return renderAvatarSection();
+      case 'overview':
+        return renderOverviewSection();
+      case 'jobs':
+        return <JobsSection />;
+      case 'candidates':
+        return <CandidatesSection />;
+      case 'messaging':
+        return <MessagingSection />;
+      case 'analytics':
+        return renderAnalyticsSection();
+      default:
+        return renderOverviewSection();
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-2">
-                Recruiter Dashboard
-              </h1>
-              <p className="text-gray-600 text-lg">Discover, engage, and hire top talent efficiently</p>
-            </div>
-            {activeView !== 'overview' && (
-              <Button
-                onClick={handleBackToOverview}
-                variant="outline"
-                className="border-blue-200 text-blue-600 hover:bg-blue-50"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Overview
-              </Button>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Stats Grid - Always visible */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        >
-          {stats.map((stat, index) => (
-            <Card key={stat.title} className="border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-lg bg-gradient-to-r ${stat.color}`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </motion.div>
-
-        {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          {activeView === 'overview' ? (
-            <DashboardOverview onModeSelect={handleModeSelect} activeMode={activeView} />
-          ) : (
-            <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
-              <div className="flex justify-between items-center mb-6">
-                <TabsList className="grid w-full max-w-md grid-cols-4">
-                  <TabsTrigger value="carousel">Pitch Carousel</TabsTrigger>
-                  <TabsTrigger value="chat">Avatar Chat</TabsTrigger>
-                  <TabsTrigger value="preview">Preview</TabsTrigger>
-                  <TabsTrigger value="tools">Tools</TabsTrigger>
-                </TabsList>
-                
-                <Button
-                  onClick={() => setShowFilters(!showFilters)}
-                  variant="outline"
-                  className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filters
-                </Button>
-              </div>
-
-              {/* Filter Panel */}
-              {showFilters && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mb-6"
-                >
-                  <FilterPanel />
-                </motion.div>
-              )}
-
-              {/* Tab Content */}
-              <TabsContent value="carousel" className="mt-0">
-                <PitchCarousel onCandidateSelect={setSelectedCandidate} />
-              </TabsContent>
-
-              <TabsContent value="chat" className="mt-0">
-                <AvatarChatMode candidate={selectedCandidate} />
-              </TabsContent>
-
-              <TabsContent value="preview" className="mt-0">
-                <CandidatePreview candidate={selectedCandidate} />
-              </TabsContent>
-
-              <TabsContent value="tools" className="mt-0">
-                <EngagementTools />
-              </TabsContent>
-            </Tabs>
-          )}
-        </motion.div>
+      <div className="flex">
+        <RecruiterSidebar
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
+        />
+        
+        <main className="flex-1 p-6 ml-64">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Content */}
+            {renderContent()}
+          </motion.div>
+        </main>
       </div>
     </div>
   );
