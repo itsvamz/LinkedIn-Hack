@@ -3,24 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pitch-profile-carousel</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
 
-    <meta property="og:title" content="pitch-profile-carousel" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <title>TalentFlow | Pitch Profile Carousel</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="TalentFlow - Discover, Pitch, and Hire Talent with Avatar-Based Profiles."
+    />
+    <meta name="author" content="Lovable / TalentFlow Team" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="TalentFlow - Avatar-Based Pitch Platform" />
+    <meta
+      property="og:description"
+      content="Explore talent like never before. Watch, hire, and connect via personalized video profiles."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi,fr,es,de,zh-CN',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+
+    <!-- GPTEngineer Script (Required) -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+
+    <style>
+      /* Optional: Basic styling for the translate widget */
+      .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+      }
+
+      body {
+        top: 0px !important;
+      }
+
+      .goog-te-gadget {
+        font-size: 0.875rem;
+        font-family: inherit;
+      }
+    </style>
   </head>
 
-  <body>
+  <body class="bg-white text-gray-900 font-inter">
     <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

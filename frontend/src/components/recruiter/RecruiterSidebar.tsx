@@ -1,23 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Video, FileText, BarChart3, Settings, LogOut, ArrowLeft, MessageSquare } from 'lucide-react';
+import { User, Briefcase, BarChart3, LogOut, ArrowLeft, Users, Video, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-interface UserSidebarProps {
+interface RecruiterSidebarProps {
   activeSection: string;
-  onSectionChange: (section: 'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings') => void;
+  onSectionChange: (section: 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics') => void;
 }
 
-const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
+const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarProps) => {
   const menuItems = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'avatar', label: 'Avatar', icon: Video },
-    { id: 'pitch', label: 'Pitch', icon: FileText },
+    { id: 'overview', label: 'Overview', icon: Users },
+    { id: 'jobs', label: 'Jobs', icon: Briefcase },
+    { id: 'candidates', label: 'Candidates', icon: User },
     { id: 'messaging', label: 'Messages', icon: MessageSquare },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -45,11 +46,11 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
         <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback className="bg-blue-600 text-white">JD</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white">RC</AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">John Doe</h3>
-            <p className="text-sm text-gray-600">Software Developer</p>
+            <h3 className="font-semibold text-gray-900">Recruiter</h3>
+            <p className="text-sm text-gray-600">Talent Acquisition</p>
           </div>
         </div>
 
@@ -92,4 +93,4 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
   );
 };
 
-export default UserSidebar;
+export default RecruiterSidebar;
