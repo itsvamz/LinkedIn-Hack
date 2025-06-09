@@ -1,96 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Heart, MessageSquare, BookmarkPlus, MapPin, Briefcase, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { getAllCandidates, bookmarkCandidate } from '@/lib/api';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const ViewCandidates = () => {
   const [savedNotes, setSavedNotes] = useState<{[key: string]: string}>({});
   const [tempNotes, setTempNotes] = useState<{[key: string]: string}>({});
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // Mock data - this would come from your database
-  const candidates = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      title: 'Senior UX Designer',
-      location: 'San Francisco, CA',
-      experience: '5+ years',
-      skills: ['UI/UX', 'Figma', 'React', 'Design Systems'],
-      avatar: '/placeholder.svg',
-      bio: 'Passionate UX designer with expertise in creating user-centered digital experiences.',
-      views: 1250,
-      likes: 89,
-      rating: 4.8
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      title: 'Full Stack Developer',
-      location: 'New York, NY',
-      experience: '4+ years',
-      skills: ['React', 'Node.js', 'Python', 'AWS'],
-      avatar: '/placeholder.svg',
-      bio: 'Full-stack developer specializing in scalable web applications and cloud architecture.',
-      views: 980,
-      likes: 67,
-      rating: 4.6
-    },
-    {
-      id: '3',
-      name: 'Emily Rodriguez',
-      title: 'Product Manager',
-      location: 'Austin, TX',
-      experience: '6+ years',
-      skills: ['Product Strategy', 'Agile', 'Analytics', 'Leadership'],
-      avatar: '/placeholder.svg',
-      bio: 'Strategic product manager with a track record of launching successful digital products.',
-      views: 1450,
-      likes: 112,
-      rating: 4.9
-    },
-    {
-      id: '4',
-      name: 'David Park',
-      title: 'Data Scientist',
-      location: 'Seattle, WA',
-      experience: '3+ years',
-      skills: ['Python', 'Machine Learning', 'SQL', 'TensorFlow'],
-      avatar: '/placeholder.svg',
-      bio: 'Data scientist passionate about turning complex data into actionable business insights.',
-      views: 750,
-      likes: 45,
-      rating: 4.5
-    },
-    {
-      id: '5',
-      name: 'Lisa Wang',
-      title: 'Marketing Director',
-      location: 'Los Angeles, CA',
-      experience: '7+ years',
-      skills: ['Digital Marketing', 'Brand Strategy', 'SEO', 'Content'],
-      avatar: '/placeholder.svg',
-      bio: 'Creative marketing leader with expertise in building brand awareness and driving growth.',
-      views: 1100,
-      likes: 78,
-      rating: 4.7
-    },
-    {
-      id: '6',
-      name: 'Alex Thompson',
-      title: 'DevOps Engineer',
-      location: 'Denver, CO',
-      experience: '4+ years',
-      skills: ['Docker', 'Kubernetes', 'AWS', 'CI/CD'],
-      avatar: '/placeholder.svg',
-      bio: 'DevOps engineer focused on automation and scalable infrastructure solutions.',
-      views: 820,
-      likes: 56,
-      rating: 4.6
-    }
-  ];
+  // Fetch candidates from API
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllCandidates();
+        setCandidates(data);
+      } catch (error) {
+        console.error('Error fetching candidates:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load candidates. Please try again.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCandidates();
+  }, []);
 
   const handleSaveNote = (candidateId: string) => {
     const note = tempNotes[candidateId] || '';
@@ -105,6 +52,29 @@ const ViewCandidates = () => {
   const handleViewPitch = (candidateId: string) => {
     console.log('Viewing pitch for candidate:', candidateId);
     // Navigate to pitch page
+  };
+
+  // Add function to handle viewing profile
+  const handleViewProfile = (candidateId: string) => {
+    navigate(`/candidate-profile/${candidateId}`);
+  };
+
+  // Add function to handle bookmarking
+  const handleBookmark = async (candidateId: string) => {
+    try {
+      await bookmarkCandidate(candidateId);
+      toast({
+        title: 'Success',
+        description: 'Candidate bookmarked successfully',
+      });
+    } catch (error) {
+      console.error('Error bookmarking candidate:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to bookmark candidate. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -122,119 +92,130 @@ const ViewCandidates = () => {
 
         {/* Candidates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {candidates.map((candidate, index) => (
-            <motion.div
-              key={candidate.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className="h-full border-violet-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                  {/* Profile Header */}
-                  <div className="flex items-center mb-4">
-                    <Avatar className="w-16 h-16 mr-4">
-                      <AvatarImage src={candidate.avatar} alt={candidate.name} />
-                      <AvatarFallback className="bg-violet-500 text-white text-lg">
-                        {candidate.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900">{candidate.name}</h3>
-                      <p className="text-violet-600 font-medium">{candidate.title}</p>
-                      <div className="flex items-center text-gray-500 text-sm mt-1">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {candidate.location}
+          {loading ? (
+            <p>Loading candidates...</p>
+          ) : candidates.length === 0 ? (
+            <p>No candidates found.</p>
+          ) : (
+            candidates.map((candidate, index) => (
+              <motion.div
+                key={candidate._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="h-full border-violet-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6">
+                    {/* Profile Header */}
+                    <div className="flex items-center mb-4">
+                      <Avatar className="w-16 h-16 mr-4">
+                        <AvatarImage src={candidate.avatar} alt={candidate.name} />
+                        <AvatarFallback className="bg-violet-500 text-white text-lg">
+                          {candidate.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900">{candidate.name}</h3>
+                        <p className="text-violet-600 font-medium">{candidate.title}</p>
+                        <div className="flex items-center text-gray-500 text-sm mt-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {candidate.location}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Bio */}
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {candidate.bio}
-                  </p>
+                    {/* Bio */}
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {candidate.bio}
+                    </p>
 
-                  {/* Experience & Rating */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Briefcase className="w-4 h-4 mr-1" />
-                      {candidate.experience}
+                    {/* Experience & Rating */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Briefcase className="w-4 h-4 mr-1" />
+                        {candidate.experience}
+                      </div>
+                      <div className="flex items-center">
+                        <span className="text-yellow-500 mr-1">★</span>
+                        <span className="text-sm font-medium">{candidate.rating}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500 mr-1">★</span>
-                      <span className="text-sm font-medium">{candidate.rating}</span>
-                    </div>
-                  </div>
 
-                  {/* Skills */}
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {candidate.skills.slice(0, 3).map((skill) => (
-                        <Badge key={skill} variant="secondary" className="bg-violet-100 text-violet-700">
-                          {skill}
-                        </Badge>
-                      ))}
-                      {candidate.skills.length > 3 && (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                          +{candidate.skills.length - 3} more
-                        </Badge>
+                    {/* Skills */}
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-2">
+                        {candidate.skills.slice(0, 3).map((skill) => (
+                          <Badge key={skill} variant="secondary" className="bg-violet-100 text-violet-700">
+                            {skill}
+                          </Badge>
+                        ))}
+                        {candidate.skills.length > 3 && (
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                            +{candidate.skills.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
+                      <div className="flex items-center">
+                        <Eye className="w-4 h-4 mr-1" />
+                        {candidate.views}
+                      </div>
+                      <div className="flex items-center">
+                        <Heart className="w-4 h-4 mr-1" />
+                        {candidate.likes}
+                      </div>
+                      <div className="flex items-center">
+                        <MessageSquare className="w-4 h-4 mr-1" />
+                        {Math.floor(candidate.views * 0.1)}
+                      </div>
+                    </div>
+
+                    {/* Notes Section */}
+                    <div className="mb-4">
+                      <textarea
+                        placeholder="Add a note about this candidate..."
+                        value={tempNotes[candidate.id] || savedNotes[candidate.id] || ''}
+                        onChange={(e) => handleNoteChange(candidate.id, e.target.value)}
+                        className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
+                        rows={2}
+                      />
+                      {tempNotes[candidate.id] && tempNotes[candidate.id] !== savedNotes[candidate.id] && (
+                        <Button
+                          onClick={() => handleSaveNote(candidate.id)}
+                          size="sm"
+                          className="mt-2 bg-emerald-600 hover:bg-emerald-700"
+                        >
+                          <Save className="w-4 h-4 mr-1" />
+                          Save Note
+                        </Button>
                       )}
                     </div>
-                  </div>
 
-                  {/* Stats */}
-                  <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Eye className="w-4 h-4 mr-1" />
-                      {candidate.views}
-                    </div>
-                    <div className="flex items-center">
-                      <Heart className="w-4 h-4 mr-1" />
-                      {candidate.likes}
-                    </div>
-                    <div className="flex items-center">
-                      <MessageSquare className="w-4 h-4 mr-1" />
-                      {Math.floor(candidate.views * 0.1)}
-                    </div>
-                  </div>
-
-                  {/* Notes Section */}
-                  <div className="mb-4">
-                    <textarea
-                      placeholder="Add a note about this candidate..."
-                      value={tempNotes[candidate.id] || savedNotes[candidate.id] || ''}
-                      onChange={(e) => handleNoteChange(candidate.id, e.target.value)}
-                      className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
-                      rows={2}
-                    />
-                    {tempNotes[candidate.id] && tempNotes[candidate.id] !== savedNotes[candidate.id] && (
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
                       <Button
-                        onClick={() => handleSaveNote(candidate.id)}
-                        size="sm"
-                        className="mt-2 bg-emerald-600 hover:bg-emerald-700"
+                        onClick={() => handleViewPitch(candidate.id)}
+                        className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
                       >
-                        <Save className="w-4 h-4 mr-1" />
-                        Save Note
+                        View Pitch
                       </Button>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => handleViewPitch(candidate.id)}
-                      className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
-                    >
-                      View Pitch
-                    </Button>
-                    <Button variant="outline" size="icon" className="border-violet-200 text-violet-600 hover:bg-violet-50">
-                      <BookmarkPlus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="border-violet-200 text-violet-600 hover:bg-violet-50"
+                        onClick={() => handleBookmark(candidate._id)}
+                      >
+                        <BookmarkPlus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))
+          )}
         </div>
 
         {/* Load More */}

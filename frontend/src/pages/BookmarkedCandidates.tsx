@@ -1,60 +1,41 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';  // <-- add useEffect import
 import { motion } from 'framer-motion';
 import { Search, Filter, MessageSquare, Eye, Heart, BookmarkCheck, User, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+
+// Example API fetch function (you need to implement or replace this)
+const getBookmarkedCandidates = async () => {
+  const response = await fetch('/api/bookmarked-candidates'); // your API endpoint here
+  if (!response.ok) {
+    throw new Error('Failed to fetch candidates');
+  }
+  return response.json();
+};
 
 const BookmarkedCandidates = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [bookmarkedCandidates, setBookmarkedCandidates] = useState([]); // <-- moved here from mock data
 
-  // Mock bookmarked candidates data
-  const bookmarkedCandidates = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      role: 'Senior UX Designer',
-      avatar: '/placeholder.svg',
-      skills: ['React', 'UI/UX', 'Figma', 'Design Systems'],
-      experience: '5+ years',
-      location: 'San Francisco, CA',
-      notes: 'Excellent portfolio, strong design thinking. Would be perfect for our design team lead position.',
-      bookmarkedDate: '2024-01-15',
-      likes: 45,
-      views: 234
-    },
-    {
-      id: 2,
-      name: 'Alex Chen',
-      role: 'Full Stack Developer',
-      avatar: '/placeholder.svg',
-      skills: ['React', 'Node.js', 'Python', 'AWS'],
-      experience: '4+ years',
-      location: 'New York, NY',
-      notes: 'Strong technical background, good communication skills. Interested in our backend architect role.',
-      bookmarkedDate: '2024-01-14',
-      likes: 67,
-      views: 189
-    },
-    {
-      id: 3,
-      name: 'Maya Patel',
-      role: 'Data Scientist',
-      avatar: '/placeholder.svg',
-      skills: ['Python', 'Machine Learning', 'TensorFlow', 'SQL'],
-      experience: '3+ years',
-      location: 'Austin, TX',
-      notes: 'Impressive ML projects, PhD in Computer Science. Perfect for our AI initiatives.',
-      bookmarkedDate: '2024-01-13',
-      likes: 89,
-      views: 345
-    }
-  ];
+  // Fetch data from API on component mount
+  useEffect(() => {
+    const fetchBookmarkedCandidates = async () => {
+      try {
+        const candidates = await getBookmarkedCandidates();
+        setBookmarkedCandidates(candidates);
+      } catch (error) {
+        console.error('Error fetching bookmarked candidates:', error);
+      }
+    };
+    
+    fetchBookmarkedCandidates();
+  }, []);
 
+  // Filter candidates based on search term
   const filteredCandidates = bookmarkedCandidates.filter(candidate => 
     candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     candidate.role.toLowerCase().includes(searchTerm.toLowerCase()) ||

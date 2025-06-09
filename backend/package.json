@@ -1,27 +1,23 @@
 {
-  "name": "marvs",
+  "name": "talentflow-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend for TalentFlow - A LinkedIn-like platform",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "seed": "node utils/seeder.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "firebase-admin": "^13.4.0",
-    "jsonwebtoken": "^9.0.2",
-    "mixpanel": "^0.18.1",
-    "mongoose": "^8.15.0",
-    "multer": "^2.0.0",
-    "node-fetch": "^2.7.0"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mixpanel": "^0.17.0",
+    "mongoose": "^7.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^2.0.22"
   }
 }

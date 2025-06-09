@@ -1,29 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userProfile, setUserProfile] = useState({ name: '', role: '', avatar: '' });
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
-
-    if (loggedIn) {
-      const profile = {
-        name: localStorage.getItem('userName') || 'John Doe',
-        role: localStorage.getItem('userRole') || 'user',
-        avatar: localStorage.getItem('userAvatar') || ''
-      };
-      setUserProfile(profile);
-    }
-  }, [location]);
+  const navigate = useNavigate();
 
   const navItems = [
     { path: '/', label: 'Home' },
@@ -41,21 +28,16 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    if (userProfile.role === 'recruiter') {
-      window.location.href = '/recruiter-dashboard';
+    if (user?.role === 'recruiter') {
+      navigate('/recruiter-dashboard');
     } else {
-      window.location.href = '/user-dashboard';
+      navigate('/user-dashboard');
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userAvatar');
-    setIsLoggedIn(false);
-    setUserProfile({ name: '', role: '', avatar: '' });
-    window.location.href = '/';
+    logout();
+    navigate('/');
   };
 
   return (
@@ -89,15 +71,15 @@ const Navbar = () => {
             {/* Google Translate Dropdown */}
             <div id="google_translate_element" className="mr-2 text-sm" />
 
-            {isLoggedIn ? (
+            {isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
                 <Avatar
                   className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
                   onClick={handleProfileClick}
                 >
-                  <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
+                  <AvatarImage src={user.avatar} alt={user.fullName} />
                   <AvatarFallback className="bg-blue-600 text-white text-sm">
-                    {getInitials(userProfile.name)}
+                    {getInitials(user.fullName)}
                   </AvatarFallback>
                 </Avatar>
                 <Button
@@ -167,18 +149,18 @@ const Navbar = () => {
 
               {/* Mobile Auth Section */}
               <div className="pt-2 space-y-2">
-                {isLoggedIn ? (
+                {isAuthenticated && user ? (
                   <>
                     <div className="flex items-center px-3 py-2">
                       <Avatar className="w-8 h-8 mr-3">
-                        <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
+                        <AvatarImage src={user.avatar} alt={user.fullName} />
                         <AvatarFallback className="bg-blue-600 text-white text-sm">
-                          {getInitials(userProfile.name)}
+                          {getInitials(user.fullName)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{userProfile.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{userProfile.role}</p>
+                        <p className="text-sm font-medium text-gray-900">{user.fullName}</p>
+                        <p className="text-xs text-gray-500 capitalize">{user.role}</p>
                       </div>
                     </div>
                     <Button

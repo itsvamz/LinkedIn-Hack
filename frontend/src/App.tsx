@@ -24,44 +24,77 @@ import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
 import Jobs from "./pages/Jobs";
 import Recruiters from "./pages/Recruiters";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen flex flex-col w-full">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/user-dashboard" element={<UserDashboard />} />
-              <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
-              <Route path="/bookmarked-candidates" element={<BookmarkedCandidates />} />
-              <Route path="/job-management" element={<JobManagement />} />
-              <Route path="/job-application" element={<JobApplication />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/recruiters" element={<Recruiters />} />
-              <Route path="/candidates" element={<ViewCandidates />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/carousel" element={<Carousel />} />
-              <Route path="/about" element={<About />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen flex flex-col w-full">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/user-dashboard" element={
+                  <ProtectedRoute requiredRole="user">
+                    <UserDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/recruiter-dashboard" element={
+                  <ProtectedRoute requiredRole="recruiter">
+                    <RecruiterDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/bookmarked-candidates" element={
+                  <ProtectedRoute requiredRole="recruiter">
+                    <BookmarkedCandidates />
+                  </ProtectedRoute>
+                } />
+                <Route path="/job-management" element={
+                  <ProtectedRoute requiredRole="recruiter">
+                    <JobManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/job-application" element={
+                  <ProtectedRoute requiredRole="user">
+                    <JobApplication />
+                  </ProtectedRoute>
+                } />
+                <Route path="/users" element={<Users />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/recruiters" element={<Recruiters />} />
+                <Route path="/candidates" element={
+                  <ProtectedRoute requiredRole="recruiter">
+                    <ViewCandidates />
+                  </ProtectedRoute>
+                } />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/carousel" element={<Carousel />} />
+                <Route path="/about" element={<About />} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
