@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Briefcase, BarChart3, LogOut, ArrowLeft, Users, Video, MessageSquare } from 'lucide-react';
+import { User, Briefcase, BarChart3, LogOut, ArrowLeft, Users, Video, MessageSquare, Settings } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
 interface RecruiterSidebarProps {
   activeSection: string;
-  onSectionChange: (section: 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics') => void;
+  onSectionChange: (section: 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings') => void;
 }
 
 const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarProps) => {
@@ -19,6 +20,7 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
     { id: 'candidates', label: 'Candidates', icon: User },
     { id: 'messaging', label: 'Messages', icon: MessageSquare },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -31,26 +33,28 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
       initial={{ x: -300 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-40"
+      className="fixed left-0 top-0 h-full w-64 bg-white dark:bg-black shadow-lg border-r border-gray-200 dark:border-gray-700 z-40"
     >
       <div className="p-6">
         {/* Logo */}
         <Link to="/" className="flex items-center mb-8">
           <ArrowLeft className="w-4 h-4 mr-2 text-blue-600" />
-          <span className="text-xl font-bold text-blue-600">
-            TalentFlow
-          </span>
+          <div className="text-center">
+            <span className="text-xl font-bold text-blue-600">
+              AVIRI
+            </span>
+          </div>
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
             <AvatarFallback className="bg-blue-600 text-white">RC</AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">Recruiter</h3>
-            <p className="text-sm text-gray-600">Talent Acquisition</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white">Recruiter</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Talent Acquisition</p>
           </div>
         </div>
 
@@ -67,7 +71,7 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
                 <Icon className="w-5 h-5 mr-3" />
@@ -82,7 +86,7 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Sign Out

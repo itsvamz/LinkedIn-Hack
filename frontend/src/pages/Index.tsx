@@ -14,15 +14,15 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl font-bold text-gray-900 mb-6"
+              className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6"
             >
               Connect Talent with Opportunity
             </motion.h1>
@@ -30,9 +30,9 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+              className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed"
             >
-              The professional platform where talent meets opportunity. Create your profile, showcase your skills, and connect with top employers.
+              The professional platform where talent meets opportunity. Create your profile, showcase your skills, and connect with top employers through AI-powered matching.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -41,13 +41,13 @@ const Index = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link to="/signup">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all">
                   Get Started
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
               <Link to="/users">
-                <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3">
+                <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all">
                   Browse Talent
                 </Button>
               </Link>
@@ -57,7 +57,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
@@ -68,10 +68,10 @@ const Index = () => {
                 transition={{ delay: 0.3 + index * 0.1 }}
                 className="text-center"
               >
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-gradient-to-br from-blue-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <stat.icon className="w-8 h-8 text-blue-600" />
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</h3>
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">{stat.value}</h3>
                 <p className="text-gray-600">{stat.label}</p>
               </motion.div>
             ))}
@@ -84,7 +84,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
                 Professional Features
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -131,7 +131,7 @@ const Index = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
                 >
-                  <Card className="h-full border-gray-200 hover:shadow-lg transition-shadow">
+                  <Card className="h-full border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
                     <CardContent className="p-6">
                       <div className="text-4xl mb-4">{feature.icon}</div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
@@ -146,17 +146,17 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-blue-600">
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-white mb-4">
               Ready to Advance Your Career?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Join thousands of professionals who have transformed their careers
+              Join thousands of professionals who have transformed their careers with AVIRI
             </p>
             <Link to="/signup">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all">
                 Create Your Profile
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface AvatarChatModeProps {
   candidate: any;
@@ -169,43 +170,45 @@ const AvatarChatMode: React.FC<AvatarChatModeProps> = ({ candidate }) => {
       {/* Chat Section */}
       <div className="lg:col-span-2">
         <Card className="border-violet-100 shadow-lg h-[600px] flex flex-col">
-          <CardHeader className="border-b border-violet-100">
+          <CardHeader className="border-b border-violet-100 flex-shrink-0">
             <CardTitle className="flex items-center justify-between">
               <span>Chat with {candidate.name}</span>
               <Badge className="bg-emerald-100 text-emerald-700">Online</Badge>
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="flex-1 flex flex-col p-0">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              <AnimatePresence>
-                {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`max-w-[80%] rounded-lg p-3 ${
-                      message.type === 'user' 
-                        ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white' 
-                        : 'bg-gray-100 text-gray-900'
-                    }`}>
-                      <p className="text-sm">{message.content}</p>
-                      <p className={`text-xs mt-1 ${
-                        message.type === 'user' ? 'text-violet-200' : 'text-gray-500'
+          <CardContent className="flex-1 flex flex-col p-0 min-h-0">
+            {/* Messages with ScrollArea */}
+            <ScrollArea className="flex-1 p-6">
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {messages.map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`max-w-[80%] rounded-lg p-3 ${
+                        message.type === 'user' 
+                          ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white' 
+                          : 'bg-gray-100 text-gray-900'
                       }`}>
-                        {message.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+                        <p className="text-sm">{message.content}</p>
+                        <p className={`text-xs mt-1 ${
+                          message.type === 'user' ? 'text-violet-200' : 'text-gray-500'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </ScrollArea>
 
             {/* Input */}
-            <div className="border-t border-violet-100 p-4">
+            <div className="border-t border-violet-100 p-4 flex-shrink-0">
               <div className="flex gap-2">
                 <Input
                   value={inputMessage}
