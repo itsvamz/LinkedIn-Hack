@@ -43,7 +43,6 @@ const Login = () => {
         description: "You have been logged in successfully.",
       });
       
-      // Redirect to appropriate dashboard
       const redirectPath = formData.role === 'recruiter' ? '/recruiter-dashboard' : '/user-dashboard';
       navigate(redirectPath);
     } catch (error: Error | unknown) {
@@ -63,7 +62,6 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Header */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-block">
               <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AVIRI</span>
@@ -83,21 +81,15 @@ const Login = () => {
                 Sign In
               </CardTitle>
             </CardHeader>
-<<<<<<< HEAD
-            <CardContent className="p-6">
-              <Tabs defaultValue="user" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100">
-                  <TabsTrigger value="user" className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-=======
+
             <CardContent>
               <Tabs 
                 defaultValue="user" 
                 className="w-full"
                 onValueChange={(value) => handleRoleChange(value as 'user' | 'recruiter')}
               >
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="user" className="flex items-center">
->>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
+                <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100">
+                  <TabsTrigger value="user" className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                     <User className="w-4 h-4 mr-2" />
                     Job Seeker
                   </TabsTrigger>
@@ -108,11 +100,7 @@ const Login = () => {
                 </TabsList>
 
                 <TabsContent value="user">
-<<<<<<< HEAD
-                  <form onSubmit={(e) => handleSubmit(e, 'user')} className="space-y-6">
-=======
                   <form onSubmit={handleSubmit} className="space-y-4">
->>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                     <div>
                       <Label htmlFor="user-email" className="text-sm font-semibold text-gray-700">Email address</Label>
                       <Input
@@ -143,12 +131,8 @@ const Login = () => {
 
                     <Button
                       type="submit"
-<<<<<<< HEAD
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3"
-=======
-                      className="w-full bg-blue-600 hover:bg-blue-700"
                       disabled={isLoading}
->>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                     >
                       {isLoading ? 'Signing in...' : 'Sign in as Job Seeker'}
                     </Button>
@@ -156,11 +140,7 @@ const Login = () => {
                 </TabsContent>
 
                 <TabsContent value="recruiter">
-<<<<<<< HEAD
-                  <form onSubmit={(e) => handleSubmit(e, 'recruiter')} className="space-y-6">
-=======
                   <form onSubmit={handleSubmit} className="space-y-4">
->>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                     <div>
                       <Label htmlFor="recruiter-email" className="text-sm font-semibold text-gray-700">Email address</Label>
                       <Input
@@ -191,12 +171,8 @@ const Login = () => {
 
                     <Button
                       type="submit"
-<<<<<<< HEAD
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3"
-=======
-                      className="w-full bg-blue-600 hover:bg-blue-700"
                       disabled={isLoading}
->>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                     >
                       {isLoading ? 'Signing in...' : 'Sign in as Recruiter'}
                     </Button>
