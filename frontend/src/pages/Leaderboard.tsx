@@ -1,18 +1,19 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, TrendingUp, Eye, Heart, Award, Crown, Medal, Filter } from 'lucide-react';
+import { Trophy, TrendingUp, Eye, Heart, Award, Crown, Medal, Filter, User, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const Leaderboard = () => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
   const [category, setCategory] = useState<'views' | 'likes' | 'engagement'>('views');
   const [roleFilter, setRoleFilter] = useState<'all' | 'developer' | 'designer' | 'manager'>('all');
 
-  // Mock leaderboard data
+  // Enhanced leaderboard data with full profile information
   const leaderboardData = [
     {
       rank: 1,
@@ -24,7 +25,13 @@ const Leaderboard = () => {
       likes: 189,
       engagement: 92.5,
       change: '+15%',
-      badge: 'top-performer'
+      badge: 'top-performer',
+      email: 'sarah.johnson@example.com',
+      phone: '+1 (555) 123-4567',
+      location: 'San Francisco, CA',
+      experience: '8+ years experience',
+      skills: ['UX Design', 'Figma', 'Design Systems', 'User Research', 'Prototyping'],
+      about: 'Passionate UX designer with 8+ years of experience creating user-centered digital experiences. Specialized in design systems and user research methodologies.'
     },
     {
       rank: 2,
@@ -36,7 +43,13 @@ const Leaderboard = () => {
       likes: 167,
       engagement: 88.3,
       change: '+8%',
-      badge: 'rising-star'
+      badge: 'rising-star',
+      email: 'emily.rodriguez@example.com',
+      phone: '+1 (555) 234-5678',
+      location: 'New York, NY',
+      experience: '6+ years experience',
+      skills: ['Product Strategy', 'Agile', 'Data Analysis', 'User Stories', 'Roadmap Planning'],
+      about: 'Strategic product manager focused on driving growth through data-driven decisions and user-centric product development.'
     },
     {
       rank: 3,
@@ -48,7 +61,13 @@ const Leaderboard = () => {
       likes: 145,
       engagement: 85.7,
       change: '+12%',
-      badge: 'consistent'
+      badge: 'consistent',
+      email: 'michael.chen@example.com',
+      phone: '+1 (555) 345-6789',
+      location: 'Seattle, WA',
+      experience: '5+ years experience',
+      skills: ['React', 'Node.js', 'Python', 'MongoDB', 'AWS', 'TypeScript'],
+      about: 'Full-stack developer with expertise in modern web technologies. Passionate about building scalable applications and clean code architecture.'
     },
     {
       rank: 4,
@@ -60,7 +79,13 @@ const Leaderboard = () => {
       likes: 134,
       engagement: 82.1,
       change: '+5%',
-      badge: null
+      badge: null,
+      email: 'lisa.wang@example.com',
+      phone: '+1 (555) 456-7890',
+      location: 'Los Angeles, CA',
+      experience: '7+ years experience',
+      skills: ['Digital Marketing', 'Brand Strategy', 'SEO/SEM', 'Analytics', 'Content Marketing'],
+      about: 'Creative marketing director with proven track record in digital marketing and brand development. Expertise in growth hacking and performance marketing.'
     },
     {
       rank: 5,
@@ -72,7 +97,13 @@ const Leaderboard = () => {
       likes: 128,
       engagement: 79.8,
       change: '+18%',
-      badge: 'fast-climber'
+      badge: 'fast-climber',
+      email: 'david.park@example.com',
+      phone: '+1 (555) 567-8901',
+      location: 'Boston, MA',
+      experience: '4+ years experience',
+      skills: ['Python', 'Machine Learning', 'SQL', 'TensorFlow', 'Data Visualization', 'Statistics'],
+      about: 'Data scientist specializing in machine learning and predictive analytics. Experienced in building ML models for business optimization.'
     },
     {
       rank: 6,
@@ -84,7 +115,13 @@ const Leaderboard = () => {
       likes: 115,
       engagement: 76.5,
       change: '+3%',
-      badge: null
+      badge: null,
+      email: 'alex.thompson@example.com',
+      phone: '+1 (555) 678-9012',
+      location: 'Austin, TX',
+      experience: '6+ years experience',
+      skills: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Terraform', 'Linux'],
+      about: 'DevOps engineer focused on cloud infrastructure and automation. Expert in containerization and continuous deployment pipelines.'
     },
     {
       rank: 7,
@@ -96,7 +133,13 @@ const Leaderboard = () => {
       likes: 108,
       engagement: 74.2,
       change: '+7%',
-      badge: null
+      badge: null,
+      email: 'jessica.liu@example.com',
+      phone: '+1 (555) 789-0123',
+      location: 'Portland, OR',
+      experience: '4+ years experience',
+      skills: ['React', 'Vue.js', 'JavaScript', 'CSS', 'Responsive Design', 'Performance Optimization'],
+      about: 'Frontend developer passionate about creating beautiful, performant user interfaces. Specialist in modern JavaScript frameworks and responsive design.'
     },
     {
       rank: 8,
@@ -108,7 +151,13 @@ const Leaderboard = () => {
       likes: 102,
       engagement: 71.9,
       change: '+10%',
-      badge: null
+      badge: null,
+      email: 'ryan.mitchell@example.com',
+      phone: '+1 (555) 890-1234',
+      location: 'Denver, CO',
+      experience: '5+ years experience',
+      skills: ['Java', 'Spring Boot', 'Microservices', 'PostgreSQL', 'Redis', 'API Design'],
+      about: 'Backend developer with expertise in microservices architecture and scalable system design. Focused on building robust, high-performance APIs.'
     }
   ];
 
@@ -156,6 +205,114 @@ const Leaderboard = () => {
         return item.views.toLocaleString();
     }
   };
+
+  const ProfileModal = ({ user }: { user: any }) => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="ml-4 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+        >
+          View Profile
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center">
+            <User className="w-5 h-5 mr-2" />
+            {user.name}'s Profile
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6">
+          {/* Header Section */}
+          <div className="flex items-center space-x-6 p-6 bg-blue-50 rounded-lg">
+            <Avatar className="w-24 h-24 border-4 border-white shadow-lg">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="bg-blue-600 text-white text-xl">
+                {user.name.split(' ').map((n: string) => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+              <p className="text-xl text-blue-600 font-medium">{user.title}</p>
+              <div className="flex items-center text-gray-600 mt-2">
+                <MapPin className="w-4 h-4 mr-2" />
+                {user.location}
+              </div>
+              <div className="flex items-center text-gray-600 mt-1">
+                <Briefcase className="w-4 h-4 mr-2" />
+                {user.experience}
+              </div>
+              <div className="flex items-center mt-2 space-x-4">
+                <div className="flex items-center">
+                  <Trophy className="w-4 h-4 mr-1 text-yellow-500" />
+                  <span className="text-sm font-medium">Rank #{user.rank}</span>
+                </div>
+                {user.badge && (
+                  <Badge className={getBadgeColor(user.badge)}>
+                    {user.badge.replace('-', ' ')}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Information */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-lg mb-3">Contact Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center">
+                <Mail className="w-4 h-4 mr-2 text-blue-600" />
+                <span>{user.email}</span>
+              </div>
+              <div className="flex items-center">
+                <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                <span>{user.phone}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Performance Stats */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <Eye className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+              <p className="text-2xl font-bold text-blue-600">{user.views.toLocaleString()}</p>
+              <p className="text-sm text-gray-600">Profile Views</p>
+            </div>
+            <div className="text-center p-4 bg-red-50 rounded-lg">
+              <Heart className="w-6 h-6 mx-auto mb-2 text-red-600" />
+              <p className="text-2xl font-bold text-red-600">{user.likes}</p>
+              <p className="text-sm text-gray-600">Likes</p>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <TrendingUp className="w-6 h-6 mx-auto mb-2 text-green-600" />
+              <p className="text-2xl font-bold text-green-600">{user.engagement}%</p>
+              <p className="text-sm text-gray-600">Engagement</p>
+            </div>
+          </div>
+
+          {/* About */}
+          <div>
+            <h3 className="font-semibold text-lg mb-3">About</h3>
+            <p className="text-gray-600 leading-relaxed">{user.about}</p>
+          </div>
+
+          {/* Skills */}
+          <div>
+            <h3 className="font-semibold text-lg mb-3">Skills & Expertise</h3>
+            <div className="flex flex-wrap gap-2">
+              {user.skills.map((skill: string, idx: number) => (
+                <Badge key={idx} variant="secondary" className="bg-blue-100 text-blue-700">
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -350,13 +507,7 @@ const Leaderboard = () => {
                     </div>
                   </div>
                   
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="ml-4 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                  >
-                    View Profile
-                  </Button>
+                  <ProfileModal user={item} />
                 </motion.div>
               ))}
             </div>

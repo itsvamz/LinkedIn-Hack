@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Video, BarChart3, Settings, Upload, Eye, TrendingUp, Award } from 'lucide-react';
+import { User, Video, BarChart3, Settings as SettingsIcon, Upload, Eye, TrendingUp, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import DashboardSidebar from '@/components/DashboardSidebar';
+import VoiceRecorder from '@/components/VoiceRecorder';
+import Settings from '@/components/Settings';
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'pitch' | 'analytics' | 'settings'>('profile');
@@ -113,27 +115,35 @@ const Dashboard = () => {
   );
 
   const renderPitchSection = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Elevator Pitch</CardTitle>
-        <CardDescription>Create your 1-minute professional pitch video</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Pitch Script</label>
-            <textarea 
-              className="w-full border border-gray-300 rounded-md px-3 py-2 h-32"
-              placeholder="Write your elevator pitch here..."
-            />
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Elevator Pitch</CardTitle>
+          <CardDescription>Create your 1-minute professional pitch video</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">Pitch Script</label>
+              <textarea 
+                className="w-full border border-gray-300 rounded-md px-3 py-2 h-32"
+                placeholder="Write your elevator pitch here..."
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button className="bg-blue-600 hover:bg-blue-700">Generate Video</Button>
+              <Button variant="outline">Preview Script</Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button className="bg-blue-600 hover:bg-blue-700">Generate Video</Button>
-            <Button variant="outline">Preview Script</Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <VoiceRecorder 
+        onRecordingComplete={(blob) => {
+          console.log('Recording completed:', blob);
+        }} 
+      />
+    </div>
   );
 
   const renderAnalyticsSection = () => (
@@ -184,24 +194,14 @@ const Dashboard = () => {
       case 'analytics':
         return renderAnalyticsSection();
       case 'settings':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-              <CardDescription>Manage your account settings and preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Settings panel coming soon...</p>
-            </CardContent>
-          </Card>
-        );
+        return <Settings userType="user" />;
       default:
         return renderProfileSection();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       <div className="flex">
         <DashboardSidebar
           activeSection={activeSection}
@@ -216,10 +216,10 @@ const Dashboard = () => {
           >
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Welcome back, Sarah!
               </h1>
-              <p className="text-gray-600">Manage your professional profile and track your progress</p>
+              <p className="text-gray-600 dark:text-gray-300">Manage your professional profile and track your progress</p>
             </div>
 
             {/* Content */}

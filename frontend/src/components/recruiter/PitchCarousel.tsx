@@ -22,15 +22,37 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [notes, setNotes] = useState<{[key: string]: string}>({});
   const [actions, setActions] = useState<{[key: string]: 'shortlist' | 'reject' | 'bookmark' | null}>({});
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set(candidatesData.map(c => c.id)));
 
   const handleAction = (candidateId: number, action: 'shortlist' | 'reject' | 'bookmark') => {
     setActions(prev => ({ ...prev, [candidateId]: action }));
     onCandidateSelect(candidatesData[currentIndex]);
+    
+    if (action === 'reject') {
+      // Hide the card when rejected
+      setVisibleCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(candidateId);
+        return newSet;
+      });
+    }
   };
 
   const handleNoteChange = (candidateId: number, note: string) => {
     setNotes(prev => ({ ...prev, [candidateId]: note }));
   };
+
+  const handleSlideChange = (swiper: any) => {
+    const activeIndex = swiper.activeIndex;
+    setCurrentIndex(activeIndex);
+    const visibleCandidates = candidatesData.filter(c => visibleCards.has(c.id));
+    if (visibleCandidates[activeIndex]) {
+      onCandidateSelect(visibleCandidates[activeIndex]);
+    }
+  };
+
+  // Filter visible candidates
+  const visibleCandidates = candidatesData.filter(candidate => visibleCards.has(candidate.id));
 
   // Mock availability data - in real app, this would come from the candidate data
   const getAvailabilityStatus = (candidateId: number) => {
@@ -67,17 +89,25 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
             }}
             navigation
             pagination={{ clickable: true }}
-            onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
+            onSlideChange={handleSlideChange}
             className="h-[600px] rounded-2xl"
           >
-            {candidatesData.map((candidate, index) => (
+            {visibleCandidates.map((candidate, index) => (
               <SwiperSlide key={candidate.id}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="h-full"
                 >
-                  <Card className="h-full border-0 shadow-2xl overflow-hidden">
+                  <Card className="h-full border-0 shadow-2xl overflow-hidden relative">
+                    {/* X Button */}
+                    <button
+                      onClick={() => handleAction(candidate.id, 'reject')}
+                      className="absolute top-4 right-4 z-10 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+
                     <div className="relative h-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
                       {/* Header */}
                       <div className="p-6 pb-0">
@@ -156,15 +186,6 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleAction(candidate.id, 'reject')}
-                            className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                          >
-                            <X className="w-5 h-5 mx-auto" />
-                          </motion.button>
-                          
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
                             onClick={() => handleAction(candidate.id, 'bookmark')}
                             className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                           >
@@ -214,8 +235,8 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
               <h3 className="text-lg font-semibold mb-4">Notes</h3>
               <Textarea
                 placeholder="Add your notes about this candidate..."
-                value={notes[candidatesData[currentIndex]?.id] || ''}
-                onChange={(e) => handleNoteChange(candidatesData[currentIndex]?.id, e.target.value)}
+                value={notes[visibleCandidates[currentIndex]?.id] || ''}
+                onChange={(e) => handleNoteChange(visibleCandidates[currentIndex]?.id, e.target.value)}
                 className="min-h-[120px] resize-none"
               />
               <Button className="w-full mt-3 bg-gradient-to-r from-blue-600 to-blue-700">

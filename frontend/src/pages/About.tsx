@@ -1,428 +1,322 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Target, Award, TrendingUp, Heart, Globe, Mail, Phone, MapPin, Send, MessageSquare, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Users, Target, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const About = () => {
-  const [formData, setFormData] = useState({
-    name: '',
+  const [contactForm, setContactForm] = useState({
+    fullName: '',
     email: '',
     subject: '',
     message: ''
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We\'ll get back to you soon.');
-    
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setIsSubmitting(false);
+    console.log('Contact form submitted:', contactForm);
+    // Handle form submission
   };
 
-  const stats = [
-    { label: 'Active Professionals', value: '10,000+', icon: Users },
-    { label: 'Successful Matches', value: '2,500+', icon: Target },
-    { label: 'Partner Companies', value: '500+', icon: Award },
-    { label: 'Platform Growth', value: '200%', icon: TrendingUp },
-  ];
+  const handleInputChange = (field: string, value: string) => {
+    setContactForm(prev => ({ ...prev, [field]: value }));
+  };
 
   const teamMembers = [
     {
-      name: 'Alex Rivera',
-      role: 'CEO & Founder',
-      bio: 'Former tech executive with 15+ years in talent acquisition and product development.',
+      name: 'Vamika Mendiratta',
+      role: 'Project Ideator & AI Developer',
+      description: 'Designed Project Vision and Built AI Models for automated chatbots, pitch script generation and resume parsing',
       avatar: '/placeholder.svg'
     },
     {
-      name: 'Sarah Chen',
-      role: 'CTO',
-      bio: 'AI and machine learning expert, previously at Google and Microsoft.',
+      name: 'Manaswi Singh',
+      role: 'AI Developer',
+      description: 'Built a pipeline to generate talking avatar videos including voice synthesis, face detection, background cleanup and avatar animation.',
       avatar: '/placeholder.svg'
     },
     {
-      name: 'Marcus Johnson',
-      role: 'Head of Talent',
-      bio: 'Experienced recruiter and HR leader with expertise in tech talent acquisition.',
+      name: 'Abhi Priya Darshini Kurasa',
+      role: 'Frontend-Backend Integration & Authentication Specialist',
+      description: 'Focused on connecting frontend with backend, managing authentication, database interactions, and recruiter-user recommendations.',
       avatar: '/placeholder.svg'
     },
     {
-      name: 'Emma Davis',
-      role: 'VP of Product',
-      bio: 'Product strategist focused on creating exceptional user experiences.',
+      name: 'Shreya Dubey',
+      role: 'Frontend Development and Multilingual AI Integration',
+      description: 'frontend development and seamless integration of multilingual AI systems',
+      avatar: '/placeholder.svg'
+    },
+    {
+      name: 'Ruchi Fatehchandani',
+      role: 'Backend Development',
+      description: 'Oversees backend architecture and is in charge of developing AI models for analyzing pitch videos and generating insights from user profiles',
       avatar: '/placeholder.svg'
     }
   ];
 
-  const values = [
+  const features = [
     {
-      icon: Heart,
-      title: 'Human-Centered',
-      description: 'We believe every professional has a unique story worth telling.'
-    },
-    {
-      icon: Globe,
-      title: 'Inclusive',
-      description: 'Creating opportunities for talent from all backgrounds and experiences.'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Innovation-Driven',
-      description: 'Constantly evolving our platform with cutting-edge technology.'
+      icon: Users,
+      title: 'AI-Powered Matching',
+      description: 'Our advanced AI algorithms match candidates with perfect opportunities based on skills, experience, and culture fit.'
     },
     {
       icon: Target,
-      title: 'Results-Focused',
-      description: 'Committed to successful matches that benefit both talent and companies.'
-    }
-  ];
-
-  const contactInfo = [
-    {
-      icon: Mail,
-      title: 'Email Us',
-      value: 'contact@talentflow.com',
-      description: 'Send us an email anytime'
+      title: 'Interactive Pitch Videos',
+      description: 'Candidates can create compelling 1-minute pitch videos to showcase their personality and skills beyond traditional resumes.'
     },
     {
-      icon: Phone,
-      title: 'Call Us',
-      value: '+1 (555) 123-4567',
-      description: 'Mon-Fri from 8am to 6pm PST'
-    },
-    {
-      icon: MapPin,
-      title: 'Visit Us',
-      value: 'San Francisco, CA',
-      description: '123 Innovation Drive, Suite 400'
+      icon: Zap,
+      title: 'Real-time Communication',
+      description: 'Seamless communication tools enable instant connections between recruiters and candidates.'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Tabs defaultValue="about" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="about">About TalentFlow</TabsTrigger>
-            <TabsTrigger value="contact">Contact Us</TabsTrigger>
-          </TabsList>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Hero Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+              About AVIRI
+            </h1>
+            <p className="text-xl text-gray-600 leading-relaxed">
+              Authentic Virtual Identity Recruitment Interface - Revolutionizing the way talent connects with opportunity through cutting-edge AI technology and innovative recruitment solutions.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-          <TabsContent value="about">
-            {/* Hero Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mb-16"
-            >
-              <h1 className="text-5xl font-bold text-gray-900 mb-6">
-                About TalentFlow
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                We're revolutionizing how talent connects with opportunity through innovative pitch presentations, 
-                AI-powered matching, and comprehensive professional showcasing.
-              </p>
-            </motion.div>
-
-            {/* Mission Statement */}
+      {/* Mission Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mb-16"
+              className="text-center mb-16"
             >
-              <Card className="border-gray-200 shadow-lg">
-                <CardContent className="p-8 md:p-12 text-center">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
-                  <p className="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-                    To bridge the gap between exceptional talent and forward-thinking companies by providing 
-                    a platform where professionals can authentically showcase their skills, personality, and 
-                    potential through engaging pitch presentations and comprehensive profiles.
-                  </p>
-                </CardContent>
-              </Card>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                We believe that every professional deserves the opportunity to showcase their unique talents, and every organization deserves to find the perfect fit for their team. Through innovative technology and human-centered design, we're building the future of recruitment.
+              </p>
             </motion.div>
 
-            {/* Stats Section */}
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                >
+                  <Card className="h-full border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <feature.icon className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                      <p className="text-gray-600">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mb-16"
+              transition={{ delay: 0.4 }}
+              className="text-center mb-16"
             >
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-                Platform Impact
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {stats.map((stat, index) => {
-                  const Icon = stat.icon;
-                  return (
-                    <motion.div
-                      key={stat.label}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + index * 0.1 }}
-                    >
-                      <Card className="border-gray-200 hover:shadow-lg transition-all text-center">
-                        <CardContent className="p-6">
-                          <Icon className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                          <div className="text-2xl font-bold text-gray-900 mb-1">
-                            {stat.value}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {stat.label}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Team MARVS</h2>
+              <p className="text-lg text-gray-600">
+                Passionate innovators dedicated to transforming the recruitment landscape
+              </p>
             </motion.div>
 
-            {/* Values Section */}
+            {/* Single Row Team Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              {teamMembers.map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                >
+                  <Card className="h-full border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <img
+                        src={member.avatar}
+                        alt={member.name}
+                        className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-4 border-blue-100"
+                      />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{member.name}</h3>
+                      <h4 className="text-sm font-medium text-blue-600 mb-3">{member.role}</h4>
+                      <p className="text-xs text-gray-600 leading-relaxed">{member.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mb-16"
+              transition={{ delay: 0.6 }}
+              className="text-center mb-16"
             >
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-                Our Values
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {values.map((value, index) => {
-                  const Icon = value.icon;
-                  return (
-                    <motion.div
-                      key={value.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + index * 0.1 }}
-                    >
-                      <Card className="border-gray-200 hover:shadow-lg transition-all h-full">
-                        <CardContent className="p-6 text-center">
-                          <Icon className="w-10 h-10 text-blue-600 mx-auto mb-4" />
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                            {value.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {value.description}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h2>
+              <p className="text-lg text-gray-600">
+                Have questions or want to learn more? We'd love to hear from you.
+              </p>
             </motion.div>
 
-            {/* Team Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-            >
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-                Meet Our Team
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {teamMembers.map((member, index) => (
-                  <motion.div
-                    key={member.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                  >
-                    <Card className="border-gray-200 hover:shadow-lg transition-all">
-                      <CardContent className="p-6 text-center">
-                        <Avatar className="w-20 h-20 mx-auto mb-4">
-                          <AvatarImage src={member.avatar} alt={member.name} />
-                          <AvatarFallback className="bg-blue-600 text-white text-lg">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {member.name}
-                        </h3>
-                        <p className="text-blue-600 font-medium mb-3">
-                          {member.role}
-                        </p>
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                          {member.bio}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </TabsContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Information */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7 }}
+                className="space-y-8"
+              >
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-6">Get in Touch</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <Mail className="w-5 h-5 text-blue-600 mr-3" />
+                      <span className="text-gray-700">contact@aviri.com</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Phone className="w-5 h-5 text-blue-600 mr-3" />
+                      <span className="text-gray-700">+91 98765 43210</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="w-5 h-5 text-blue-600 mr-3" />
+                      <span className="text-gray-700">Whitefield, Bangalore, India</span>
+                    </div>
+                  </div>
+                </div>
 
-          <TabsContent value="contact">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-2">Office Hours</h4>
+                  <p className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM IST</p>
+                  <p className="text-gray-600">Saturday: 10:00 AM - 2:00 PM IST</p>
+                </div>
+              </motion.div>
+
               {/* Contact Form */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="lg:col-span-2"
+                transition={{ delay: 0.8 }}
               >
                 <Card className="border-gray-200 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Send className="w-5 h-5 mr-2 text-blue-600" />
-                      Send us a Message
-                    </CardTitle>
+                    <CardTitle>Send us a Message</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="name">Full Name</Label>
-                          <Input
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            placeholder="Your full name"
-                            required
-                            className="focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="email">Email Address</Label>
-                          <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="your.email@example.com"
-                            required
-                            className="focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-                      </div>
-
+                    <form onSubmit={handleContactSubmit} className="space-y-4">
                       <div>
-                        <Label htmlFor="subject">Subject</Label>
+                        <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+                          Full Name *
+                        </Label>
                         <Input
-                          id="subject"
-                          name="subject"
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                          placeholder="What's this about?"
+                          id="fullName"
+                          type="text"
                           required
-                          className="focus:ring-blue-500 focus:border-blue-500"
+                          value={contactForm.fullName}
+                          onChange={(e) => handleInputChange('fullName', e.target.value)}
+                          className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Enter your full name"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="message">Message</Label>
-                        <textarea
-                          id="message"
-                          name="message"
-                          value={formData.message}
-                          onChange={handleInputChange}
-                          placeholder="Tell us more about your inquiry..."
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                          Email Address *
+                        </Label>
+                        <Input
+                          id="email"
+                          type="email"
                           required
-                          rows={6}
-                          className="w-full px-3 py-2 border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 rounded-md"
+                          value={contactForm.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Enter your email"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="subject" className="text-sm font-medium text-gray-700">
+                          Subject
+                        </Label>
+                        <Input
+                          id="subject"
+                          type="text"
+                          value={contactForm.subject}
+                          onChange={(e) => handleInputChange('subject', e.target.value)}
+                          className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Enter subject"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="message" className="text-sm font-medium text-gray-700">
+                          Message
+                        </Label>
+                        <Textarea
+                          id="message"
+                          rows={4}
+                          value={contactForm.message}
+                          onChange={(e) => handleInputChange('message', e.target.value)}
+                          className="mt-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Tell us how we can help you..."
                         />
                       </div>
 
                       <Button
                         type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                       >
-                        {isSubmitting ? 'Sending...' : 'Send Message'}
-                        <Send className="w-4 h-4 ml-2" />
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Message
                       </Button>
                     </form>
                   </CardContent>
                 </Card>
               </motion.div>
-
-              {/* Contact Information */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="space-y-6"
-              >
-                <Card className="border-gray-200 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Contact Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {contactInfo.map((info, index) => {
-                      const Icon = info.icon;
-                      return (
-                        <motion.div
-                          key={info.title}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 + index * 0.1 }}
-                          className="flex items-start space-x-3"
-                        >
-                          <div className="bg-blue-50 p-2 rounded-lg">
-                            <Icon className="w-5 h-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-gray-900">{info.title}</h3>
-                            <p className="text-blue-600 font-medium">{info.value}</p>
-                            <p className="text-sm text-gray-600">{info.description}</p>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-
-                <Card className="border-gray-200 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Office Hours</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Monday - Friday</span>
-                        <span className="font-medium">8:00 AM - 6:00 PM PST</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Saturday</span>
-                        <span className="font-medium">10:00 AM - 4:00 PM PST</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Sunday</span>
-                        <span className="font-medium">Closed</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

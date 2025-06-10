@@ -26,6 +26,26 @@ const FilterPanel = () => {
     }
   };
 
+  const clearAllFilters = () => {
+    setSelectedRoles([]);
+    setSelectedSkills([]);
+    setSelectedLocations([]);
+    setExperienceRange([0, 10]);
+    setSalaryRange([50, 200]);
+  };
+
+  const applyFilters = () => {
+    // Apply filter logic here
+    console.log('Applying filters:', {
+      roles: selectedRoles,
+      skills: selectedSkills,
+      locations: selectedLocations,
+      experience: experienceRange,
+      salary: salaryRange
+    });
+    // Here you would typically update the parent component's filter state
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -158,10 +178,19 @@ const FilterPanel = () => {
               Showing {Math.floor(Math.random() * 50) + 50} candidates
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="border-violet-200 text-violet-600">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-violet-200 text-violet-600"
+                onClick={clearAllFilters}
+              >
                 Clear All
               </Button>
-              <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600">
+              <Button 
+                size="sm" 
+                className="bg-gradient-to-r from-violet-600 to-purple-600"
+                onClick={applyFilters}
+              >
                 Apply Filters
               </Button>
             </div>

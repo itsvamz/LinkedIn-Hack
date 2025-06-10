@@ -1,15 +1,47 @@
+<<<<<<< HEAD
+import React, { useState, useRef } from 'react';
+=======
 import React, { useState, useEffect } from 'react';
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 import { motion } from 'framer-motion';
-import { User, Video, FileText, BarChart3, Settings, Upload, Eye, Briefcase, MessageSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, Calendar, Star, TrendingUp, Upload, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UserSidebar from '@/components/UserSidebar';
+<<<<<<< HEAD
+import VoiceRecorder from '@/components/VoiceRecorder';
+
+const UserDashboard = () => {
+  const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'pitch' | 'analytics' | 'messaging' | 'settings'>('profile');
+  const resumeFileRef = useRef<HTMLInputElement>(null);
+  const avatarFileRef = useRef<HTMLInputElement>(null);
+
+  const handleResumeUpload = () => {
+    resumeFileRef.current?.click();
+  };
+
+  const handleAvatarUpload = () => {
+    avatarFileRef.current?.click();
+  };
+
+  const handleResumeFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.log('Resume uploaded:', file.name);
+      // Handle file upload logic here
+    }
+  };
+
+  const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.log('Avatar image uploaded:', file.name);
+      // Handle file upload logic here
+=======
 import MessagingSection from '@/components/MessagingSection';
 import { useToast } from '@/components/ui/use-toast';
 import { getUserProfile, updateUserProfile, uploadResume, createPitch, updatePitch, createAvatar } from '@/lib/api';
@@ -231,19 +263,30 @@ const UserDashboard = () => {
       });
     } finally {
       setIsLoading(false);
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
     }
   };
 
   const renderProfileSection = () => (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Professional Profile</CardTitle>
-          <CardDescription>Complete your profile to increase visibility to recruiters</CardDescription>
+      <Card className="border-gray-200 shadow-lg bg-white">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardTitle className="text-blue-800">Professional Profile</CardTitle>
+          <CardDescription className="text-blue-600">Complete your profile to attract top recruiters</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 p-6">
           {/* Resume Upload */}
           <div>
+<<<<<<< HEAD
+            <Label className="text-sm font-semibold text-gray-700 mb-3 block">Resume Upload</Label>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center hover:border-blue-500 transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <Upload className="w-10 h-10 text-blue-500 mx-auto mb-3" />
+              <p className="text-sm text-gray-700 mb-3 font-medium">Upload your resume to auto-fill profile</p>
+              <Button variant="outline" size="sm" onClick={handleResumeUpload} className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                Upload Resume
+              </Button>
+              <p className="text-xs text-gray-500 mt-3">PDF, DOC up to 5MB</p>
+=======
             <Label className="text-sm font-medium text-gray-700 mb-2 block">Resume Upload</Label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
               <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
@@ -284,12 +327,36 @@ const UserDashboard = () => {
                 Upload Resume
               </Button>
               <p className="text-xs text-gray-500 mt-2">PDF, DOC up to 5MB</p>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
             </div>
+            <input
+              ref={resumeFileRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeFileChange}
+              className="hidden"
+            />
           </div>
 
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
+<<<<<<< HEAD
+              <Label htmlFor="fullName" className="text-sm font-semibold text-gray-700">Full Name</Label>
+              <Input id="fullName" placeholder="John Doe" className="mt-2 border-gray-300 focus:border-blue-500" />
+            </div>
+            <div>
+              <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Phone Number</Label>
+              <Input id="phone" placeholder="+1 (555) 123-4567" className="mt-2 border-gray-300 focus:border-blue-500" />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email</Label>
+              <Input id="email" type="email" placeholder="john@email.com" className="mt-2 border-gray-300 focus:border-blue-500" />
+            </div>
+            <div>
+              <Label htmlFor="location" className="text-sm font-semibold text-gray-700">Location</Label>
+              <Input id="location" placeholder="San Francisco, CA" className="mt-2 border-gray-300 focus:border-blue-500" />
+=======
               <Label htmlFor="fullName">Full Name</Label>
               <Input 
                 id="fullName" 
@@ -326,14 +393,31 @@ const UserDashboard = () => {
                 value={profileData.location}
                 onChange={handleProfileChange}
               />
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
             </div>
           </div>
 
           {/* Professional Profiles */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Professional Profiles</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-lg font-bold text-gray-800">Professional Profiles</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
+<<<<<<< HEAD
+                <Label htmlFor="linkedin" className="text-sm font-semibold text-gray-700">LinkedIn</Label>
+                <Input id="linkedin" placeholder="linkedin.com/in/johndoe" className="mt-2 border-gray-300 focus:border-blue-500" />
+              </div>
+              <div>
+                <Label htmlFor="github" className="text-sm font-semibold text-gray-700">GitHub</Label>
+                <Input id="github" placeholder="github.com/johndoe" className="mt-2 border-gray-300 focus:border-blue-500" />
+              </div>
+              <div>
+                <Label htmlFor="leetcode" className="text-sm font-semibold text-gray-700">LeetCode</Label>
+                <Input id="leetcode" placeholder="leetcode.com/johndoe" className="mt-2 border-gray-300 focus:border-blue-500" />
+              </div>
+              <div>
+                <Label htmlFor="portfolio" className="text-sm font-semibold text-gray-700">Portfolio</Label>
+                <Input id="portfolio" placeholder="johndoe.dev" className="mt-2 border-gray-300 focus:border-blue-500" />
+=======
                 <Label htmlFor="linkedin">LinkedIn</Label>
                 <Input 
                   id="linkedin" 
@@ -368,12 +452,17 @@ const UserDashboard = () => {
                   value={profileData.portfolio}
                   onChange={handleProfileChange}
                 />
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
               </div>
             </div>
           </div>
 
           {/* Skills */}
           <div>
+<<<<<<< HEAD
+            <Label htmlFor="skills" className="text-sm font-semibold text-gray-700">Skills</Label>
+            <Textarea id="skills" placeholder="JavaScript, React, Node.js, Python..." className="mt-2 border-gray-300 focus:border-blue-500" />
+=======
             <Label htmlFor="skills">Skills</Label>
             <Textarea 
               id="skills" 
@@ -381,10 +470,15 @@ const UserDashboard = () => {
               value={profileData.skills}
               onChange={handleProfileChange}
             />
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
           </div>
 
           {/* Availability */}
           <div>
+<<<<<<< HEAD
+            <Label htmlFor="availability" className="text-sm font-semibold text-gray-700">Availability</Label>
+            <select className="w-full border border-gray-300 rounded-md px-3 py-2 mt-2 focus:border-blue-500">
+=======
             <Label htmlFor="availability">Availability</Label>
             <select 
               id="availability"
@@ -392,6 +486,7 @@ const UserDashboard = () => {
               value={profileData.availability}
               onChange={handleProfileChange}
             >
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
               <option>Available immediately</option>
               <option>Available in 2 weeks</option>
               <option>Available in 1 month</option>
@@ -399,6 +494,9 @@ const UserDashboard = () => {
             </select>
           </div>
 
+<<<<<<< HEAD
+          <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3">Save Profile</Button>
+=======
           <Button 
             className="w-full" 
             onClick={handleSaveProfile}
@@ -406,48 +504,61 @@ const UserDashboard = () => {
           >
             {isLoading ? 'Saving...' : 'Save Profile'}
           </Button>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
         </CardContent>
       </Card>
     </div>
   );
 
   const renderAvatarSection = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Avatar Creation</CardTitle>
-        <CardDescription>Create and manage your professional avatar</CardDescription>
+    <Card className="border-gray-200 shadow-lg bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="text-blue-800">Avatar Creation</CardTitle>
+        <CardDescription className="text-blue-600">Create and manage your professional avatar</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="space-y-6">
           {/* Current Avatar */}
           <div className="text-center">
-            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <User className="w-16 h-16 text-blue-600" />
+            <div className="w-40 h-40 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <Briefcase className="w-20 h-20 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Current Avatar</h3>
+            <h3 className="text-xl font-bold mb-2 text-gray-800">Current Avatar</h3>
             <p className="text-gray-600 mb-4">Upload a clear photo to generate your professional avatar</p>
           </div>
 
           {/* Upload New Photo */}
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-600 mb-2">Upload a new photo</p>
-            <Button variant="outline" size="sm">Choose Photo</Button>
-            <p className="text-xs text-gray-500 mt-2">JPG, PNG up to 2MB</p>
+          <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center hover:border-blue-500 transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-50">
+            <Upload className="w-10 h-10 text-blue-500 mx-auto mb-3" />
+            <p className="text-sm text-gray-700 mb-3 font-medium">Upload a new photo</p>
+            <Button variant="outline" size="sm" onClick={handleAvatarUpload} className="border-blue-300 text-blue-600 hover:bg-blue-50">
+              Choose Photo
+            </Button>
+            <p className="text-xs text-gray-500 mt-3">JPG, PNG up to 2MB</p>
           </div>
+          <input
+            ref={avatarFileRef}
+            type="file"
+            accept=".jpg,.jpeg,.png"
+            onChange={handleAvatarFileChange}
+            className="hidden"
+          />
 
           {/* Previous Avatars */}
           <div>
-            <h4 className="font-medium mb-3">Previous Avatars</h4>
-            <div className="grid grid-cols-4 gap-3">
+            <h4 className="font-semibold mb-4 text-gray-800">Previous Avatars</h4>
+            <div className="grid grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-200">
-                  <User className="w-8 h-8 text-gray-400" />
+                <div key={i} className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-300">
+                  <Briefcase className="w-10 h-10 text-gray-400" />
                 </div>
               ))}
             </div>
           </div>
 
+<<<<<<< HEAD
+          <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3">Generate New Avatar</Button>
+=======
           <Button 
             className="w-full"
             onClick={handleGenerateAvatar}
@@ -455,17 +566,22 @@ const UserDashboard = () => {
           >
             {isLoading ? 'Generating...' : 'Generate New Avatar'}
           </Button>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
         </div>
       </CardContent>
     </Card>
   );
 
   const renderPitchSection = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Elevator Pitch</CardTitle>
-        <CardDescription>Create your compelling 1-minute professional pitch</CardDescription>
+    <Card className="border-gray-200 shadow-lg bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="text-blue-800">Elevator Pitch</CardTitle>
+        <CardDescription className="text-blue-600">Record your 1-minute elevator pitch</CardDescription>
       </CardHeader>
+<<<<<<< HEAD
+      <CardContent className="p-6">
+        <VoiceRecorder />
+=======
       <CardContent>
         <div className="space-y-6">
           {/* Pitch Generation */}
@@ -518,45 +634,107 @@ const UserDashboard = () => {
             <Button variant="outline">Preview</Button>
           </div>
         </div>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
       </CardContent>
     </Card>
   );
 
   const renderAnalyticsSection = () => (
+<<<<<<< HEAD
+    <Card className="border-gray-200 shadow-lg bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="text-blue-800">Profile Analytics</CardTitle>
+        <CardDescription className="text-blue-600">Track your profile performance</CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="border border-blue-200 shadow-md">
+=======
     <div className="space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {userStats.map((stat) => (
           <Card key={stat.title}>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <p className="text-sm text-green-600 font-medium">{stat.trend}</p>
-                </div>
-                <div className="p-3 rounded-lg bg-blue-50">
-                  <stat.icon className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
+              <h4 className="font-semibold mb-3 text-gray-800">Profile Views</h4>
+              <p className="text-3xl font-bold text-blue-600 mb-1">247</p>
+              <p className="text-sm text-gray-600">This month</p>
             </CardContent>
           </Card>
-        ))}
-      </div>
+          <Card className="border border-green-200 shadow-md">
+            <CardContent className="p-6">
+              <h4 className="font-semibold mb-3 text-gray-800">Recruiter Interest</h4>
+              <p className="text-3xl font-bold text-green-600 mb-1">18</p>
+              <p className="text-sm text-gray-600">Profile saves</p>
+            </CardContent>
+          </Card>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
-      {/* Detailed Analytics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Performance</CardTitle>
-          <CardDescription>Track your profile engagement over time</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 flex items-center justify-center text-gray-500">
-            Analytics chart will be displayed here
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+  const renderMessagingSection = () => (
+    <Card className="border-gray-200 shadow-lg bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="text-blue-800">Messages</CardTitle>
+        <CardDescription className="text-blue-600">Manage your conversations</CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <Tabs defaultValue="received" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="received">Messages from Recruiters</TabsTrigger>
+            <TabsTrigger value="sent">Messages Sent to Recruiters</TabsTrigger>
+          </TabsList>
+          <TabsContent value="received" className="space-y-4">
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">Sarah Johnson - TechCorp</h4>
+                      <span className="text-sm text-gray-500">2 hours ago</span>
+                    </div>
+                    <p className="text-gray-600 mb-2">Hi John, I came across your profile and was impressed by your React skills...</p>
+                    <Button size="sm" variant="outline">Reply</Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          <TabsContent value="sent" className="space-y-4">
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <Card key={i} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">To: Michael Chen - Elite Search</h4>
+                      <span className="text-sm text-gray-500">1 day ago</span>
+                    </div>
+                    <p className="text-gray-600 mb-2">Thank you for reaching out. I'm interested in learning more about the position...</p>
+                    <Button size="sm" variant="outline">View Thread</Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+
+  const renderSettingsSection = () => (
+    <Card className="border-gray-200 shadow-lg bg-white">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="text-blue-800">Settings</CardTitle>
+        <CardDescription className="text-blue-600">Manage your account preferences</CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="text-center py-8">
+          <p className="text-gray-500">Settings panel is currently under development</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 
   const renderContent = () => {
@@ -567,29 +745,19 @@ const UserDashboard = () => {
         return renderAvatarSection();
       case 'pitch':
         return renderPitchSection();
-      case 'messaging':
-        return <MessagingSection />;
       case 'analytics':
         return renderAnalyticsSection();
+      case 'messaging':
+        return renderMessagingSection();
       case 'settings':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>Manage your account preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Settings panel coming soon...</p>
-            </CardContent>
-          </Card>
-        );
+        return renderSettingsSection();
       default:
         return renderProfileSection();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="flex">
         <UserSidebar
           activeSection={activeSection}
@@ -602,6 +770,8 @@ const UserDashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
+<<<<<<< HEAD
+=======
             {/* Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -611,6 +781,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Content */}
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
             {renderContent()}
           </motion.div>
         </main>

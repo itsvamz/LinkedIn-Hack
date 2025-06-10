@@ -1,16 +1,64 @@
+<<<<<<< HEAD
+
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+=======
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+<<<<<<< HEAD
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState({ name: '', role: '', avatar: '' });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    setIsDarkMode(darkMode);
+    
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    if (loggedIn) {
+      const profile = {
+        name: localStorage.getItem('userName') || 'John Doe',
+        role: localStorage.getItem('userRole') || 'user',
+        avatar: localStorage.getItem('userAvatar') || ''
+      };
+      setUserProfile(profile);
+    }
+  }, [location]);
+=======
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const navItems = [
     { path: '/', label: 'Home' },
@@ -41,12 +89,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-blue-600">TalentFlow</span>
+            <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AVIRI</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -58,7 +106,7 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
-                    : 'text-gray-700 hover:text-blue-600'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                 }`}
               >
                 {item.label}
@@ -66,8 +114,18 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Auth Section with Google Translate */}
+          {/* Auth Section with Google Translate and Dark Mode */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Dark Mode Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleDarkMode}
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
             {/* Google Translate Dropdown */}
             <div id="google_translate_element" className="mr-2 text-sm" />
 
@@ -85,7 +143,7 @@ const Navbar = () => {
                 <Button
                   variant="ghost"
                   onClick={handleLogout}
-                  className="text-gray-700 hover:text-blue-600"
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Sign Out
                 </Button>
@@ -93,13 +151,13 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" className="text-gray-700 hover:text-blue-600">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                     <LogIn className="w-4 h-4 mr-2" />
                     Sign In
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg">
                     Join Now
                   </Button>
                 </Link>
@@ -111,7 +169,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-600 p-2"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 p-2"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -124,7 +182,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden pb-4 border-t border-gray-200 mt-4 pt-4"
+            className="md:hidden pb-4 border-t border-gray-200 dark:border-gray-700 mt-4 pt-4"
           >
             <div className="space-y-2">
               {navItems.map((item) => (
@@ -134,13 +192,26 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className={`block px-3 py-2 text-sm font-medium transition-colors ${
                     isActive(item.path)
-                      ? 'text-blue-600 bg-blue-50 rounded-md'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md'
+                      ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md'
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
+
+              {/* Dark Mode Toggle in mobile */}
+              <div className="px-3 py-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleDarkMode}
+                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  {isDarkMode ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                  {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                </Button>
+              </div>
 
               {/* Google Translate in mobile */}
               <div className="px-3 py-2">
@@ -159,8 +230,13 @@ const Navbar = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
+<<<<<<< HEAD
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{userProfile.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userProfile.role}</p>
+=======
                         <p className="text-sm font-medium text-gray-900">{user.fullName}</p>
                         <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                       </div>
                     </div>
                     <Button
@@ -168,7 +244,7 @@ const Navbar = () => {
                         handleProfileClick();
                         setIsOpen(false);
                       }}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                     >
                       Dashboard
                     </Button>
@@ -178,7 +254,7 @@ const Navbar = () => {
                         setIsOpen(false);
                       }}
                       variant="outline"
-                      className="w-full border-gray-300 text-gray-700"
+                      className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
                     >
                       Sign Out
                     </Button>
@@ -186,12 +262,12 @@ const Navbar = () => {
                 ) : (
                   <>
                     <Link to="/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full border-gray-300 text-gray-700">
+                      <Button variant="outline" className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                         Sign In
                       </Button>
                     </Link>
                     <Link to="/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
                         Join Now
                       </Button>
                     </Link>

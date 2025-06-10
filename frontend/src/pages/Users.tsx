@@ -1,23 +1,121 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, MapPin, Briefcase, Star, Play, MessageSquare, User } from 'lucide-react';
+import { Search, Filter, MapPin, Briefcase, Star, Play, MessageSquare, User, X, Mail, Phone, MapPin as Location } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { candidatesData } from '../data/candidatesData';
+import ContactModal from '@/components/ContactModal';
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
+  const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<number>>(new Set());
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    type: 'candidate' as 'candidate' | 'recruiter'
+  });
 
   const skills = ['React', 'Python', 'JavaScript', 'Node.js', 'UI/UX', 'Data Science'];
 
   const filteredUsers = candidatesData.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (selectedSkill === '' || user.skills.includes(selectedSkill))
+  );
+
+  const toggleBookmark = (userId: number) => {
+    const newBookmarked = new Set(bookmarkedUsers);
+    if (newBookmarked.has(userId)) {
+      newBookmarked.delete(userId);
+    } else {
+      newBookmarked.add(userId);
+    }
+    setBookmarkedUsers(newBookmarked);
+  };
+
+  const handleContactCandidate = (user: any) => {
+    setSelectedContact({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      type: 'candidate'
+    });
+    setContactModalOpen(true);
+  };
+
+  const ProfileModal = ({ user }: { user: any }) => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+          View Profile
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center">
+            <User className="w-5 h-5 mr-2" />
+            {user.name}'s Complete Profile
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6">
+          {/* Header Section */}
+          <div className="flex items-center space-x-6 p-6 bg-blue-50 rounded-lg">
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+            />
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+              <p className="text-xl text-blue-600 font-medium">{user.role}</p>
+              <div className="flex items-center text-gray-600 mt-2">
+                <Location className="w-4 h-4 mr-2" />
+                {user.location}
+              </div>
+              <div className="flex items-center text-gray-600 mt-1">
+                <Briefcase className="w-4 h-4 mr-2" />
+                {user.experience}
+              </div>
+            </div>
+          </div>
+
+          {/* About */}
+          <div>
+            <h3 className="font-semibold text-lg mb-3">About</h3>
+            <p className="text-gray-600 leading-relaxed">{user.about}</p>
+          </div>
+
+          {/* Skills */}
+          <div>
+            <h3 className="font-semibold text-lg mb-3">Skills & Expertise</h3>
+            <div className="flex flex-wrap gap-2">
+              {user.skills.map((skill: string, idx: number) => (
+                <Badge key={idx} variant="secondary" className="bg-blue-100 text-blue-700">
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Contact Actions */}
+          <div className="flex gap-4 pt-4 border-t">
+            <Button 
+              onClick={() => handleContactCandidate(user)}
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Contact Candidate
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 
   const PitchModal = ({ user }: { user: any }) => (
@@ -100,20 +198,20 @@ const Users = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
             Discover Talent
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-lg">
             Connect with {candidatesData.length}+ professionals ready for new opportunities
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -121,7 +219,7 @@ const Users = () => {
                 placeholder="Search professionals by name, role, or skills"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -129,7 +227,7 @@ const Users = () => {
                 variant={selectedSkill === '' ? 'default' : 'outline'}
                 onClick={() => setSelectedSkill('')}
                 size="sm"
-                className={selectedSkill === '' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                className={selectedSkill === '' ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-200 text-blue-600 hover:bg-blue-50'}
               >
                 All Skills
               </Button>
@@ -139,7 +237,7 @@ const Users = () => {
                   variant={selectedSkill === skill ? 'default' : 'outline'}
                   onClick={() => setSelectedSkill(skill)}
                   size="sm"
-                  className={selectedSkill === skill ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                  className={selectedSkill === skill ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-200 text-blue-600 hover:bg-blue-50'}
                 >
                   {skill}
                 </Button>
@@ -157,14 +255,14 @@ const Users = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="h-full border-gray-200 hover:shadow-lg transition-all duration-300">
+              <Card className="h-full border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
                 <CardContent className="p-6">
                   {/* User Header */}
                   <div className="flex items-center mb-4">
                     <img
                       src={user.avatar}
                       alt={user.name}
-                      className="w-16 h-16 rounded-full object-cover mr-4"
+                      className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-blue-100"
                     />
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
@@ -186,12 +284,12 @@ const Users = () => {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
                       {user.skills.slice(0, 3).map((skill, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
+                        <Badge key={idx} variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
                           {skill}
                         </Badge>
                       ))}
                       {user.skills.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-600">
                           +{user.skills.length - 3}
                         </Badge>
                       )}
@@ -206,11 +304,17 @@ const Users = () => {
                   {/* Actions */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
-                      <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-                        View Profile
-                      </Button>
-                      <Button variant="outline" size="icon">
-                        <Star className="w-4 h-4" />
+                      <ProfileModal user={user} />
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => toggleBookmark(user.id)}
+                        className={`${bookmarkedUsers.has(user.id) 
+                          ? 'bg-yellow-100 border-yellow-300 text-yellow-600' 
+                          : 'border-gray-200 text-gray-400 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-500'
+                        }`}
+                      >
+                        <Star className={`w-4 h-4 ${bookmarkedUsers.has(user.id) ? 'fill-current' : ''}`} />
                       </Button>
                     </div>
                     <div className="flex gap-2">
@@ -233,6 +337,13 @@ const Users = () => {
           </div>
         )}
       </div>
+
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        contact={selectedContact}
+      />
     </div>
   );
 };
