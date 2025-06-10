@@ -15,6 +15,23 @@ const CandidatesSection = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState('carousel');
 
+  // Add state for recommended candidates
+  const [recommendedCandidates, setRecommendedCandidates] = useState([]);
+  
+  React.useEffect(() => {
+    const fetchRecommendedCandidates = async () => {
+      try {
+        const response = await fetch('/api/recommended-candidates');
+        const candidates = await response.json();
+        setRecommendedCandidates(candidates);
+      } catch (error) {
+        console.error('Error fetching recommended candidates:', error);
+      }
+    };
+    
+    fetchRecommendedCandidates();
+  }, []);
+  
   return (
     <div className="space-y-6">
       <motion.div

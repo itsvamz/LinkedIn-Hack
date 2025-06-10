@@ -1,13 +1,20 @@
+<<<<<<< HEAD
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+=======
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState({ name: '', role: '', avatar: '' });
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -35,6 +42,11 @@ const Navbar = () => {
       setUserProfile(profile);
     }
   }, [location]);
+=======
+  const { user, isAuthenticated, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
@@ -64,21 +76,16 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    if (userProfile.role === 'recruiter') {
-      window.location.href = '/recruiter-dashboard';
+    if (user?.role === 'recruiter') {
+      navigate('/recruiter-dashboard');
     } else {
-      window.location.href = '/user-dashboard';
+      navigate('/user-dashboard');
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userAvatar');
-    setIsLoggedIn(false);
-    setUserProfile({ name: '', role: '', avatar: '' });
-    window.location.href = '/';
+    logout();
+    navigate('/');
   };
 
   return (
@@ -122,15 +129,15 @@ const Navbar = () => {
             {/* Google Translate Dropdown */}
             <div id="google_translate_element" className="mr-2 text-sm" />
 
-            {isLoggedIn ? (
+            {isAuthenticated && user ? (
               <div className="flex items-center space-x-3">
                 <Avatar
                   className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
                   onClick={handleProfileClick}
                 >
-                  <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
+                  <AvatarImage src={user.avatar} alt={user.fullName} />
                   <AvatarFallback className="bg-blue-600 text-white text-sm">
-                    {getInitials(userProfile.name)}
+                    {getInitials(user.fullName)}
                   </AvatarFallback>
                 </Avatar>
                 <Button
@@ -213,18 +220,23 @@ const Navbar = () => {
 
               {/* Mobile Auth Section */}
               <div className="pt-2 space-y-2">
-                {isLoggedIn ? (
+                {isAuthenticated && user ? (
                   <>
                     <div className="flex items-center px-3 py-2">
                       <Avatar className="w-8 h-8 mr-3">
-                        <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
+                        <AvatarImage src={user.avatar} alt={user.fullName} />
                         <AvatarFallback className="bg-blue-600 text-white text-sm">
-                          {getInitials(userProfile.name)}
+                          {getInitials(user.fullName)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
+<<<<<<< HEAD
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{userProfile.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userProfile.role}</p>
+=======
+                        <p className="text-sm font-medium text-gray-900">{user.fullName}</p>
+                        <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
                       </div>
                     </div>
                     <Button

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Briefcase, Calendar, Users, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,125 +7,155 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  type: string;
+  location: string;
+  salary: string;
+  applicants: number;
+  postedDate: string;
+  skills: string[];
+  description: string;
+}
+
 const Jobs = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Mock jobs data
-  const jobs = [
-    {
-      id: 1,
-      title: 'Senior Frontend Developer',
-      company: 'TechCorp Inc.',
-      location: 'San Francisco, CA',
-      type: 'Full-time',
-      salary: '$120k - $150k',
-      applicants: 24,
-      postedDate: '2024-01-15',
-      skills: ['React', 'TypeScript', 'Next.js'],
-      description: 'We are looking for a senior frontend developer to join our team...'
-    },
-    {
-      id: 2,
-      title: 'UX Designer',
-      company: 'DesignStudio',
-      location: 'Remote',
-      type: 'Contract',
-      salary: '$80k - $100k',
-      applicants: 18,
-      postedDate: '2024-01-12',
-      skills: ['Figma', 'UI/UX', 'Design Systems'],
-      description: 'Join our design team to create amazing user experiences...'
-    },
-    {
-      id: 3,
-      title: 'Data Scientist',
-      company: 'AI Solutions',
-      location: 'New York, NY',
-      type: 'Full-time',
-      salary: '$130k - $170k',
-      applicants: 31,
-      postedDate: '2024-01-10',
-      skills: ['Python', 'Machine Learning', 'TensorFlow'],
-      description: 'We need a data scientist to work on cutting-edge AI projects...'
-    }
-  ];
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
 
-  const filteredJobs = jobs.filter(job => 
+        // Prepare headers - include auth token if available
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch('http://localhost:5000/api/jobs', {
+          headers
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch jobs');
+        }
+
+        const jobsData = await response.json();
+        setJobs(jobsData);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        // Even if there's an error, we can show some fallback or handle gracefully
+        // For now, we'll just log the error and continue
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const filteredJobs = jobs.filter(job =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+    job.skills.some((skill: string) =>
+      skill.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   const handleApplyJob = (jobId: number) => {
+    if (!isLoggedIn) {
+      // Redirect to sign-in page if not logged in
+      navigate('/login');
+      return;
+    }
+    // If logged in, proceed with job application
     navigate('/job-application');
   };
 
-  const renderJobCard = (job: any) => (
-    <Card key={job.id} className="border-gray-200 hover:shadow-lg transition-all duration-300">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{job.title}</h3>
-            <p className="text-blue-600 font-medium">{job.company}</p>
+  // Fixed: Added the missing renderJobCard function
+  const renderJobCard = (job: Job) => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="h-full"
+    >
+      <Card className="h-full hover:shadow-lg transition-all duration-300 border border-gray-200">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-xl font-semibold text-gray-900 mb-2">
+                {job.title}
+              </CardTitle>
+              <p className="text-lg font-medium text-blue-600 mb-1">{job.company}</p>
+              <div className="flex items-center text-gray-500 text-sm mb-2">
+                <MapPin className="w-4 h-4 mr-1" />
+                {job.location}
+              </div>
+            </div>
+            <Badge variant="secondary" className="ml-2">
+              {job.type}
+            </Badge>
           </div>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            {job.type}
-          </Badge>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* Job Details */}
-        <div className="space-y-2 text-sm text-gray-600">
-          <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-2" />
-            {job.location}
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <p className="text-gray-600 text-sm line-clamp-3">{job.description}</p>
+          
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center">
+              <Briefcase className="w-4 h-4 mr-1" />
+              {job.salary}
+            </div>
+            <div className="flex items-center">
+              <Users className="w-4 h-4 mr-1" />
+              {job.applicants} applicants
+            </div>
           </div>
-          <div className="flex items-center">
-            <Briefcase className="w-4 h-4 mr-2" />
-            {job.salary}
-          </div>
-          <div className="flex items-center">
-            <Users className="w-4 h-4 mr-2" />
-            {job.applicants} applicants
-          </div>
-          <div className="flex items-center">
-            <Calendar className="w-4 h-4 mr-2" />
-            Posted {new Date(job.postedDate).toLocaleDateString()}
-          </div>
-        </div>
 
-        {/* Skills */}
-        <div>
-          <div className="flex flex-wrap gap-1">
-            {job.skills.map((skill: string, idx: number) => (
-              <Badge key={idx} variant="outline" className="text-xs">
+          <div className="flex items-center text-sm text-gray-500">
+            <Calendar className="w-4 h-4 mr-1" />
+            Posted {job.postedDate}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {job.skills.slice(0, 3).map((skill) => (
+              <Badge key={skill} variant="outline" className="text-xs">
                 {skill}
               </Badge>
             ))}
+            {job.skills.length > 3 && (
+              <Badge key="more-skills" variant="outline" className="text-xs">
+                +{job.skills.length - 3} more
+              </Badge>
+            )}
           </div>
-        </div>
 
-        {/* Description */}
-        <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
-
-        {/* Apply Button */}
-        <Button 
-          className="w-full bg-blue-600 hover:bg-blue-700"
-          onClick={() => handleApplyJob(job.id)}
-        >
-          Apply Now
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
-      </CardContent>
-    </Card>
+          <Button 
+            onClick={() => handleApplyJob(job.id)}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isLoggedIn ? 'Apply Now' : 'Sign in to Apply'}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Find Your Dream Job
@@ -134,9 +163,13 @@ const Jobs = () => {
           <p className="text-gray-600 text-lg">
             Discover amazing opportunities from top companies
           </p>
+          {!isLoggedIn && (
+            <p className="text-sm text-blue-600 mt-2">
+              Sign in to apply for jobs
+            </p>
+          )}
         </div>
 
-        {/* Search */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -149,13 +182,18 @@ const Jobs = () => {
           </div>
         </div>
 
-        {/* Jobs Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredJobs.map(renderJobCard)}
-        </div>
-
-        {/* No Results */}
-        {filteredJobs.length === 0 && (
+        {loading ? (
+          <p className="text-center text-gray-600">Loading jobs...</p>
+        ) : filteredJobs.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Fixed: Simplified the mapping with proper key */}
+            {filteredJobs.map(job => (
+              <div key={job.id}>
+                {renderJobCard(job)}
+              </div>
+            ))}
+          </div>
+        ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">💼</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>

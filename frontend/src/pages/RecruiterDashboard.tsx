@@ -122,20 +122,80 @@ const RecruiterDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" placeholder="Jane Smith" />
+              <Input 
+                id="fullName" 
+                placeholder="Jane Smith" 
+                value={profileData.fullName}
+                onChange={handleProfileChange}
+              />
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" placeholder="+1 (555) 123-4567" />
+              <Input 
+                id="phone" 
+                placeholder="+1 (555) 123-4567" 
+                value={profileData.phone}
+                onChange={handleProfileChange}
+              />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="jane@company.com" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="jane@company.com" 
+                value={profileData.email}
+                onChange={handleProfileChange}
+                disabled
+              />
             </div>
             <div>
               <Label htmlFor="location">Location</Label>
-              <Input id="location" placeholder="San Francisco, CA" />
+              <Input 
+                id="location" 
+                placeholder="San Francisco, CA" 
+                value={profileData.location}
+                onChange={handleProfileChange}
+              />
             </div>
+            <div>
+              <Label htmlFor="company">Company</Label>
+              <Input 
+                id="company" 
+                placeholder="Acme Inc." 
+                value={profileData.company}
+                onChange={handleProfileChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="position">Position</Label>
+              <Input 
+                id="position" 
+                placeholder="Senior Recruiter" 
+                value={profileData.position}
+                onChange={handleProfileChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="industry">Industry</Label>
+              <Input 
+                id="industry" 
+                placeholder="Technology" 
+                value={profileData.industry}
+                onChange={handleProfileChange}
+              />
+            </div>
+          </div>
+
+          {/* About */}
+          <div>
+            <Label htmlFor="about">About</Label>
+            <Textarea 
+              id="about" 
+              placeholder="Brief description about yourself and your recruiting focus..." 
+              value={profileData.about}
+              onChange={handleProfileChange}
+            />
           </div>
 
           {/* Professional Profiles */}
@@ -144,19 +204,30 @@ const RecruiterDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="linkedin">LinkedIn</Label>
-                <Input id="linkedin" placeholder="linkedin.com/in/janesmith" />
+                <Input 
+                  id="linkedin" 
+                  placeholder="linkedin.com/in/janesmith" 
+                  value={profileData.linkedin}
+                  onChange={handleProfileChange}
+                />
               </div>
               <div>
                 <Label htmlFor="github">GitHub</Label>
-                <Input id="github" placeholder="github.com/janesmith" />
-              </div>
-              <div>
-                <Label htmlFor="leetcode">LeetCode</Label>
-                <Input id="leetcode" placeholder="leetcode.com/janesmith" />
+                <Input 
+                  id="github" 
+                  placeholder="github.com/janesmith" 
+                  value={profileData.github}
+                  onChange={handleProfileChange}
+                />
               </div>
               <div>
                 <Label htmlFor="portfolio">Portfolio</Label>
-                <Input id="portfolio" placeholder="janesmith.dev" />
+                <Input 
+                  id="portfolio" 
+                  placeholder="janesmith.dev" 
+                  value={profileData.portfolio}
+                  onChange={handleProfileChange}
+                />
               </div>
             </div>
           </div>
@@ -164,13 +235,23 @@ const RecruiterDashboard = () => {
           {/* Skills */}
           <div>
             <Label htmlFor="skills">Skills</Label>
-            <Textarea id="skills" placeholder="Talent Acquisition, HR Management, Interviewing..." />
+            <Textarea 
+              id="skills" 
+              placeholder="Talent Acquisition, HR Management, Interviewing..." 
+              value={profileData.skills}
+              onChange={handleProfileChange}
+            />
           </div>
 
           {/* Availability */}
           <div>
             <Label htmlFor="availability">Availability</Label>
-            <select className="w-full border border-gray-300 rounded-md px-3 py-2">
+            <select 
+              id="availability"
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              value={profileData.availability}
+              onChange={handleProfileChange}
+            >
               <option>Available immediately</option>
               <option>Available in 2 weeks</option>
               <option>Available in 1 month</option>

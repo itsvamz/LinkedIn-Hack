@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { User, Video, FileText, BarChart3, Settings, LogOut, ArrowLeft, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserSidebarProps {
   activeSection: string;
@@ -11,6 +12,8 @@ interface UserSidebarProps {
 }
 
 const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
+  const { user, logout } = useAuth();
+  
   const menuItems = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'avatar', label: 'Avatar', icon: Video },
@@ -21,7 +24,7 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
   ];
 
   const handleLogout = () => {
-    console.log('Logging out...');
+    logout();
     window.location.href = '/';
   };
 
@@ -45,10 +48,12 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
         <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback className="bg-blue-600 text-white">JD</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white">
+              {user?.fullName?.split(' ').map(name => name[0]).join('') || 'U'}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">John Doe</h3>
+            <h3 className="font-semibold text-gray-900">{user?.fullName || 'User'}</h3>
             <p className="text-sm text-gray-600">Software Developer</p>
           </div>
         </div>
@@ -62,7 +67,7 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
             return (
               <button
                 key={item.id}
-                onClick={() => onSectionChange(item.id as any)}
+                onClick={() => onSectionChange(item.id as 'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings')}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md'

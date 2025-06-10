@@ -1,13 +1,32 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+<<<<<<< HEAD
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Search, Filter, User, Video, MessageSquare, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+=======
+import { Search, Filter, MessageSquare, Video } from 'lucide-react';
+import { getAllRecruiters } from '@/lib/api';
+import { useToast } from '@/components/ui/use-toast';
+
+// Define the Recruiter interface
+interface Recruiter {
+  id: string | number;
+  name?: string;
+  company?: string;
+  role?: string;
+  industry?: string;
+  avatar?: string;
+  rating?: number;
+  activeJobs?: number;
+  description?: string;
+  specialties?: string[];
+}
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 
 const Recruiters = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,7 +35,11 @@ const Recruiters = () => {
     role: '',
     industry: ''
   });
+  const [recruiters, setRecruiters] = useState<Recruiter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
+<<<<<<< HEAD
   const recruiters = [
     {
       id: 1,
@@ -67,22 +90,47 @@ const Recruiters = () => {
       about: 'Healthcare recruitment specialist with a mission to connect talented medical professionals with organizations that share their passion for improving patient outcomes. I understand the unique challenges and opportunities in healthcare recruitment.'
     }
   ];
+=======
+  // Fetch recruiters from API
+  useEffect(() => {
+    const fetchRecruiters = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllRecruiters();
+        setRecruiters(data);
+      } catch (error) {
+        console.error('Error fetching recruiters:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load recruiters. Please try again.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecruiters();
+  }, [toast]);
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 
   const industries = ['Technology', 'Healthcare', 'Finance', 'Marketing', 'Sales'];
   const roles = ['Software Engineer', 'Product Manager', 'Data Scientist', 'Designer', 'Marketing Manager'];
 
+  // Fixed: Add safety checks for all properties to prevent undefined errors
   const filteredRecruiters = recruiters.filter(recruiter => {
-    const matchesSearch = recruiter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         recruiter.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         recruiter.role.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (recruiter?.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (recruiter?.company?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (recruiter?.role?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     
-    const matchesCompany = !selectedFilters.company || recruiter.company === selectedFilters.company;
-    const matchesRole = !selectedFilters.role || recruiter.specialties.includes(selectedFilters.role);
-    const matchesIndustry = !selectedFilters.industry || recruiter.industry === selectedFilters.industry;
-
+    const matchesCompany = !selectedFilters.company || recruiter?.company === selectedFilters.company;
+    const matchesRole = !selectedFilters.role || (recruiter?.specialties && recruiter.specialties.includes(selectedFilters.role));
+    const matchesIndustry = !selectedFilters.industry || recruiter?.industry === selectedFilters.industry;
+  
     return matchesSearch && matchesCompany && matchesRole && matchesIndustry;
   });
 
+<<<<<<< HEAD
   const ProfileModal = ({ recruiter }: { recruiter: any }) => (
     <Dialog>
       <DialogTrigger asChild>
@@ -214,6 +262,12 @@ const Recruiters = () => {
       </DialogContent>
     </Dialog>
   );
+=======
+  // Helper function to safely get unique companies
+  const getUniqueCompanies = () => {
+    return Array.from(new Set(recruiters.map(r => r?.company).filter(Boolean)));
+  };
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
@@ -257,7 +311,7 @@ const Recruiters = () => {
               className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Companies</option>
-              {Array.from(new Set(recruiters.map(r => r.company))).map(company => (
+              {getUniqueCompanies().map(company => (
                 <option key={company} value={company}>{company}</option>
               ))}
             </select>
@@ -286,6 +340,7 @@ const Recruiters = () => {
           </div>
         </motion.div>
 
+<<<<<<< HEAD
         {/* Recruiters Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecruiters.map((recruiter, index) => (
@@ -334,9 +389,82 @@ const Recruiters = () => {
         </div>
 
         {filteredRecruiters.length === 0 && (
+=======
+        {/* Loading State */}
+        {loading ? (
+>>>>>>> ca66d2d0bd4756b94397761ce54bd826d861ca77
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No recruiters found matching your criteria.</p>
+            <p className="text-gray-600">Loading recruiters...</p>
           </div>
+        ) : (
+          <>
+            {/* Recruiters Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRecruiters.map((recruiter) => (
+                <motion.div
+                  key={recruiter.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <Card className="h-full hover:shadow-lg transition-all duration-300 border-gray-200">
+                    <CardHeader className="text-center">
+                      <Avatar className="w-20 h-20 mx-auto mb-4">
+                        <AvatarImage src={recruiter?.avatar} />
+                        <AvatarFallback className="bg-blue-600 text-white text-lg">
+                          {/* Fixed: Add safety checks before calling split() */}
+                          {(recruiter?.name || 'Unknown')
+                            .split(' ')
+                            .map(n => n?.[0] || '')
+                            .join('')
+                            .toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <CardTitle className="text-xl">{recruiter?.name || 'Unknown'}</CardTitle>
+                      <p className="text-sm text-gray-600">{recruiter?.role || 'Role not specified'}</p>
+                      <p className="text-sm font-medium text-blue-600">{recruiter?.company || 'Company not specified'}</p>
+                      <div className="flex items-center justify-center mt-2">
+                        <span className="text-yellow-400">★</span>
+                        <span className="text-sm text-gray-600 ml-1">{recruiter?.rating || 0}</span>
+                        <span className="text-sm text-gray-500 ml-2">({recruiter?.activeJobs || 0} active jobs)</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-sm text-gray-600 text-center">
+                        {recruiter?.description || 'No description available'}
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {(recruiter?.specialties || []).map((specialty) => (
+                          <Badge key={`${recruiter.id}-${specialty}`} variant="secondary" className="text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-2 pt-4">
+                        <Button variant="outline" className="flex-1" size="sm">
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Chat
+                        </Button>
+                        <Button className="flex-1 bg-blue-600 hover:bg-blue-700" size="sm">
+                          <Video className="w-4 h-4 mr-2" />
+                          Avatar Chat
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* No Results Message */}
+            {filteredRecruiters.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No recruiters found matching your criteria.</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
