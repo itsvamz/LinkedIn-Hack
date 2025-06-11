@@ -1,26 +1,38 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState({ name: '', role: '', avatar: '' });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+
     const darkMode = localStorage.getItem('darkMode') === 'true';
     setIsDarkMode(darkMode);
-
+    
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+    }
+
+    if (loggedIn) {
+      const profile = {
+        name: localStorage.getItem('userName') || 'John Doe',
+        role: localStorage.getItem('userRole') || 'user',
+        avatar: localStorage.getItem('userAvatar') || ''
+      };
+      setUserProfile(profile);
     }
   }, [location]);
 
@@ -28,7 +40,7 @@ const Navbar = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
-
+    
     if (newDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -52,26 +64,33 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    if (user?.role === 'recruiter') {
-      navigate('/recruiter-dashboard');
+    if (userProfile.role === 'recruiter') {
+      window.location.href = '/recruiter-dashboard';
     } else {
-      navigate('/user-dashboard');
+      window.location.href = '/user-dashboard';
     }
   };
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userAvatar');
+    setIsLoggedIn(false);
+    setUserProfile({ name: '', role: '', avatar: '' });
+    window.location.href = '/';
   };
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AVIRI</span>
           </Link>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
@@ -88,7 +107,9 @@ const Navbar = () => {
             ))}
           </div>
 
+          {/* Auth Section with Google Translate and Dark Mode */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Dark Mode Toggle */}
             <Button
               variant="ghost"
               size="sm"
@@ -98,17 +119,18 @@ const Navbar = () => {
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
 
+            {/* Google Translate Dropdown */}
             <div id="google_translate_element" className="mr-2 text-sm" />
 
-            {isAuthenticated && user ? (
+            {isLoggedIn ? (
               <div className="flex items-center space-x-3">
                 <Avatar
                   className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
                   onClick={handleProfileClick}
                 >
-                  <AvatarImage src={user.avatar} alt={user.fullName} />
+                  <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
                   <AvatarFallback className="bg-blue-600 text-white text-sm">
-                    {getInitials(user.fullName)}
+                    {getInitials(userProfile.name)}
                   </AvatarFallback>
                 </Avatar>
                 <Button
@@ -136,6 +158,7 @@ const Navbar = () => {
             )}
           </div>
 
+          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -146,6 +169,7 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Mobile Navigation */}
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -169,6 +193,7 @@ const Navbar = () => {
                 </Link>
               ))}
 
+              {/* Dark Mode Toggle in mobile */}
               <div className="px-3 py-2">
                 <Button
                   variant="ghost"
@@ -181,23 +206,25 @@ const Navbar = () => {
                 </Button>
               </div>
 
+              {/* Google Translate in mobile */}
               <div className="px-3 py-2">
                 <div id="google_translate_element" className="text-sm mb-2" />
               </div>
 
+              {/* Mobile Auth Section */}
               <div className="pt-2 space-y-2">
-                {isAuthenticated && user ? (
+                {isLoggedIn ? (
                   <>
                     <div className="flex items-center px-3 py-2">
                       <Avatar className="w-8 h-8 mr-3">
-                        <AvatarImage src={user.avatar} alt={user.fullName} />
+                        <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
                         <AvatarFallback className="bg-blue-600 text-white text-sm">
-                          {getInitials(user.fullName)}
+                          {getInitials(userProfile.name)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.fullName}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user.role}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{userProfile.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userProfile.role}</p>
                       </div>
                     </div>
                     <Button

@@ -1,26 +1,19 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LogIn, User, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
-  const { login, isLoading } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const location = useLocation();
-  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: 'user' as 'user' | 'recruiter'
+    role: 'user'
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,29 +21,22 @@ const Login = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleRoleChange = (role: 'user' | 'recruiter') => {
-    setFormData(prev => ({ ...prev, role }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, role: 'user' | 'recruiter') => {
     e.preventDefault();
     
-    try {
-      await login(formData);
-      
-      toast({
-        title: "Login successful",
-        description: "You have been logged in successfully.",
-      });
-      
-      const redirectPath = formData.role === 'recruiter' ? '/recruiter-dashboard' : '/user-dashboard';
-      navigate(redirectPath);
-    } catch (error: Error | unknown) {
-      toast({
-        title: "Login failed",
-        description: (error as Error & { response?: { data?: { msg?: string } } }).response?.data?.msg || "Invalid credentials. Please try again.",
-        variant: "destructive"
-      });
+    // Mock login logic
+    console.log('Login submitted:', { ...formData, role });
+    
+    // Set login state in localStorage
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('userName', role === 'recruiter' ? 'Sarah Wilson' : 'John Doe');
+    
+    // Redirect to appropriate dashboard
+    if (role === 'recruiter') {
+      window.location.href = '/recruiter-dashboard';
+    } else {
+      window.location.href = '/user-dashboard';
     }
   };
 
@@ -62,6 +48,7 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Header */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-block">
               <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AVIRI</span>
@@ -81,13 +68,8 @@ const Login = () => {
                 Sign In
               </CardTitle>
             </CardHeader>
-
-            <CardContent>
-              <Tabs 
-                defaultValue="user" 
-                className="w-full"
-                onValueChange={(value) => handleRoleChange(value as 'user' | 'recruiter')}
-              >
+            <CardContent className="p-6">
+              <Tabs defaultValue="user" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100">
                   <TabsTrigger value="user" className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                     <User className="w-4 h-4 mr-2" />
@@ -100,7 +82,7 @@ const Login = () => {
                 </TabsList>
 
                 <TabsContent value="user">
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={(e) => handleSubmit(e, 'user')} className="space-y-6">
                     <div>
                       <Label htmlFor="user-email" className="text-sm font-semibold text-gray-700">Email address</Label>
                       <Input
@@ -132,15 +114,14 @@ const Login = () => {
                     <Button
                       type="submit"
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3"
-                      disabled={isLoading}
                     >
-                      {isLoading ? 'Signing in...' : 'Sign in as Job Seeker'}
+                      Sign in as Job Seeker
                     </Button>
                   </form>
                 </TabsContent>
 
                 <TabsContent value="recruiter">
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={(e) => handleSubmit(e, 'recruiter')} className="space-y-6">
                     <div>
                       <Label htmlFor="recruiter-email" className="text-sm font-semibold text-gray-700">Email address</Label>
                       <Input
@@ -172,9 +153,8 @@ const Login = () => {
                     <Button
                       type="submit"
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3"
-                      disabled={isLoading}
                     >
-                      {isLoading ? 'Signing in...' : 'Sign in as Recruiter'}
+                      Sign in as Recruiter
                     </Button>
                   </form>
                 </TabsContent>
