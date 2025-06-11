@@ -1,50 +1,96 @@
-
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter, MapPin, Briefcase, Star, Play, MessageSquare, User, X, Mail, Phone, MapPin as Location } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { candidatesData } from '../data/candidatesData';
-import ContactModal from '@/components/ContactModal';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Filter,
+  MapPin,
+  Briefcase,
+  Star,
+  Play,
+  MessageSquare,
+  User,
+  Mail,
+  Phone,
+  MapPin as Location,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ContactModal from "@/components/ContactModal";
 
 const Users = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSkill, setSelectedSkill] = useState('');
-  const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<number>>(new Set());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSkill, setSelectedSkill] = useState("");
+  const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<string>>(
+    new Set()
+  );
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    type: 'candidate' as 'candidate' | 'recruiter'
+    name: "",
+    email: "",
+    phone: "",
+    type: "candidate" as "candidate" | "recruiter",
   });
 
-  const skills = ['React', 'Python', 'JavaScript', 'Node.js', 'UI/UX', 'Data Science'];
+  const [users, setUsers] = useState<any[]>([]);
+  const skills = [
+    "React",
+    "Python",
+    "JavaScript",
+    "Node.js",
+    "UI/UX",
+    "Data Science",
+  ];
 
-  const filteredUsers = candidatesData.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedSkill === '' || user.skills.includes(selectedSkill))
-  );
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://localhost:5000/api/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log("Fetched users:", res.data); // 🔍 Console log added here
+        setUsers(res.data);
+      })
+      .catch((err) => console.error("Error fetching users:", err));
+  }, []);
 
-  const toggleBookmark = (userId: number) => {
+  const filteredUsers = users.filter((user) => {
+    const nameMatch =
+      searchTerm.trim() === "" ||
+      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const skillMatch =
+      selectedSkill === "" ||
+      (Array.isArray(user.skills) && user.skills.includes(selectedSkill));
+
+    return nameMatch && skillMatch;
+  });
+
+  const toggleBookmark = (userId: string) => {
     const newBookmarked = new Set(bookmarkedUsers);
-    if (newBookmarked.has(userId)) {
-      newBookmarked.delete(userId);
-    } else {
-      newBookmarked.add(userId);
-    }
+    newBookmarked.has(userId)
+      ? newBookmarked.delete(userId)
+      : newBookmarked.add(userId);
     setBookmarkedUsers(newBookmarked);
   };
 
   const handleContactCandidate = (user: any) => {
     setSelectedContact({
-      name: user.name,
+      name: user.fullName,
       email: user.email,
-      phone: user.phone,
-      type: 'candidate'
+      phone: user.phone || "",
+      type: "candidate",
     });
     setContactModalOpen(true);
   };
@@ -60,52 +106,53 @@ const Users = () => {
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <User className="w-5 h-5 mr-2" />
-            {user.name}'s Complete Profile
+            {user.fullName}'s Complete Profile
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          {/* Header Section */}
           <div className="flex items-center space-x-6 p-6 bg-blue-50 rounded-lg">
             <img
-              src={user.avatar}
-              alt={user.name}
+              src={user.avatar || "https://i.pravatar.cc/150?img=10"}
+              alt={user.fullName}
               className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
             />
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {user.fullName}
+              </h2>
               <p className="text-xl text-blue-600 font-medium">{user.role}</p>
               <div className="flex items-center text-gray-600 mt-2">
                 <Location className="w-4 h-4 mr-2" />
-                {user.location}
+                {user.location || "N/A"}
               </div>
               <div className="flex items-center text-gray-600 mt-1">
                 <Briefcase className="w-4 h-4 mr-2" />
-                {user.experience}
+                {user.experience || "N/A"}
               </div>
             </div>
           </div>
-
-          {/* About */}
           <div>
             <h3 className="font-semibold text-lg mb-3">About</h3>
-            <p className="text-gray-600 leading-relaxed">{user.about}</p>
+            <p className="text-gray-600 leading-relaxed">
+              {user.about || "No description provided."}
+            </p>
           </div>
-
-          {/* Skills */}
           <div>
             <h3 className="font-semibold text-lg mb-3">Skills & Expertise</h3>
             <div className="flex flex-wrap gap-2">
-              {user.skills.map((skill: string, idx: number) => (
-                <Badge key={idx} variant="secondary" className="bg-blue-100 text-blue-700">
+              {user.skills?.map((skill: string, idx: number) => (
+                <Badge
+                  key={idx}
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-700"
+                >
                   {skill}
                 </Badge>
-              ))}
+              )) || "No skills listed."}
             </div>
           </div>
-
-          {/* Contact Actions */}
           <div className="flex gap-4 pt-4 border-t">
-            <Button 
+            <Button
               onClick={() => handleContactCandidate(user)}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
@@ -121,7 +168,11 @@ const Users = () => {
   const PitchModal = ({ user }: { user: any }) => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-blue-600 border-blue-600 hover:bg-blue-50"
+        >
           <Play className="w-4 h-4 mr-1" />
           View Pitch
         </Button>
@@ -130,22 +181,26 @@ const Users = () => {
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <User className="w-5 h-5 mr-2" />
-            {user.name}'s Elevator Pitch
+            {user.fullName}'s Elevator Pitch
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
             <div className="text-center text-white">
               <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">{user.name}'s Pitch Video</p>
+              <p className="text-lg font-medium">
+                {user.fullName}'s Pitch Video
+              </p>
               <p className="text-sm opacity-75">1 minute presentation</p>
             </div>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="font-semibold mb-2">About this pitch:</h4>
             <p className="text-gray-600 text-sm">
-              A personalized 1-minute video showcasing {user.name}'s skills, experience, and passion for {user.role.toLowerCase()}. 
-              This pitch highlights their expertise in {user.skills.slice(0, 2).join(' and ')} and their commitment to delivering exceptional results.
+              A personalized 1-minute video showcasing {user.fullName}'s skills,
+              experience, and passion for {user.role?.toLowerCase()}. This pitch
+              highlights their expertise in{" "}
+              {user.skills?.slice(0, 2).join(" and ") || "multiple domains"}.
             </p>
           </div>
         </div>
@@ -156,7 +211,11 @@ const Users = () => {
   const AvatarChatModal = ({ user }: { user: any }) => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-50">
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-green-600 border-green-600 hover:bg-green-50"
+        >
           <MessageSquare className="w-4 h-4 mr-1" />
           Chat with Avatar
         </Button>
@@ -165,31 +224,40 @@ const Users = () => {
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <MessageSquare className="w-5 h-5 mr-2" />
-            Chat with {user.name}'s Avatar
+            Chat with {user.fullName}'s Avatar
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
             <img
-              src={user.avatar}
-              alt={user.name}
+              src={user.avatar || "https://i.pravatar.cc/150?img=10"}
+              alt={user.fullName}
               className="w-16 h-16 rounded-full object-cover"
             />
             <div>
-              <h4 className="font-semibold">{user.name}</h4>
+              <h4 className="font-semibold">{user.fullName}</h4>
               <p className="text-sm text-gray-600">{user.role}</p>
-              <p className="text-xs text-blue-600">AI Avatar - Ready to answer your questions</p>
+              <p className="text-xs text-blue-600">
+                AI Avatar - Ready to answer your questions
+              </p>
             </div>
           </div>
           <div className="h-64 border rounded-lg p-4 bg-gray-50">
             <div className="text-center text-gray-500 mt-20">
               <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-sm">Start a conversation with {user.name}'s AI avatar</p>
-              <p className="text-xs">Ask about their skills, experience, or project interests</p>
+              <p className="text-sm">
+                Start a conversation with {user.fullName}'s AI avatar
+              </p>
+              <p className="text-xs">
+                Ask about their skills, experience, or project interests
+              </p>
             </div>
           </div>
           <div className="flex space-x-2">
-            <Input placeholder="Ask about their experience with React..." className="flex-1" />
+            <Input
+              placeholder="Ask about their experience with React..."
+              className="flex-1"
+            />
             <Button className="bg-blue-600 hover:bg-blue-700">Send</Button>
           </div>
         </div>
@@ -200,17 +268,15 @@ const Users = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
             Discover Talent
           </h1>
           <p className="text-gray-600 text-lg">
-            Connect with {candidatesData.length}+ professionals ready for new opportunities
+            Connect with {users.length}+ professionals ready for new
+            opportunities
           </p>
         </div>
-
-        {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -224,20 +290,28 @@ const Users = () => {
             </div>
             <div className="flex gap-2 flex-wrap">
               <Button
-                variant={selectedSkill === '' ? 'default' : 'outline'}
-                onClick={() => setSelectedSkill('')}
+                variant={selectedSkill === "" ? "default" : "outline"}
+                onClick={() => setSelectedSkill("")}
                 size="sm"
-                className={selectedSkill === '' ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-200 text-blue-600 hover:bg-blue-50'}
+                className={
+                  selectedSkill === ""
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "border-blue-200 text-blue-600 hover:bg-blue-50"
+                }
               >
                 All Skills
               </Button>
-              {skills.map(skill => (
+              {skills.map((skill) => (
                 <Button
                   key={skill}
-                  variant={selectedSkill === skill ? 'default' : 'outline'}
+                  variant={selectedSkill === skill ? "default" : "outline"}
                   onClick={() => setSelectedSkill(skill)}
                   size="sm"
-                  className={selectedSkill === skill ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-200 text-blue-600 hover:bg-blue-50'}
+                  className={
+                    selectedSkill === skill
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "border-blue-200 text-blue-600 hover:bg-blue-50"
+                  }
                 >
                   {skill}
                 </Button>
@@ -246,75 +320,85 @@ const Users = () => {
           </div>
         </div>
 
-        {/* User Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredUsers.map((user, index) => (
             <motion.div
-              key={user.id}
+              key={user._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
               <Card className="h-full border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
                 <CardContent className="p-6">
-                  {/* User Header */}
                   <div className="flex items-center mb-4">
                     <img
-                      src={user.avatar}
-                      alt={user.name}
+                      src={user.avatar || "https://i.pravatar.cc/150?img=10"}
+                      alt={user.fullName}
                       className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-blue-100"
                     />
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {user.fullName}
+                      </h3>
                       <p className="text-blue-600 font-medium">{user.role}</p>
                       <div className="flex items-center text-sm text-gray-500 mt-1">
                         <MapPin className="w-3 h-3 mr-1" />
-                        {user.location}
+                        {user.location || "N/A"}
                       </div>
                     </div>
                   </div>
 
-                  {/* Experience */}
                   <div className="flex items-center text-sm text-gray-600 mb-4">
                     <Briefcase className="w-4 h-4 mr-2" />
-                    {user.experience}
+                    {user.experience || "N/A"}
                   </div>
 
-                  {/* Skills */}
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
-                      {user.skills.slice(0, 3).map((skill, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
-                          {skill}
-                        </Badge>
-                      ))}
-                      {user.skills.length > 3 && (
-                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-600">
+                      {user.skills
+                        ?.slice(0, 3)
+                        .map((skill: string, idx: number) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="text-xs bg-blue-100 text-blue-700 border-blue-200"
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
+                      {user.skills?.length > 3 && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs border-blue-200 text-blue-600"
+                        >
                           +{user.skills.length - 3}
                         </Badge>
                       )}
                     </div>
                   </div>
 
-                  {/* About */}
                   <p className="text-sm text-gray-600 line-clamp-2 mb-4">
-                    {user.about}
+                    {user.about || "No description provided."}
                   </p>
 
-                  {/* Actions */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <ProfileModal user={user} />
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="icon"
-                        onClick={() => toggleBookmark(user.id)}
-                        className={`${bookmarkedUsers.has(user.id) 
-                          ? 'bg-yellow-100 border-yellow-300 text-yellow-600' 
-                          : 'border-gray-200 text-gray-400 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-500'
+                        onClick={() => toggleBookmark(user._id)}
+                        className={`${
+                          bookmarkedUsers.has(user._id)
+                            ? "bg-yellow-100 border-yellow-300 text-yellow-600"
+                            : "border-gray-200 text-gray-400 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-500"
                         }`}
                       >
-                        <Star className={`w-4 h-4 ${bookmarkedUsers.has(user.id) ? 'fill-current' : ''}`} />
+                        <Star
+                          className={`w-4 h-4 ${
+                            bookmarkedUsers.has(user._id) ? "fill-current" : ""
+                          }`}
+                        />
                       </Button>
                     </div>
                     <div className="flex gap-2">
@@ -328,17 +412,17 @@ const Users = () => {
           ))}
         </div>
 
-        {/* No Results */}
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No professionals found</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No professionals found
+            </h3>
             <p className="text-gray-600">Try adjusting your search criteria</p>
           </div>
         )}
       </div>
 
-      {/* Contact Modal */}
       <ContactModal
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}

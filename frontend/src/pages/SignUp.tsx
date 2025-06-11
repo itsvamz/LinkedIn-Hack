@@ -1,43 +1,81 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff, Building2, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  Building2,
+  ArrowRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState<'candidate' | 'recruiter'>('candidate');
+  const [userType, setUserType] = useState<"user" | "recruiter">("user");
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    company: ''
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    company: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign up form submitted:', { ...formData, userType });
-    
-    // Store user data in localStorage for demo purposes
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userName', formData.fullName);
-    localStorage.setItem('userRole', userType);
-    
-    // Redirect based on user type
-    if (userType === 'recruiter') {
-      window.location.href = '/recruiter-dashboard';
-    } else {
-      window.location.href = '/user-dashboard';
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          role: userType,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.msg || "Registration failed");
+        return;
+      }
+
+      // Store token and user info locally (optional)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.user.fullName);
+      localStorage.setItem("userRole", data.user.role);
+      localStorage.setItem("isLoggedIn", "true");
+
+      // Redirect
+      window.location.href =
+        userType === "recruiter" ? "/recruiter-dashboard" : "/user-dashboard";
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -54,24 +92,27 @@ const SignUp = () => {
             <Link to="/" className="flex items-center mb-6">
               <div className="text-center">
                 <span className="text-3xl font-bold text-blue-600">AVIRI</span>
-                <p className="text-sm text-gray-600">Authentic Virtual Identity Recruitment Interface</p>
+                <p className="text-sm text-gray-600">
+                  Authentic Virtual Identity Recruitment Interface
+                </p>
               </div>
             </Link>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Join the Future of Recruitment
             </h1>
             <p className="text-xl text-gray-600 mb-6">
-              Connect with top talent or find your dream job through our innovative platform
+              Connect with top talent or find your dream job through our
+              innovative platform
             </p>
           </div>
 
           {/* Features */}
           <div className="space-y-4">
             {[
-              'AI-powered matching algorithm',
-              'Interactive video pitch presentations',
-              'Real-time communication tools',
-              'Advanced analytics and insights'
+              "AI-powered matching algorithm",
+              "Interactive video pitch presentations",
+              "Real-time communication tools",
+              "Advanced analytics and insights",
             ].map((feature, index) => (
               <motion.div
                 key={feature}
@@ -96,7 +137,9 @@ const SignUp = () => {
         >
           <Card className="w-full max-w-md border-gray-200 shadow-xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900">Create Account</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-900">
+                Create Account
+              </CardTitle>
               <CardDescription className="text-gray-600">
                 Choose your account type and get started
               </CardDescription>
@@ -105,15 +148,17 @@ const SignUp = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* User Type Selection */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium text-gray-700">I am a:</Label>
+                  <Label className="text-sm font-medium text-gray-700">
+                    I am a:
+                  </Label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
-                      onClick={() => setUserType('candidate')}
+                      onClick={() => setUserType("user")}
                       className={`p-3 rounded-lg border-2 transition-all ${
-                        userType === 'candidate'
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:border-gray-300'
+                        userType === "user"
+                          ? "border-blue-500 bg-blue-50 text-blue-700"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
                       <User className="w-5 h-5 mx-auto mb-1" />
@@ -121,11 +166,11 @@ const SignUp = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setUserType('recruiter')}
+                      onClick={() => setUserType("recruiter")}
                       className={`p-3 rounded-lg border-2 transition-all ${
-                        userType === 'recruiter'
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:border-gray-300'
+                        userType === "recruiter"
+                          ? "border-blue-500 bg-blue-50 text-blue-700"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
                       <Building2 className="w-5 h-5 mx-auto mb-1" />
@@ -137,7 +182,10 @@ const SignUp = () => {
                 {/* Form Fields */}
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="fullName"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Full Name
                     </Label>
                     <div className="relative mt-1">
@@ -147,7 +195,9 @@ const SignUp = () => {
                         type="text"
                         required
                         value={formData.fullName}
-                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("fullName", e.target.value)
+                        }
                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Enter your full name"
                       />
@@ -155,7 +205,10 @@ const SignUp = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="email"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Email Address
                     </Label>
                     <div className="relative mt-1">
@@ -165,16 +218,21 @@ const SignUp = () => {
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Enter your email"
                       />
                     </div>
                   </div>
 
-                  {userType === 'recruiter' && (
+                  {userType === "recruiter" && (
                     <div>
-                      <Label htmlFor="company" className="text-sm font-medium text-gray-700">
+                      <Label
+                        htmlFor="company"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Company
                       </Label>
                       <div className="relative mt-1">
@@ -184,7 +242,9 @@ const SignUp = () => {
                           type="text"
                           required
                           value={formData.company}
-                          onChange={(e) => handleInputChange('company', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("company", e.target.value)
+                          }
                           className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           placeholder="Enter your company name"
                         />
@@ -193,17 +253,22 @@ const SignUp = () => {
                   )}
 
                   <div>
-                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="password"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Password
                     </Label>
                     <div className="relative mt-1">
                       <Lock className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <Input
                         id="password"
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         required
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
                         className="pl-10 pr-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Create a password"
                       />
@@ -212,13 +277,20 @@ const SignUp = () => {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="confirmPassword"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Confirm Password
                     </Label>
                     <div className="relative mt-1">
@@ -228,7 +300,9 @@ const SignUp = () => {
                         type="password"
                         required
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("confirmPassword", e.target.value)
+                        }
                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Confirm your password"
                       />
@@ -246,8 +320,11 @@ const SignUp = () => {
 
                 <div className="text-center">
                   <p className="text-sm text-gray-600">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                    Already have an account?{" "}
+                    <Link
+                      to="/login"
+                      className="text-blue-600 hover:text-blue-700 font-medium"
+                    >
                       Sign in
                     </Link>
                   </p>

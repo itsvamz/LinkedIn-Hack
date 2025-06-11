@@ -1,3 +1,4 @@
+const User = require("../models/User");
 const express = require("express");
 const router = express.Router();
 const {
@@ -15,7 +16,7 @@ const {
   incrementAnalytics,
   getPublicProfile,
   getPublicPitch,
-  getUserById
+  getUserById,
 } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
@@ -43,5 +44,15 @@ router.get("/analytics", getAnalytics);
 
 // Fetch user by ID
 router.get("/:id", getUserById);
+
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find({ role: "user" });
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err); // <-- add this
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
 
 module.exports = router;
