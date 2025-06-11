@@ -50,6 +50,23 @@ const Users = () => {
     "UI/UX",
     "Data Science",
   ];
+  const incrementAnalytics = async (userId: string, type: string) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        `http://localhost:5000/api/user/analytics/${userId}`,
+        { type },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(`Analytics incremented: ${type} for user ${userId}`);
+    } catch (error) {
+      console.error("Failed to increment analytics:", error);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -79,9 +96,12 @@ const Users = () => {
 
   const toggleBookmark = (userId: string) => {
     const newBookmarked = new Set(bookmarkedUsers);
-    newBookmarked.has(userId)
-      ? newBookmarked.delete(userId)
-      : newBookmarked.add(userId);
+    if (newBookmarked.has(userId)) {
+      newBookmarked.delete(userId);
+    } else {
+      newBookmarked.add(userId);
+      incrementAnalytics(userId, "profileBookmark");
+    }
     setBookmarkedUsers(newBookmarked);
   };
 
@@ -98,10 +118,14 @@ const Users = () => {
   const ProfileModal = ({ user }: { user: any }) => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+        <Button
+          className="flex-1 bg-blue-600 hover:bg-blue-700"
+          onClick={() => incrementAnalytics(user._id, "profileView")}
+        >
           View Profile
         </Button>
       </DialogTrigger>
+
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center">
@@ -172,12 +196,13 @@ const Users = () => {
           variant="outline"
           size="sm"
           className="text-blue-600 border-blue-600 hover:bg-blue-50"
+          onClick={() => incrementAnalytics(user._id, "pitchView")}
         >
           <Play className="w-4 h-4 mr-1" />
           View Pitch
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <User className="w-5 h-5 mr-2" />
@@ -185,22 +210,29 @@ const Users = () => {
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
-            <div className="text-center text-white">
-              <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">
-                {user.fullName}'s Pitch Video
-              </p>
-              <p className="text-sm opacity-75">1 minute presentation</p>
+          {user.videoUrl ? (
+            <div className="aspect-video">
+              <iframe
+                src={user.videoUrl}
+                title={`${user.fullName} Pitch`}
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full rounded-lg"
+              />
             </div>
-          </div>
+          ) : (
+            <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
+              <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium text-white">
+                No pitch video uploaded
+              </p>
+            </div>
+          )}
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="font-semibold mb-2">About this pitch:</h4>
             <p className="text-gray-600 text-sm">
-              A personalized 1-minute video showcasing {user.fullName}'s skills,
-              experience, and passion for {user.role?.toLowerCase()}. This pitch
-              highlights their expertise in{" "}
-              {user.skills?.slice(0, 2).join(" and ") || "multiple domains"}.
+              {user.pitch || "No pitch description provided."}
             </p>
           </div>
         </div>
