@@ -1,42 +1,51 @@
-
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { LogIn, User, Building2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { LogIn, User, Building2 } from "lucide-react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: 'user'
+    email: "",
+    password: "",
+    role: "user",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent, role: 'user' | 'recruiter') => {
+  const handleSubmit = async (
+    e: React.FormEvent,
+    role: "user" | "recruiter"
+  ) => {
     e.preventDefault();
-    
-    // Mock login logic
-    console.log('Login submitted:', { ...formData, role });
-    
-    // Set login state in localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userRole', role);
-    localStorage.setItem('userName', role === 'recruiter' ? 'Sarah Wilson' : 'John Doe');
-    
-    // Redirect to appropriate dashboard
-    if (role === 'recruiter') {
-      window.location.href = '/recruiter-dashboard';
-    } else {
-      window.location.href = '/user-dashboard';
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+        role: role,
+      });
+
+      const { token, user } = res.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("userName", user.fullName || "User");
+      localStorage.setItem("isLoggedIn", "true");
+
+      // Redirect
+      window.location.href =
+        role === "recruiter" ? "/recruiter-dashboard" : "/user-dashboard";
+    } catch (err: any) {
+      alert(err.response?.data?.msg || "Login failed");
     }
   };
 
@@ -51,7 +60,9 @@ const Login = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-block">
-              <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">AVIRI</span>
+              <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                AVIRI
+              </span>
             </Link>
             <h2 className="mt-6 text-3xl font-bold text-gray-900">
               Welcome back
@@ -69,22 +80,42 @@ const Login = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <Tabs defaultValue="user" className="w-full">
+              <Tabs
+                defaultValue="user"
+                className="w-full"
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, role: value }))
+                }
+              >
                 <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100">
-                  <TabsTrigger value="user" className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  <TabsTrigger
+                    value="user"
+                    className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  >
                     <User className="w-4 h-4 mr-2" />
                     Job Seeker
                   </TabsTrigger>
-                  <TabsTrigger value="recruiter" className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  <TabsTrigger
+                    value="recruiter"
+                    className="flex items-center data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  >
                     <Building2 className="w-4 h-4 mr-2" />
                     Recruiter
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="user">
-                  <form onSubmit={(e) => handleSubmit(e, 'user')} className="space-y-6">
+                  <form
+                    onSubmit={(e) => handleSubmit(e, "user")}
+                    className="space-y-6"
+                  >
                     <div>
-                      <Label htmlFor="user-email" className="text-sm font-semibold text-gray-700">Email address</Label>
+                      <Label
+                        htmlFor="user-email"
+                        className="text-sm font-semibold text-gray-700"
+                      >
+                        Email address
+                      </Label>
                       <Input
                         id="user-email"
                         name="email"
@@ -98,7 +129,12 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="user-password" className="text-sm font-semibold text-gray-700">Password</Label>
+                      <Label
+                        htmlFor="user-password"
+                        className="text-sm font-semibold text-gray-700"
+                      >
+                        Password
+                      </Label>
                       <Input
                         id="user-password"
                         name="password"
@@ -121,9 +157,17 @@ const Login = () => {
                 </TabsContent>
 
                 <TabsContent value="recruiter">
-                  <form onSubmit={(e) => handleSubmit(e, 'recruiter')} className="space-y-6">
+                  <form
+                    onSubmit={(e) => handleSubmit(e, "recruiter")}
+                    className="space-y-6"
+                  >
                     <div>
-                      <Label htmlFor="recruiter-email" className="text-sm font-semibold text-gray-700">Email address</Label>
+                      <Label
+                        htmlFor="recruiter-email"
+                        className="text-sm font-semibold text-gray-700"
+                      >
+                        Email address
+                      </Label>
                       <Input
                         id="recruiter-email"
                         name="email"
@@ -137,7 +181,12 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="recruiter-password" className="text-sm font-semibold text-gray-700">Password</Label>
+                      <Label
+                        htmlFor="recruiter-password"
+                        className="text-sm font-semibold text-gray-700"
+                      >
+                        Password
+                      </Label>
                       <Input
                         id="recruiter-password"
                         name="password"
@@ -162,7 +211,7 @@ const Login = () => {
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <Link
                     to="/signup"
                     className="font-medium text-blue-600 hover:text-blue-500"
