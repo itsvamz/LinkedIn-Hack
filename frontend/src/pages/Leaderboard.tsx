@@ -13,7 +13,24 @@ const Leaderboard = () => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
   const [category, setCategory] = useState<'views' | 'likes' | 'engagement'>('views');
   const [roleFilter, setRoleFilter] = useState<'all' | 'developer' | 'designer' | 'manager'>('all');
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<{
+    rank: number;
+    name: string;
+    title: string;
+    role: string;
+    avatar: string;
+    views: number;
+    likes: number;
+    engagement: number;
+    change: string;
+    badge: string | null;
+    email: string;
+    phone: string;
+    location: string;
+    experience: string;
+    skills: string[];
+    about: string;
+  }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +43,22 @@ const Leaderboard = () => {
         });
         
         // Transform the data to match the leaderboard format
-        const transformedData = res.data.map((user: any, index: number) => ({
+        const transformedData = res.data.map((user: {
+          fullName: string;
+          role?: string;
+          avatar?: string;
+          analytics?: {
+            profileViews?: number;
+            profileLikes?: number;
+            engagement?: number;
+          };
+          email: string;
+          phone?: string;
+          location?: string;
+          experience?: Array<{ company: string; position: string; duration: string }>;
+          skills?: string[];
+          about?: string;
+        }, index: number) => ({
           rank: index + 1,
           name: user.fullName,
           title: user.role || 'Professional',
@@ -280,7 +312,7 @@ const Leaderboard = () => {
                   {['week', 'month', 'all'].map((option) => (
                     <button
                       key={option}
-                      onClick={() => setTimeframe(option as any)}
+                      onClick={() => setTimeframe(option as 'week' | 'month' | 'all')}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
                         timeframe === option
                           ? 'bg-white text-blue-700 shadow-sm'
@@ -310,7 +342,7 @@ const Leaderboard = () => {
                     return (
                       <button
                         key={option.key}
-                        onClick={() => setCategory(option.key as any)}
+onClick={() => setCategory(option.key as 'views' | 'likes' | 'engagement')}
                         className={`flex items-center px-3 py-1 rounded-md text-sm font-medium transition-all ${
                           category === option.key
                             ? 'bg-white text-blue-700 shadow-sm'
@@ -341,7 +373,7 @@ const Leaderboard = () => {
                   ].map((option) => (
                     <button
                       key={option.key}
-                      onClick={() => setRoleFilter(option.key as any)}
+onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'manager')}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
                         roleFilter === option.key
                           ? 'bg-white text-blue-700 shadow-sm'

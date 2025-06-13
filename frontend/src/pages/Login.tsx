@@ -46,8 +46,12 @@ const Login = () => {
       // Redirect
       window.location.href =
         role === "recruiter" ? "/recruiter-dashboard" : "/user-dashboard";
-    } catch (err: any) {
-      setErrorMessage(err.response?.data?.msg || "Invalid credentials");
+    } catch (err: Error | unknown) {
+      if (err instanceof Error && axios.isAxiosError(err) && err.response) {
+        setErrorMessage(err.response.data?.msg || "Invalid credentials");
+      } else {
+        setErrorMessage("Invalid credentials");
+      }
     }
   };
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -72,7 +71,7 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
             return (
               <button
                 key={item.id}
-                onClick={() => onSectionChange(item.id as any)}
+                onClick={() => onSectionChange(item.id as 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings')}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md'
