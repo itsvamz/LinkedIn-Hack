@@ -27,7 +27,10 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
     console.log('Logging out...');
     window.location.href = '/';
   };
-
+  
+  // Get user name from localStorage
+  const userName = localStorage.getItem("userName") || "Recruiter";
+  
   return (
     <motion.aside
       initial={{ x: -300 }}
@@ -50,10 +53,12 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
         <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback className="bg-blue-600 text-white">RC</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white">
+              {userName.split(" ").map(name => name[0]).join("").toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">Recruiter</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">{userName}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">Talent Acquisition</p>
           </div>
         </div>

@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Users, Calendar, Star, TrendingUp, Upload, Mail, Phone, MapPin, Briefcase, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +18,27 @@ import Settings from '@/components/Settings';
 
 const RecruiterDashboard = () => {
   const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings'>('overview');
+  const [userData, setUserData] = useState(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        
+        const res = await axios.get("http://localhost:5000/api/recruiter/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
+    fetchUser();
+  }, []);
+
   const resumeFileRef = useRef<HTMLInputElement>(null);
   const avatarFileRef = useRef<HTMLInputElement>(null);
   const [messageModalOpen, setMessageModalOpen] = useState(false);
@@ -28,7 +50,42 @@ const RecruiterDashboard = () => {
     email: string;
     phone: string;
   } | null>(null);
-
+  const [saveMessage, setSaveMessage] = useState({ type: "", text: "" });
+  
+  const saveProfile = async () => {
+    try {
+      setSaveMessage({ type: "", text: "" }); // Clear previous messages
+      const token = localStorage.getItem("token");
+      
+      const response = await axios.put(
+        "http://localhost:5000/api/recruiter/profile",
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      setSaveMessage({ 
+        type: "success", 
+        text: "Profile updated successfully!" 
+      });
+      
+      // Update localStorage with new name if it changed
+      if (userData?.fullName) {
+        localStorage.setItem("userName", userData.fullName);
+      }
+      
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to update profile. Please try again." 
+      });
+    }
+  };
+  
   const handleResumeUpload = () => {
     resumeFileRef.current?.click();
   };
@@ -108,6 +165,13 @@ const RecruiterDashboard = () => {
           <CardDescription>Complete your profile to increase visibility to candidates</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Welcome Message */}
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-800">
+              Welcome, {userData?.fullName || "Recruiter"}
+            </h3>
+          </div>
+          
           {/* Resume Upload */}
           <div>
             <Label className="text-sm font-medium text-gray-700 mb-2 block">Resume Upload</Label>
@@ -132,19 +196,38 @@ const RecruiterDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" placeholder="Jane Smith" />
+              <Input 
+                id="fullName" 
+                 
+                value={userData?.fullName || ""}
+                onChange={(e) => setUserData({...userData, fullName: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" placeholder="+1 (555) 123-4567" />
+              <Input 
+                id="phone" 
+                value={userData?.phone || ""}
+                onChange={(e) => setUserData({...userData, phone: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="jane@company.com" />
+              <Input 
+                id="email" 
+                type="email" 
+                value={userData?.email || ""}
+                onChange={(e) => setUserData({...userData, email: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="location">Location</Label>
-              <Input id="location" placeholder="San Francisco, CA" />
+              <Input 
+                id="location" 
+                
+                value={userData?.location || ""}
+                onChange={(e) => setUserData({...userData, location: e.target.value})}
+              />
             </div>
           </div>
 
@@ -154,19 +237,39 @@ const RecruiterDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="linkedin">LinkedIn</Label>
-                <Input id="linkedin" placeholder="linkedin.com/in/janesmith" />
+                <Input 
+                  id="linkedin" 
+                  
+                  value={userData?.linkedin || ""}
+                  onChange={(e) => setUserData({...userData, linkedin: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="github">GitHub</Label>
-                <Input id="github" placeholder="github.com/janesmith" />
+                <Input 
+                  id="github" 
+                  
+                  value={userData?.github || ""}
+                  onChange={(e) => setUserData({...userData, github: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="leetcode">LeetCode</Label>
-                <Input id="leetcode" placeholder="leetcode.com/janesmith" />
+                <Input 
+                  id="leetcode" 
+                  
+                  value={userData?.leetcode || ""}
+                  onChange={(e) => setUserData({...userData, leetcode: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="portfolio">Portfolio</Label>
-                <Input id="portfolio" placeholder="janesmith.dev" />
+                <Input 
+                  id="portfolio" 
+                  
+                  value={userData?.portfolio || ""}
+                  onChange={(e) => setUserData({...userData, portfolio: e.target.value})}
+                />
               </div>
             </div>
           </div>
@@ -174,21 +277,47 @@ const RecruiterDashboard = () => {
           {/* Skills */}
           <div>
             <Label htmlFor="skills">Skills</Label>
-            <Textarea id="skills" placeholder="Talent Acquisition, HR Management, Interviewing..." />
+            <Textarea 
+              id="skills" 
+              
+              value={userData?.skills || ""}
+              onChange={(e) => setUserData({...userData, skills: e.target.value})}
+            />
           </div>
 
           {/* Availability */}
           <div>
             <Label htmlFor="availability">Availability</Label>
-            <select className="w-full border border-gray-300 rounded-md px-3 py-2">
-              <option>Available immediately</option>
-              <option>Available in 2 weeks</option>
-              <option>Available in 1 month</option>
-              <option>Not actively recruiting</option>
+            <select 
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              value={userData?.availability || ""}
+              onChange={(e) => setUserData({...userData, availability: e.target.value})}
+            >
+              <option value="">Select availability</option>
+              <option value="Available immediately">Available immediately</option>
+              <option value="Available in 2 weeks">Available in 2 weeks</option>
+              <option value="Available in 1 month">Available in 1 month</option>
+              <option value="Not actively recruiting">Not actively recruiting</option>
             </select>
           </div>
 
-          <Button className="w-full bg-blue-600 hover:bg-blue-700">Save Profile</Button>
+          <Button 
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            onClick={saveProfile}
+          >
+            Save Profile
+          </Button>
+          
+          {/* Display save message if present */}
+          {saveMessage.text && (
+            <div className={`mt-4 p-3 rounded-md text-sm ${
+              saveMessage.type === "success" 
+                ? "bg-green-50 text-green-600 border border-green-200" 
+                : "bg-red-50 text-red-600 border border-red-200"
+            }`}>
+              {saveMessage.text}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

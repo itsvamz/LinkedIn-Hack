@@ -15,6 +15,7 @@ const Login = () => {
     password: "",
     role: "user",
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,6 +27,7 @@ const Login = () => {
     role: "user" | "recruiter"
   ) => {
     e.preventDefault();
+    setErrorMessage(""); // Clear previous error messages
 
     try {
       const res = await axios.post("http://localhost:5000/api/auth/login", {
@@ -45,7 +47,7 @@ const Login = () => {
       window.location.href =
         role === "recruiter" ? "/recruiter-dashboard" : "/user-dashboard";
     } catch (err: any) {
-      alert(err.response?.data?.msg || "Login failed");
+      setErrorMessage(err.response?.data?.msg || "Invalid credentials");
     }
   };
 
@@ -109,6 +111,12 @@ const Login = () => {
                     onSubmit={(e) => handleSubmit(e, "user")}
                     className="space-y-6"
                   >
+                    {errorMessage && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+                        {errorMessage}
+                      </div>
+                    )}
+                    
                     <div>
                       <Label
                         htmlFor="user-email"
@@ -161,6 +169,12 @@ const Login = () => {
                     onSubmit={(e) => handleSubmit(e, "recruiter")}
                     className="space-y-6"
                   >
+                    {errorMessage && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+                        {errorMessage}
+                      </div>
+                    )}
+                    
                     <div>
                       <Label
                         htmlFor="recruiter-email"

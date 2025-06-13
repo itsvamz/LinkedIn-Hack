@@ -8,7 +8,9 @@ const {
   getCandidates,
   bookmarkCandidate,
   getBookmarkedCandidates,
-  getAllRecruiters
+  getAllRecruiters,
+  getProfile,  // Add these imports
+  updateProfile
 } = require("../controllers/recruiterController");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
@@ -18,6 +20,11 @@ router.get("/all", getAllRecruiters);
 
 // All other routes require authentication
 router.use(authMiddleware);
+
+// Profile routes - these need to be before the role middleware
+// since they only need authentication, not role checking
+router.get("/profile", getProfile);
+router.put("/profile", updateProfile);
 
 // All other routes require recruiter role
 router.use(roleMiddleware("recruiter"));

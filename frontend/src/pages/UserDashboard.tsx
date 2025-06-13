@@ -31,6 +31,12 @@ import VoiceRecorder from "@/components/VoiceRecorder";
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
+  const [saveMessage, setSaveMessage] = useState({ type: "", text: "" });
+  const [activeSection, setActiveSection] = useState<
+    "profile" | "avatar" | "pitch" | "analytics" | "messaging" | "settings"
+  >("profile");
+  const resumeFileRef = useRef<HTMLInputElement>(null);
+  const avatarFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,7 +49,7 @@ const UserDashboard = () => {
           },
         });
         console.log("Fetched user data:", res.data);
-        setUserData(res.data); // <- your actual user data here
+        setUserData(res.data);
       } catch (err) {
         console.error(err);
       }
@@ -51,11 +57,6 @@ const UserDashboard = () => {
 
     fetchUser();
   }, []);
-  const [activeSection, setActiveSection] = useState<
-    "profile" | "avatar" | "pitch" | "analytics" | "messaging" | "settings"
-  >("profile");
-  const resumeFileRef = useRef<HTMLInputElement>(null);
-  const avatarFileRef = useRef<HTMLInputElement>(null);
 
   const handleResumeUpload = () => resumeFileRef.current?.click();
   const handleAvatarUpload = () => avatarFileRef.current?.click();
@@ -70,6 +71,40 @@ const UserDashboard = () => {
     if (file) console.log("Avatar uploaded:", file.name);
   };
 
+  const saveProfile = async () => {
+    try {
+      setSaveMessage({ type: "", text: "" }); // Clear previous messages
+      const token = localStorage.getItem("token");
+      
+      const response = await axios.put(
+        "http://localhost:5000/api/user/profile",
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      setSaveMessage({ 
+        type: "success", 
+        text: "Profile updated successfully!" 
+      });
+      
+      // Update localStorage with new name if it changed
+      if (userData?.fullName) {
+        localStorage.setItem("userName", userData.fullName);
+      }
+      
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to update profile. Please try again." 
+      });
+    }
+  };
+
   const renderProfileSection = () => (
     <div className="space-y-6">
       <Card className="border-gray-200 shadow-lg bg-white">
@@ -80,6 +115,13 @@ const UserDashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
+          {/* Welcome Message */}
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-800">
+              Welcome, {userData?.fullName || "User"}
+            </h3>
+          </div>
+          
           {/* Resume Upload */}
           <div>
             <Label className="text-sm font-semibold text-gray-700 mb-3 block">
@@ -111,16 +153,38 @@ const UserDashboard = () => {
 
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {["Full Name", "Phone Number", "Email", "Location"].map(
-              (label, idx) => (
-                <div key={idx}>
-                  <Label className="text-sm font-semibold text-gray-700">
-                    {label}
-                  </Label>
-                  <Input className="mt-2 border-gray-300 focus:border-blue-500" />
-                </div>
-              )
-            )}
+            <div>
+              <Label className="text-sm font-semibold text-gray-700">Full Name</Label>
+              <Input 
+                className="mt-2 border-gray-300 focus:border-blue-500" 
+                value={userData?.fullName || ""}
+                onChange={(e) => setUserData({...userData, fullName: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-gray-700">Phone Number</Label>
+              <Input 
+                className="mt-2 border-gray-300 focus:border-blue-500" 
+                value={userData?.phone || ""}
+                onChange={(e) => setUserData({...userData, phone: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-gray-700">Email</Label>
+              <Input 
+                className="mt-2 border-gray-300 focus:border-blue-500" 
+                value={userData?.email || ""}
+                onChange={(e) => setUserData({...userData, email: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-gray-700">Location</Label>
+              <Input 
+                className="mt-2 border-gray-300 focus:border-blue-500" 
+                value={userData?.location || ""}
+                onChange={(e) => setUserData({...userData, location: e.target.value})}
+              />
+            </div>
           </div>
 
           {/* Professional Links */}
@@ -129,43 +193,85 @@ const UserDashboard = () => {
               Professional Profiles
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {["LinkedIn", "GitHub", "LeetCode", "Portfolio"].map(
-                (label, idx) => (
-                  <div key={idx}>
-                    <Label className="text-sm font-semibold text-gray-700">
-                      {label}
-                    </Label>
-                    <Input className="mt-2 border-gray-300 focus:border-blue-500" />
-                  </div>
-                )
-              )}
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">LinkedIn</Label>
+                <Input 
+                  className="mt-2 border-gray-300 focus:border-blue-500" 
+                  value={userData?.linkedin || ""}
+                  onChange={(e) => setUserData({...userData, linkedin: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">GitHub</Label>
+                <Input 
+                  className="mt-2 border-gray-300 focus:border-blue-500" 
+                  value={userData?.github || ""}
+                  onChange={(e) => setUserData({...userData, github: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">LeetCode</Label>
+                <Input 
+                  className="mt-2 border-gray-300 focus:border-blue-500" 
+                  value={userData?.leetcode || ""}
+                  onChange={(e) => setUserData({...userData, leetcode: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">Portfolio</Label>
+                <Input 
+                  className="mt-2 border-gray-300 focus:border-blue-500" 
+                  value={userData?.portfolio || ""}
+                  onChange={(e) => setUserData({...userData, portfolio: e.target.value})}
+                />
+              </div>
             </div>
           </div>
 
           {/* Skills */}
           <div>
-            <Label className="text-sm font-semibold text-gray-700">
-              Skills
-            </Label>
-            <Textarea className="mt-2 border-gray-300 focus:border-blue-500" />
+            <Label className="text-sm font-semibold text-gray-700">Skills</Label>
+            <Textarea 
+              className="mt-2 border-gray-300 focus:border-blue-500" 
+              value={userData?.skills || ""}
+              onChange={(e) => setUserData({...userData, skills: e.target.value})}
+            />
           </div>
 
           {/* Availability */}
           <div>
-            <Label className="text-sm font-semibold text-gray-700">
-              Availability
-            </Label>
-            <select className="w-full border border-gray-300 rounded-md px-3 py-2 mt-2 focus:border-blue-500">
-              <option>Available immediately</option>
-              <option>Available in 2 weeks</option>
-              <option>Available in 1 month</option>
-              <option>Not actively looking</option>
+            <Label className="text-sm font-semibold text-gray-700">Availability</Label>
+            <select 
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-2 focus:border-blue-500"
+              value={userData?.availability || ""}
+              onChange={(e) => setUserData({...userData, availability: e.target.value})}
+            >
+              <option value="">Select availability</option>
+              <option value="Available immediately">Available immediately</option>
+              <option value="Available in 2 weeks">Available in 2 weeks</option>
+              <option value="Available in 1 month">Available in 1 month</option>
+              <option value="Not actively looking">Not actively looking</option>
             </select>
           </div>
 
-          <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 hover:from-blue-700 hover:to-indigo-700">
+          {/* Save Profile Button */}
+          <Button 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 hover:from-blue-700 hover:to-indigo-700"
+            onClick={saveProfile}
+          >
             Save Profile
           </Button>
+          
+          {/* Display save message if present */}
+          {saveMessage.text && (
+            <div className={`mt-4 p-3 rounded-md text-sm ${
+              saveMessage.type === "success" 
+                ? "bg-green-50 text-green-600 border border-green-200" 
+                : "bg-red-50 text-red-600 border border-red-200"
+            }`}>
+              {saveMessage.text}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -246,6 +352,7 @@ const UserDashboard = () => {
   );
 
   const renderAnalyticsSection = () => <ProfileAnalytics user={userData} />;
+  
   const renderMessagingSection = () => (
     <Card className="border-gray-200 shadow-lg bg-white">
       <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -287,7 +394,7 @@ const UserDashboard = () => {
                     <span className="text-sm text-gray-500">1d ago</span>
                   </div>
                   <p className="text-gray-600 mb-2">
-                    Thank you for reaching out. I’m interested...
+                    Thank you for reaching out. I'm interested...
                   </p>
                   <Button size="sm" variant="outline">
                     View Thread

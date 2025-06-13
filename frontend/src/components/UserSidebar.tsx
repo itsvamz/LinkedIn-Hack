@@ -24,31 +24,36 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
     console.log('Logging out...');
     window.location.href = '/';
   };
-
+  
+  // Get user name from localStorage (using React state instead for Claude environment)
+  const userName = "John Doe"; // In a real app, this would come from React state or context
+  
   return (
     <motion.aside
       initial={{ x: -300 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-40"
+      className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-40 flex flex-col"
     >
-      <div className="p-6">
+      <div className="p-6 flex-1">
         {/* Logo */}
-        <Link to="/" className="flex items-center mb-8">
+        <Link to="/" className="flex items-center mb-6">
           <ArrowLeft className="w-4 h-4 mr-2 text-blue-600" />
           <span className="text-xl font-bold text-blue-600">
             TalentFlow
           </span>
         </Link>
 
-        {/* User Profile */}
+        {/* User Profile at Top */}
         <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
-            <AvatarFallback className="bg-blue-600 text-white">JD</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white">
+              {userName.split(" ").map(name => name[0]).join("").toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">John Doe</h3>
+            <h3 className="font-semibold text-gray-900">{userName}</h3>
             <p className="text-sm text-gray-600">Software Developer</p>
           </div>
         </div>
@@ -62,7 +67,7 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
             return (
               <button
                 key={item.id}
-                onClick={() => onSectionChange(item.id as any)}
+                onClick={() => onSectionChange(item.id as 'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings')}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md'
@@ -75,18 +80,18 @@ const UserSidebar = ({ activeSection, onSectionChange }: UserSidebarProps) => {
             );
           })}
         </nav>
+      </div>
 
-        {/* Logout Button */}
-        <div className="absolute bottom-6 left-6 right-6">
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
+      {/* Logout Button at Bottom */}
+      <div className="p-6 pt-0">
+        <Button
+          onClick={handleLogout}
+          variant="outline"
+          className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
       </div>
     </motion.aside>
   );
