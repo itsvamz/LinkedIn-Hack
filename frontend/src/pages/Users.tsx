@@ -3,7 +3,6 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
   MapPin,
   Briefcase,
   Star,
@@ -11,8 +10,6 @@ import {
   MessageSquare,
   User,
   Mail,
-  Phone,
-  MapPin as Location,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,12 +24,33 @@ import {
 } from "@/components/ui/dialog";
 import ContactModal from "@/components/ContactModal";
 
+interface Experience {
+  _id: string;
+  company: string;
+  position: string;
+  duration: string;
+  description: string;
+}
+
+interface UserType {
+  _id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  location?: string;
+  avatar?: string;
+  about?: string;
+  skills?: string[];
+  experience?: Experience[];
+  videoUrl?: string;
+  pitch?: string;
+  phone?: string;
+}
+
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSkill, setSelectedSkill] = useState("");
-  const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<string>>(
-    new Set()
-  );
+  const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<string>>(new Set());
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState({
     name: "",
@@ -40,72 +58,48 @@ const Users = () => {
     phone: "",
     type: "candidate" as "candidate" | "recruiter",
   });
-
-  const [users, setUsers] = useState<any[]>([]);
-  const skills = [
-    "React",
-    "Python",
-    "JavaScript",
-    "Node.js",
-    "UI/UX",
-    "Data Science",
-  ];
-  const incrementAnalytics = async (userId: string, type: string) => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.post(
-        `http://localhost:5000/api/user/analytics/${userId}`,
-        { type },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(`Analytics incremented: ${type} for user ${userId}`);
-    } catch (error) {
-      console.error("Failed to increment analytics:", error);
-    }
-  };
+  const [users, setUsers] = useState<UserType[]>([]);
+  const skills = ["React", "Python", "JavaScript", "Node.js", "UI/UX", "Data Science"];
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    axios
-      .get("http://localhost:5000/api/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log("Fetched users:", res.data); // 🔍 Console log added here
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/user/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setUsers(res.data);
-      })
-      .catch((err) => console.error("Error fetching users:", err));
+        console.log("Fetched users:", res.data);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    };
+    fetchUsers();
   }, []);
 
   const filteredUsers = users.filter((user) => {
     const nameMatch =
-      searchTerm.trim() === "" ||
-      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
+      !searchTerm ||
+      user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
     const skillMatch =
       selectedSkill === "" ||
-      (Array.isArray(user.skills) && user.skills.includes(selectedSkill));
-
+      (user.skills?.includes(selectedSkill));
     return nameMatch && skillMatch;
   });
 
   const toggleBookmark = (userId: string) => {
-    const newBookmarked = new Set(bookmarkedUsers);
-    if (newBookmarked.has(userId)) {
-      newBookmarked.delete(userId);
-    } else {
-      newBookmarked.add(userId);
-      incrementAnalytics(userId, "profileBookmark");
+    const newSet = new Set(bookmarkedUsers);
+    if (newSet.has(userId)) newSet.delete(userId);
+    else {
+      newSet.add(userId);
+      axios.post(`http://localhost:5000/api/user/analytics/${userId}`, { type: "profileBookmark" }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }).catch(console.error);
     }
-    setBookmarkedUsers(newBookmarked);
+    setBookmarkedUsers(newSet);
   };
 
-  const handleContactCandidate = (user: any) => {
+  const handleContactCandidate = (user: UserType) => {
     setSelectedContact({
       name: user.fullName,
       email: user.email,
@@ -115,298 +109,88 @@ const Users = () => {
     setContactModalOpen(true);
   };
 
-  const ProfileModal = ({ user }: { user: any }) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          className="flex-1 bg-blue-600 hover:bg-blue-700"
-          onClick={() => incrementAnalytics(user._id, "profileView")}
-        >
-          View Profile
-        </Button>
-      </DialogTrigger>
-
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <User className="w-5 h-5 mr-2" />
-            {user.fullName}'s Complete Profile
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="flex items-center space-x-6 p-6 bg-blue-50 rounded-lg">
-            <img
-              src={user.avatar || "https://i.pravatar.cc/150?img=10"}
-              alt={user.fullName}
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-            />
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {user.fullName}
-              </h2>
-              <p className="text-xl text-blue-600 font-medium">{user.role}</p>
-              <div className="flex items-center text-gray-600 mt-2">
-                <Location className="w-4 h-4 mr-2" />
-                {user.location || "N/A"}
-              </div>
-              <div className="flex items-center text-gray-600 mt-1">
-                <Briefcase className="w-4 h-4 mr-2" />
-                {user.experience || "N/A"}
-              </div>
-            </div>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg mb-3">About</h3>
-            <p className="text-gray-600 leading-relaxed">
-              {user.about || "No description provided."}
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg mb-3">Skills & Expertise</h3>
-            <div className="flex flex-wrap gap-2">
-              {user.skills?.map((skill: string, idx: number) => (
-                <Badge
-                  key={idx}
-                  variant="secondary"
-                  className="bg-blue-100 text-blue-700"
-                >
-                  {skill}
-                </Badge>
-              )) || "No skills listed."}
-            </div>
-          </div>
-          <div className="flex gap-4 pt-4 border-t">
-            <Button
-              onClick={() => handleContactCandidate(user)}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-            >
-              <Mail className="w-4 h-4 mr-2" />
-              Contact Candidate
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-
-  const PitchModal = ({ user }: { user: any }) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-blue-600 border-blue-600 hover:bg-blue-50"
-          onClick={() => incrementAnalytics(user._id, "pitchView")}
-        >
-          <Play className="w-4 h-4 mr-1" />
-          View Pitch
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <User className="w-5 h-5 mr-2" />
-            {user.fullName}'s Elevator Pitch
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          {user.videoUrl ? (
-            <div className="aspect-video">
-              <iframe
-                src={user.videoUrl}
-                title={`${user.fullName} Pitch`}
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                className="w-full h-full rounded-lg"
-              />
-            </div>
-          ) : (
-            <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
-              <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium text-white">
-                No pitch video uploaded
-              </p>
-            </div>
-          )}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold mb-2">About this pitch:</h4>
-            <p className="text-gray-600 text-sm">
-              {user.pitch || "No pitch description provided."}
-            </p>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-
-  const AvatarChatModal = ({ user }: { user: any }) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-green-600 border-green-600 hover:bg-green-50"
-        >
-          <MessageSquare className="w-4 h-4 mr-1" />
-          Chat with Avatar
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <MessageSquare className="w-5 h-5 mr-2" />
-            Chat with {user.fullName}'s Avatar
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
-            <img
-              src={user.avatar || "https://i.pravatar.cc/150?img=10"}
-              alt={user.fullName}
-              className="w-16 h-16 rounded-full object-cover"
-            />
-            <div>
-              <h4 className="font-semibold">{user.fullName}</h4>
-              <p className="text-sm text-gray-600">{user.role}</p>
-              <p className="text-xs text-blue-600">
-                AI Avatar - Ready to answer your questions
-              </p>
-            </div>
-          </div>
-          <div className="h-64 border rounded-lg p-4 bg-gray-50">
-            <div className="text-center text-gray-500 mt-20">
-              <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-sm">
-                Start a conversation with {user.fullName}'s AI avatar
-              </p>
-              <p className="text-xs">
-                Ask about their skills, experience, or project interests
-              </p>
-            </div>
-          </div>
-          <div className="flex space-x-2">
-            <Input
-              placeholder="Ask about their experience with React..."
-              className="flex-1"
-            />
-            <Button className="bg-blue-600 hover:bg-blue-700">Send</Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+    <div className="min-h-screen bg-indigo-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Discover Talent
           </h1>
-          <p className="text-gray-600 text-lg">
-            Connect with {users.length}+ professionals ready for new
-            opportunities
+          <p className="text-lg text-gray-600 mt-2">
+            Connect with {users.length}+ professionals
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="Search professionals by name, role, or skills"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex gap-2 flex-wrap">
+
+        <div className="bg-white rounded-xl shadow p-6 mb-8 flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              placeholder="Search by name or skills"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant={!selectedSkill ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedSkill("")}
+            >
+              All Skills
+            </Button>
+            {skills.map((skill) => (
               <Button
-                variant={selectedSkill === "" ? "default" : "outline"}
-                onClick={() => setSelectedSkill("")}
+                key={skill}
+                variant={selectedSkill === skill ? "default" : "outline"}
                 size="sm"
-                className={
-                  selectedSkill === ""
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "border-blue-200 text-blue-600 hover:bg-blue-50"
-                }
+                onClick={() => setSelectedSkill(skill)}
               >
-                All Skills
+                {skill}
               </Button>
-              {skills.map((skill) => (
-                <Button
-                  key={skill}
-                  variant={selectedSkill === skill ? "default" : "outline"}
-                  onClick={() => setSelectedSkill(skill)}
-                  size="sm"
-                  className={
-                    selectedSkill === skill
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "border-blue-200 text-blue-600 hover:bg-blue-50"
-                  }
-                >
-                  {skill}
-                </Button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map((user, index) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredUsers.map((user, idx) => (
             <motion.div
               key={user._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: idx * 0.1 }}
             >
-              <Card className="h-full border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
-                <CardContent className="p-6">
+              <Card className="bg-white hover:shadow-lg transition">
+                <CardContent>
                   <div className="flex items-center mb-4">
                     <img
-                      src={user.avatar || "https://i.pravatar.cc/150?img=10"}
+                      src={user.avatar || "https://i.pravatar.cc/150?img=54"}
                       alt={user.fullName}
-                      className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-blue-100"
+                      className="w-16 h-16 rounded-full mr-4 border-2 border-blue-100"
                     />
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {user.fullName}
-                      </h3>
-                      <p className="text-blue-600 font-medium">{user.role}</p>
-                      <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {user.location || "N/A"}
+                    <div>
+                      <h3 className="text-lg font-semibold">{user.fullName}</h3>
+                      <p className="text-blue-600">{user.role}</p>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <MapPin className="w-4 h-4 mr-1" /> {user.location || "N/A"}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center text-sm text-gray-600 mb-4">
                     <Briefcase className="w-4 h-4 mr-2" />
-                    {user.experience || "N/A"}
+                    {user.experience?.length
+                      ? user.experience[0].position
+                      : "N/A"}
                   </div>
 
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-1">
-                      {user.skills
-                        ?.slice(0, 3)
-                        .map((skill: string, idx: number) => (
-                          <Badge
-                            key={idx}
-                            variant="secondary"
-                            className="text-xs bg-blue-100 text-blue-700 border-blue-200"
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
-                      {user.skills?.length > 3 && (
-                        <Badge
-                          variant="outline"
-                          className="text-xs border-blue-200 text-blue-600"
-                        >
-                          +{user.skills.length - 3}
-                        </Badge>
-                      )}
-                    </div>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {user.skills?.slice(0, 3).map((s) => (
+                      <Badge key={s}>{s}</Badge>
+                    ))}
+                    {user.skills && user.skills.length > 3 && (
+                      <Badge variant="outline">+{user.skills.length - 3}</Badge>
+                    )}
                   </div>
 
                   <p className="text-sm text-gray-600 line-clamp-2 mb-4">
@@ -415,16 +199,86 @@ const Users = () => {
 
                   <div className="space-y-2">
                     <div className="flex gap-2">
-                      <ProfileModal user={user} />
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" onClick={() =>
+                            axios.post(
+                              `http://localhost:5000/api/user/analytics/${user._id}`,
+                              { type: "profileView" },
+                              { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                            )
+                          }>
+                            <User className="w-4 h-4 mr-1" /> View Profile
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center">
+                              <User className="w-5 h-5 mr-2" /> {user.fullName}'s Profile
+                            </DialogTitle>
+                          </DialogHeader>
+                          {/* Add profile details here */}
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-4">
+                              <img
+                                src={user.avatar || "https://i.pravatar.cc/150?img=54"}
+                                alt={user.fullName}
+                                className="w-20 h-20 rounded-full border-2 border-blue-100"
+                              />
+                              <div>
+                                <h3 className="text-xl font-semibold">{user.fullName}</h3>
+                                <p className="text-blue-600">{user.role}</p>
+                                <div className="flex items-center text-sm text-gray-500">
+                                  <MapPin className="w-4 h-4 mr-1" /> {user.location || "N/A"}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <h4 className="font-medium">About</h4>
+                              <p className="text-gray-600">{user.about || "No description provided."}</p>
+                            </div>
+
+                            <div className="space-y-2">
+                              <h4 className="font-medium">Skills</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {user.skills?.map((skill) => (
+                                  <Badge key={skill}>{skill}</Badge>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <h4 className="font-medium">Experience</h4>
+                              {user.experience?.map((exp) => (
+                                <div key={exp._id} className="border-l-2 border-gray-200 pl-4">
+                                  <div className="font-medium">{exp.position}</div>
+                                  <div className="text-sm text-gray-600">{exp.company}</div>
+                                  <div className="text-sm text-gray-500">{exp.duration}</div>
+                                  <p className="text-sm text-gray-600 mt-1">{exp.description}</p>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="flex gap-2 pt-4">
+                              <Button onClick={() => handleContactCandidate(user)}>
+                                <Mail className="w-4 h-4 mr-2" />
+                                Contact
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => toggleBookmark(user._id)}
-                        className={`${
+                        className={
                           bookmarkedUsers.has(user._id)
                             ? "bg-yellow-100 border-yellow-300 text-yellow-600"
-                            : "border-gray-200 text-gray-400 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-500"
-                        }`}
+                            : "border-gray-200 text-gray-400 hover:bg-yellow-50"
+                        }
                       >
                         <Star
                           className={`w-4 h-4 ${
@@ -434,8 +288,34 @@ const Users = () => {
                       </Button>
                     </div>
                     <div className="flex gap-2">
-                      <PitchModal user={user} />
-                      <AvatarChatModal user={user} />
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <Play className="w-4 h-4 mr-1" /> Watch Pitch
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Video Pitch</DialogTitle>
+                          </DialogHeader>
+                          <div className="aspect-video">
+                            {user.videoUrl ? (
+                              <iframe
+                                src={user.videoUrl}
+                                className="w-full h-full"
+                                allowFullScreen
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full bg-gray-100 text-gray-500">
+                                No pitch video available
+                              </div>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      <Button size="sm" variant="outline" onClick={() => handleContactCandidate(user)}>
+                        <MessageSquare className="w-4 h-4 mr-1" /> Chat
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -445,12 +325,10 @@ const Users = () => {
         </div>
 
         {filteredUsers.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No professionals found
-            </h3>
-            <p className="text-gray-600">Try adjusting your search criteria</p>
+            <h3 className="text-xl font-semibold">No professionals found</h3>
+            <p>Try adjusting your search criteria</p>
           </div>
         )}
       </div>

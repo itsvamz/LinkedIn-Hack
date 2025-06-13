@@ -16,37 +16,34 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// Update profile function
 exports.updateProfile = async (req, res) => {
-  const { 
-    fullName, phone, location, linkedin, github, 
-    leetcode, portfolio, skills, availability 
-  } = req.body;
-
   try {
+    // Only update fields that are provided in the request
     const updateData = {};
-    if (fullName) updateData.fullName = fullName;
-    if (phone) updateData.phone = phone;
-    if (location) updateData.location = location;
-    if (linkedin) updateData.linkedin = linkedin;
-    if (github) updateData.github = github;
-    if (leetcode) updateData.leetcode = leetcode;
-    if (portfolio) updateData.portfolio = portfolio;
-    if (skills) updateData.skills = skills;
-    if (availability) updateData.availability = availability;
+    
+    // Loop through request body and add fields to updateData
+    // This preserves empty fields if they're explicitly set to empty string
+    Object.keys(req.body).forEach(key => {
+      if (req.body[key] !== undefined) {
+        updateData[key] = req.body[key];
+      }
+    });
     
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      updateData,
-      { new: true }
+      { $set: updateData },
+      { new: true, runValidators: true }
     ).select("-password");
-
-    mixpanel.track("Profile Updated", {
-      distinct_id: req.user.id,
-    });
-
-    res.json({ msg: "Profile updated successfully", user });
+    
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    
+    res.json(user);
   } catch (err) {
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error(err.message);
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
@@ -495,5 +492,16 @@ exports.getUserById = async (req, res) => {
     res.json(user);
   } catch (err) {
     res.status(500).json({ msg: "Server error", error: err.message });
+  }
+};
+
+// Add this function to your userController.js file
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: "user" }).select("-password");
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: "Server error" });
   }
 };

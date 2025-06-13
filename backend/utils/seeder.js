@@ -24,6 +24,7 @@ const users = [
     github: "github.com/johndoe",
     leetcode: "leetcode.com/johndoe",
     portfolio: "johndoe.dev",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
     skills: ["React", "Node.js", "JavaScript", "TypeScript", "MongoDB", "Express", "Redux", "GraphQL"],
     availability: "Available immediately",
     education: [
@@ -76,6 +77,7 @@ const users = [
     email: "jane@example.com",
     password: "password123",
     role: "user",
+    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
     fullName: "Jane Smith",
     phone: "+1 (555) 234-5678",
     location: "New York, NY",
@@ -137,11 +139,13 @@ const users = [
     role: "user",
     fullName: "Alex Johnson",
     phone: "+1 (555) 345-6789",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
     location: "Seattle, WA",
     linkedin: "linkedin.com/in/alexjohnson",
     github: "github.com/alexjohnson",
     leetcode: "leetcode.com/alexjohnson",
     portfolio: "alexjohnson.tech",
+    about: "Backend engineer specializing in microservices architecture and cloud infrastructure. I've led the development of scalable, resilient systems at Microsoft using Java and Spring Boot. My expertise includes designing APIs, optimizing database performance, and implementing CI/CD pipelines. I'm passionate about building systems that can handle high traffic while maintaining reliability and security.",
     skills: ["Java", "Spring Boot", "Microservices", "Kubernetes", "Docker", "AWS", "CI/CD", "JUnit"],
     availability: "Available in 1 month",
     education: [
@@ -188,6 +192,7 @@ const users = [
     email: "priya@example.com",
     password: "password123",
     role: "user",
+    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
     fullName: "Priya Patel",
     phone: "+1 (555) 456-7890",
     location: "Austin, TX",
@@ -195,6 +200,7 @@ const users = [
     github: "github.com/priyapatel",
     leetcode: "leetcode.com/priyapatel",
     portfolio: "priyapatel.dev",
+    about: "UI/UX developer with a background in design and frontend engineering. I bridge the gap between design and development, creating beautiful, accessible interfaces that users love. My approach combines aesthetic sensibility with technical expertise in React and modern CSS frameworks. I'm particularly interested in design systems and component libraries that enable consistent user experiences across products.",
     skills: ["React", "Vue.js", "Angular", "JavaScript", "CSS", "SASS", "UI/UX", "Figma"],
     availability: "Available immediately",
     education: [
@@ -250,10 +256,12 @@ const users = [
     fullName: "David Wilson",
     phone: "+1 (555) 567-8901",
     location: "Chicago, IL",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
     linkedin: "linkedin.com/in/davidwilson",
     github: "github.com/davidwilson",
     leetcode: "leetcode.com/davidwilson",
     portfolio: "davidwilson.net",
+    about: "Game developer and graphics programmer with expertise in Unity and C++. I've worked on mobile games with millions of downloads and VR experiences that push the boundaries of immersion. My technical focus includes physics simulation, shader programming, and performance optimization for resource-constrained environments. I'm looking for opportunities to create innovative interactive experiences.",
     skills: ["C++", "C#", "Unity", "Game Development", "3D Modeling", "DirectX", "OpenGL", "Physics Simulation"],
     availability: "Available in 3 weeks",
     education: [
@@ -301,6 +309,239 @@ const users = [
     profileLikes: 27,
     profileBookmarks: 9,
     pitchViews: 73
+  },
+  {
+    email: "michael@example.com",
+    password: "password123",
+    role: "user",
+    fullName: "Michael Rodriguez",
+    phone: "+1 (555) 678-9012",
+    location: "Los Angeles, CA",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    linkedin: "linkedin.com/in/michaelrodriguez",
+    github: "github.com/michaelrodriguez",
+    leetcode: "leetcode.com/michaelrodriguez",
+    portfolio: "michaelrodriguez.dev",
+    about: "Mobile app developer specializing in cross-platform solutions with React Native and Flutter. I've shipped apps used by millions of users across iOS and Android platforms. My expertise includes state management, native module integration, and optimizing performance for mobile devices. I'm passionate about creating seamless mobile experiences that feel native on every platform.",
+    skills: ["React Native", "Flutter", "JavaScript", "Dart", "Redux", "Firebase", "iOS", "Android"],
+    availability: "Available in 2 weeks",
+    education: [
+      {
+        institution: "UCLA",
+        degree: "BS Computer Science",
+        year: "2016-2020",
+        gpa: "3.7"
+      }
+    ],
+    experience: [
+      {
+        company: "Mobile App Studio",
+        position: "Senior Mobile Developer",
+        duration: "2021-2023",
+        description: "Led development of cross-platform mobile applications using React Native. Implemented complex features and optimized app performance across devices."
+      },
+      {
+        company: "Tech Startup",
+        position: "Mobile Developer",
+        duration: "2020-2021",
+        description: "Developed and maintained mobile applications for iOS and Android. Collaborated with design team to implement responsive UI components."
+      }
+    ],
+    projects: [
+      {
+        name: "Fitness Tracking App",
+        tech: ["React Native", "Redux", "Firebase", "HealthKit", "Google Fit"],
+        description: "Built a cross-platform fitness app with workout tracking, progress visualization, and social features. Integrated with native health APIs."
+      },
+      {
+        name: "Food Delivery Platform",
+        tech: ["Flutter", "Dart", "Google Maps API", "Stripe"],
+        description: "Developed a food delivery app with real-time order tracking, payment processing, and restaurant discovery features."
+      }
+    ],
+    profileViews: 156,
+    profileClicks: 72,
+    profileLikes: 33,
+    profileBookmarks: 11,
+    pitchViews: 85
+  },
+  {
+    email: "sarah@example.com",
+    password: "password123",
+    role: "user",
+    fullName: "Sarah Kim",
+    phone: "+1 (555) 789-0123",
+    location: "Boston, MA",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    linkedin: "linkedin.com/in/sarahkim",
+    github: "github.com/sarahkim",
+    leetcode: "leetcode.com/sarahkim",
+    portfolio: "sarahkim.tech",
+    about: "DevOps engineer with a focus on cloud infrastructure and automation. I specialize in building robust CI/CD pipelines and managing containerized applications in Kubernetes environments. My experience includes migrating legacy systems to cloud-native architectures and implementing infrastructure as code practices. I'm passionate about creating reliable, scalable, and secure infrastructure that enables development teams to deliver faster.",
+    skills: ["AWS", "Kubernetes", "Docker", "Terraform", "Jenkins", "Python", "Bash", "Prometheus"],
+    availability: "Available in 1 month",
+    education: [
+      {
+        institution: "Boston University",
+        degree: "BS Computer Science",
+        year: "2017-2021",
+        gpa: "3.6"
+      }
+    ],
+    experience: [
+      {
+        company: "Cloud Solutions Inc.",
+        position: "DevOps Engineer",
+        duration: "2021-2023",
+        description: "Designed and implemented cloud infrastructure using AWS and Kubernetes. Automated deployment processes and established monitoring systems."
+      },
+      {
+        company: "Tech Enterprise",
+        position: "Systems Administrator",
+        duration: "2020-2021",
+        description: "Managed on-premises and cloud infrastructure. Implemented automation scripts and improved system reliability and security."
+      }
+    ],
+    projects: [
+      {
+        name: "Infrastructure as Code Framework",
+        tech: ["Terraform", "AWS", "Python", "GitHub Actions"],
+        description: "Developed a framework for managing cloud infrastructure as code, enabling consistent environment provisioning and configuration management."
+      },
+      {
+        name: "Kubernetes Monitoring Solution",
+        tech: ["Prometheus", "Grafana", "Kubernetes", "Helm"],
+        description: "Built a comprehensive monitoring and alerting solution for Kubernetes clusters, providing visibility into application and infrastructure metrics."
+      }
+    ],
+    profileViews: 142,
+    profileClicks: 65,
+    profileLikes: 29,
+    profileBookmarks: 10,
+    pitchViews: 78
+  },
+  {
+    email: "carlos@example.com",
+    password: "password123",
+    role: "user",
+    fullName: "Carlos Mendez",
+    phone: "+1 (555) 890-1234",
+    location: "Miami, FL",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    linkedin: "linkedin.com/in/carlosmendez",
+    github: "github.com/carlosmendez",
+    leetcode: "leetcode.com/carlosmendez",
+    portfolio: "carlosmendez.io",
+    about: "Cybersecurity specialist with expertise in application security and penetration testing. I help organizations identify and remediate security vulnerabilities before they can be exploited. My background includes securing financial applications, implementing secure authentication systems, and developing security awareness programs. I'm passionate about building security into the development lifecycle rather than treating it as an afterthought.",
+    skills: ["Penetration Testing", "OWASP", "Python", "Network Security", "Cryptography", "Security Auditing", "Secure Coding", "Threat Modeling"],
+    availability: "Available immediately",
+    education: [
+      {
+        institution: "University of Florida",
+        degree: "BS Computer Science",
+        year: "2016-2020",
+        gpa: "3.8"
+      },
+      {
+        institution: "SANS Institute",
+        degree: "Cybersecurity Certification",
+        year: "2021",
+        gpa: "4.0"
+      }
+    ],
+    experience: [
+      {
+        company: "Security Consultants LLC",
+        position: "Security Engineer",
+        duration: "2021-2023",
+        description: "Conducted security assessments and penetration tests for client applications. Identified vulnerabilities and provided remediation recommendations."
+      },
+      {
+        company: "Financial Tech Company",
+        position: "Application Security Analyst",
+        duration: "2020-2021",
+        description: "Implemented secure coding practices and performed security code reviews. Developed security testing automation for CI/CD pipeline."
+      }
+    ],
+    projects: [
+      {
+        name: "Automated Vulnerability Scanner",
+        tech: ["Python", "Docker", "OWASP ZAP", "REST APIs"],
+        description: "Built an automated tool for scanning web applications for security vulnerabilities, generating detailed reports with remediation guidance."
+      },
+      {
+        name: "Secure Authentication System",
+        tech: ["Node.js", "JWT", "OAuth", "Biometric Authentication"],
+        description: "Developed a multi-factor authentication system with support for various authentication methods and comprehensive audit logging."
+      }
+    ],
+    profileViews: 168,
+    profileClicks: 77,
+    profileLikes: 35,
+    profileBookmarks: 13,
+    pitchViews: 91
+  },
+  {
+    email: "emma@example.com",
+    password: "password123",
+    role: "user",
+    fullName: "Emma Wilson",
+    phone: "+1 (555) 901-2345",
+    location: "Portland, OR",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    linkedin: "linkedin.com/in/emmawilson",
+    github: "github.com/emmawilson",
+    leetcode: "leetcode.com/emmawilson",
+    portfolio: "emmawilson.dev",
+    about: "Blockchain developer and smart contract engineer with a passion for decentralized applications. I've built DeFi protocols, NFT marketplaces, and DAO governance systems on Ethereum and other chains. My expertise includes Solidity development, security auditing of smart contracts, and integrating blockchain functionality into web applications. I'm excited about the potential of Web3 to create more transparent and equitable systems.",
+    skills: ["Solidity", "Ethereum", "Web3.js", "Smart Contracts", "DeFi", "React", "Node.js", "Hardhat"],
+    availability: "Available in 2 weeks",
+    education: [
+      {
+        institution: "Oregon State University",
+        degree: "BS Computer Science",
+        year: "2017-2021",
+        gpa: "3.9"
+      },
+      {
+        institution: "Blockchain Academy",
+        degree: "Blockchain Development Certification",
+        year: "2021",
+        gpa: "4.0"
+      }
+    ],
+    experience: [
+      {
+        company: "Blockchain Startup",
+        position: "Smart Contract Developer",
+        duration: "2021-2023",
+        description: "Developed and audited smart contracts for DeFi protocols. Implemented token standards and created secure, gas-efficient contracts."
+      },
+      {
+        company: "Web3 Agency",
+        position: "Blockchain Engineer",
+        duration: "2020-2021",
+        description: "Built decentralized applications with React and Ethereum. Integrated wallet connections and implemented on-chain interactions."
+      }
+    ],
+    projects: [
+      {
+        name: "NFT Marketplace",
+        tech: ["Solidity", "React", "IPFS", "Ethers.js"],
+        description: "Created a marketplace for digital collectibles with support for minting, buying, selling, and auctioning NFTs with royalty payments to creators."
+      },
+      {
+        name: "DAO Governance Platform",
+        tech: ["Solidity", "The Graph", "React", "TypeScript"],
+        description: "Built a decentralized governance platform allowing token holders to create and vote on proposals with automatic execution of passed proposals."
+      }
+    ],
+    profileViews: 175,
+    profileClicks: 83,
+    profileLikes: 38,
+    profileBookmarks: 16,
+    pitchViews: 97,
+    avatar: "https://randomuser.me/api/portraits/women/33.jpg"
   }
 ];
 
@@ -430,9 +671,60 @@ const recruiters = [
       background: "coworking-space",
       color: "coral"
     }
+  },
+  {
+    email: "james@techtalent.com",
+    password: "password123",
+    role: "recruiter",
+    fullName: "James Wilson",
+    phone: "+1 (555) 987-6543",
+    location: "Chicago, IL",
+    linkedin: "linkedin.com/in/jameswilson",
+    portfolio: "jameswilson-recruiting.com",
+    company: "Tech Talent Solutions",
+    position: "Technical Recruiting Manager",
+    industry: ["AI", "Machine Learning", "Data Science", "Robotics"],
+    about: "Specialized in recruiting for AI and machine learning roles. Former data scientist with deep technical knowledge of the field and connections to top AI talent worldwide.",
+    profileViews: 189,
+    responseRate: 91,
+    avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+    avatarSettings: {
+      hair: "short",
+      face: "round",
+      outfit: "business",
+      accessories: "glasses",
+      background: "modern-office",
+      color: "blue"
+    }
+  },
+  {
+    email: "maria@healthrecruit.com",
+    password: "password123",
+    role: "recruiter",
+    fullName: "Maria Rodriguez",
+    phone: "+1 (555) 765-4321",
+    location: "Boston, MA",
+    linkedin: "linkedin.com/in/mariarodriguez",
+    portfolio: "mariarodriguez-recruiting.net",
+    company: "HealthTech Recruiters",
+    position: "Senior Healthcare Recruiter",
+    industry: ["Healthcare", "Biotech", "Medical Devices", "Pharmaceuticals"],
+    about: "Specialized in recruiting for healthcare technology roles. Deep understanding of the healthcare industry and regulatory requirements. Passionate about connecting talent with companies making a difference in patient care.",
+    profileViews: 167,
+    responseRate: 88,
+    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
+    avatarSettings: {
+      hair: "long",
+      face: "heart",
+      outfit: "professional",
+      accessories: "earrings",
+      background: "hospital",
+      color: "teal"
+    }
   }
 ];
 
+// Update the pitches creation in the seedDatabase function
 const seedDatabase = async () => {
   try {
     // Connect to database
@@ -666,6 +958,234 @@ const seedDatabase = async () => {
         postedBy: createdRecruiters[4]._id,
         views: 298,
         applications: 22
+      },
+      {
+        title: "Backend Engineer",
+        company: "FinTech Solutions",
+        location: "Chicago, IL",
+        type: "Full-time",
+        salary: "$115k - $145k",
+        description: "Join our backend team to build scalable financial services APIs and microservices. You'll be working on high-throughput systems that process millions of transactions daily.",
+        requirements: [
+          "4+ years of backend development experience",
+          "Strong knowledge of Java or Kotlin",
+          "Experience with Spring Boot framework",
+          "Familiarity with relational databases and SQL",
+          "Understanding of microservices architecture",
+          "Knowledge of financial services a plus"
+        ],
+        responsibilities: [
+          "Design and implement RESTful APIs",
+          "Build scalable microservices",
+          "Optimize database queries and performance",
+          "Implement security best practices",
+          "Write comprehensive unit and integration tests",
+          "Participate in code reviews and architectural discussions"
+        ],
+        skills: ["Java", "Spring Boot", "Microservices", "PostgreSQL", "Kafka", "Docker", "JUnit", "CI/CD"],
+        benefits: [
+          "Competitive salary",
+          "Health and dental insurance",
+          "401(k) with company match",
+          "Flexible work arrangements",
+          "Professional development budget",
+          "Paid time off",
+          "Parental leave"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[0]._id,
+        views: 289,
+        applications: 21
+      },
+      {
+        title: "Data Engineer",
+        company: "Analytics Pro",
+        location: "Remote",
+        type: "Full-time",
+        salary: "$125k - $155k",
+        description: "We're looking for a Data Engineer to help build and maintain our data infrastructure. You'll work on ETL pipelines, data warehousing, and analytics platforms to enable data-driven decision making.",
+        requirements: [
+          "3+ years of data engineering experience",
+          "Proficiency with Python and SQL",
+          "Experience with data processing frameworks (Spark, Hadoop)",
+          "Knowledge of cloud data services (AWS Redshift, Snowflake, BigQuery)",
+          "Understanding of data modeling and warehouse design",
+          "Familiarity with BI tools (Tableau, Power BI, Looker)"
+        ],
+        responsibilities: [
+          "Design and implement ETL pipelines",
+          "Build and maintain data warehouses",
+          "Optimize data models for analytics",
+          "Ensure data quality and integrity",
+          "Collaborate with data scientists and analysts",
+          "Implement data governance practices"
+        ],
+        skills: ["Python", "SQL", "Spark", "AWS", "Airflow", "Snowflake", "dbt", "Terraform"],
+        benefits: [
+          "Competitive salary",
+          "Remote-first culture",
+          "Health and wellness benefits",
+          "Flexible working hours",
+          "Learning and development stipend",
+          "Home office allowance",
+          "Regular team retreats"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[1]._id,
+        views: 267,
+        applications: 19
+      },
+      {
+        title: "Cloud Security Architect",
+        company: "SecureCloud Inc.",
+        location: "Washington, DC",
+        type: "Full-time",
+        salary: "$140k - $180k",
+        description: "We're seeking a Cloud Security Architect to design and implement secure cloud infrastructure for government and enterprise clients. You'll be responsible for ensuring our cloud solutions meet the highest security standards.",
+        requirements: [
+          "5+ years of experience in cloud security",
+          "AWS, Azure, or GCP security certifications",
+          "Knowledge of security frameworks (NIST, ISO 27001)",
+          "Experience with infrastructure as code",
+          "Understanding of network security principles",
+          "Background in security assessment and compliance"
+        ],
+        responsibilities: [
+          "Design secure cloud architectures",
+          "Implement security controls and guardrails",
+          "Conduct security assessments and audits",
+          "Develop security policies and procedures",
+          "Respond to security incidents",
+          "Advise on compliance requirements"
+        ],
+        skills: ["AWS", "Azure", "Security", "Terraform", "IAM", "Compliance", "SIEM", "Penetration Testing"],
+        benefits: [
+          "Top-tier compensation",
+          "Comprehensive benefits package",
+          "Security certification reimbursement",
+          "Flexible work arrangements",
+          "Professional development opportunities",
+          "Paid time off",
+          "Retirement plan with matching"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[2]._id,
+        views: 231,
+        applications: 15
+      },
+      {
+        title: "Machine Learning Engineer",
+        company: "AI Innovations",
+        location: "Boston, MA",
+        type: "Full-time",
+        salary: "$130k - $170k",
+        description: "Join our team of ML engineers building cutting-edge AI solutions for healthcare and life sciences. You'll work on developing and deploying machine learning models that help improve patient outcomes and accelerate drug discovery.",
+        requirements: [
+          "MS or PhD in Computer Science, Machine Learning, or related field",
+          "3+ years of experience in applied machine learning",
+          "Proficiency in Python and ML frameworks (TensorFlow, PyTorch)",
+          "Experience with data processing and feature engineering",
+          "Understanding of ML ops and model deployment",
+          "Knowledge of healthcare data a plus"
+        ],
+        responsibilities: [
+          "Develop and train machine learning models",
+          "Process and analyze large datasets",
+          "Implement ML pipelines for production",
+          "Collaborate with data scientists and domain experts",
+          "Evaluate and improve model performance",
+          "Stay current with ML research and techniques"
+        ],
+        skills: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "MLOps", "Docker", "Kubernetes", "SQL"],
+        benefits: [
+          "Competitive salary and equity",
+          "Health, dental, and vision insurance",
+          "Flexible work arrangements",
+          "Conference and education budget",
+          "Gym membership",
+          "Catered lunches",
+          "Relocation assistance"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[3]._id,
+        views: 312,
+        applications: 26
+      },
+      {
+        title: "Product Designer",
+        company: "User First Design",
+        location: "Portland, OR",
+        type: "Full-time",
+        salary: "$95k - $125k",
+        description: "We're looking for a Product Designer to join our team and help create beautiful, functional digital products. You'll work closely with product managers, engineers, and stakeholders to design user-centered experiences.",
+        requirements: [
+          "3+ years of product design experience",
+          "Strong portfolio demonstrating UX/UI skills",
+          "Proficiency in design tools (Figma, Sketch)",
+          "Experience with design systems",
+          "Understanding of user research methods",
+          "Excellent communication skills"
+        ],
+        responsibilities: [
+          "Create wireframes, prototypes, and high-fidelity designs",
+          "Conduct user research and usability testing",
+          "Develop and maintain design systems",
+          "Collaborate with cross-functional teams",
+          "Present design concepts to stakeholders",
+          "Iterate based on feedback and data"
+        ],
+        skills: ["UI/UX", "Figma", "Design Systems", "Prototyping", "User Research", "Visual Design", "Interaction Design", "Accessibility"],
+        benefits: [
+          "Competitive salary",
+          "Health and wellness benefits",
+          "Flexible work schedule",
+          "Remote work options",
+          "Professional development budget",
+          "Creative team environment",
+          "Design conference stipend"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[4]._id,
+        views: 254,
+        applications: 18
+      },
+      {
+        title: "Blockchain Developer",
+        company: "Web3 Ventures",
+        location: "Miami, FL",
+        type: "Full-time",
+        salary: "$120k - $160k",
+        description: "Join our blockchain team to build decentralized applications and smart contracts. You'll be working on cutting-edge Web3 technologies that are reshaping the future of finance and digital ownership.",
+        requirements: [
+          "2+ years of blockchain development experience",
+          "Proficiency in Solidity and Ethereum development",
+          "Experience with Web3.js or Ethers.js",
+          "Understanding of DeFi protocols and NFTs",
+          "Knowledge of blockchain security best practices",
+          "Background in full-stack development a plus"
+        ],
+        responsibilities: [
+          "Develop and audit smart contracts",
+          "Build decentralized application frontends",
+          "Integrate with blockchain networks and protocols",
+          "Implement wallet connections and authentication",
+          "Optimize gas usage and transaction costs",
+          "Research and implement new blockchain technologies"
+        ],
+        skills: ["Solidity", "Ethereum", "Web3.js", "React", "Smart Contracts", "DeFi", "NFTs", "Hardhat"],
+        benefits: [
+          "Competitive salary and token incentives",
+          "Flexible work location",
+          "Health insurance",
+          "Crypto conference budget",
+          "Continuous learning opportunities",
+          "Vibrant Web3 community",
+          "Hackathon participation"
+        ],
+        status: "Active",
+        postedBy: createdRecruiters[0]._id,
+        views: 278,
+        applications: 20
       }
     ];
     
@@ -675,8 +1195,24 @@ const seedDatabase = async () => {
     // Create avatars for users and recruiters
     const avatars = [];
     
+    // Create a set to track used indices
+    const usedIndices = new Set();
+    
+    // Function to get a unique random index
+    const getUniqueIndex = () => {
+      let index;
+      do {
+        index = Math.floor(Math.random() * 100);
+      } while (usedIndices.has(index));
+      usedIndices.add(index);
+      return index;
+    };
+    
     // User avatars
     for (const user of createdUsers) {
+      const gender = Math.random() > 0.5 ? 'men' : 'women';
+      const uniqueIndex = getUniqueIndex();
+      
       avatars.push({
         user: user._id,
         userModel: 'User',
@@ -688,12 +1224,15 @@ const seedDatabase = async () => {
           background: ['office', 'outdoor', 'gradient', 'tech'][Math.floor(Math.random() * 4)],
           color: ['blue', 'green', 'purple', 'orange', 'teal'][Math.floor(Math.random() * 5)]
         },
-        imageUrl: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
+        imageUrl: `https://randomuser.me/api/portraits/${gender}/${uniqueIndex}.jpg`
       });
     }
     
     // Recruiter avatars
     for (const recruiter of createdRecruiters) {
+      const gender = Math.random() > 0.5 ? 'men' : 'women';
+      const uniqueIndex = getUniqueIndex();
+      
       avatars.push({
         user: recruiter._id,
         userModel: 'Recruiter',
@@ -705,7 +1244,7 @@ const seedDatabase = async () => {
           background: ['office', 'corporate', 'gradient', 'modern'][Math.floor(Math.random() * 4)],
           color: ['blue', 'navy', 'gray', 'maroon', 'teal'][Math.floor(Math.random() * 5)]
         },
-        imageUrl: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
+        imageUrl: `https://randomuser.me/api/portraits/${gender}/${uniqueIndex}.jpg`
       });
     }
     

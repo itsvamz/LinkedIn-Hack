@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Trophy, TrendingUp, Eye, Heart, Award, Crown, Medal, Filter, User, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,80 +6,172 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useNavigate } from 'react-router-dom';
+// import { useAuthGuard } from '@/utils/authGuard';
+
+interface User {
+  _id: string;
+  fullName: string;
+  skills: string[];
+  profileViews: number;
+  profileLikes: number;
+  profileClicks: number;
+  profileBookmarks: number;
+  email: string;
+  phone?: string;
+  location?: string;
+  experience: { company: string; role: string; duration: string }[];
+  about?: string;
+}
+
+interface ProcessedUser {
+  rank: number;
+  id: string;
+  name: string;
+  title: string;
+  role: string;
+  avatar: string;
+  views: number;
+  likes: number;
+  engagement: number;
+  change: string;
+  badge: string | null;
+  email: string;
+  phone: string;
+  location: string;
+  experience: string;
+  skills: string[];
+  about: string;
+}
 
 const Leaderboard = () => {
   const [timeframe, setTimeframe] = useState<'week' | 'month' | 'all'>('month');
   const [category, setCategory] = useState<'views' | 'likes' | 'engagement'>('views');
   const [roleFilter, setRoleFilter] = useState<'all' | 'developer' | 'designer' | 'manager'>('all');
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<ProcessedUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/user/all", {
-          headers: { Authorization: `Bearer ${token}` },
+        const token = localStorage.getItem('token'); // Get the token from localStorage
+        
+        const response = await fetch('http://localhost:5000/api/user', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Add the token to the request headers
+          }
         });
         
-        // Transform the data to match the leaderboard format
-        const transformedData = res.data.map((user: any, index: number) => ({
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        
+        const data: User[] = await response.json();
+        
+        // Process the data to match the leaderboard format
+        const processedData = data.map((user, index) => ({
           rank: index + 1,
+          id: user._id,
           name: user.fullName,
-          title: user.role || 'Professional',
-          role: determineRole(user.role),
-          avatar: user.avatar || '/placeholder.svg',
-          views: user.analytics?.profileViews || Math.floor(Math.random() * 1000) + 500,
-          likes: user.analytics?.profileLikes || Math.floor(Math.random() * 100) + 50,
-          engagement: user.analytics?.engagement || Math.floor(Math.random() * 30) + 60,
-          change: '+' + (Math.floor(Math.random() * 20) + 1) + '%',
+          title: determineTitle(user.skills),
+          role: determineRole(user.skills),
+          avatar: '/placeholder.svg',
+          views: user.profileViews || 0,
+          likes: user.profileLikes || 0,
+          engagement: calculateEngagement(user),
+          change: '+5%', // Placeholder
           badge: determineBadge(index),
           email: user.email,
           phone: user.phone || 'Not provided',
           location: user.location || 'Not specified',
-          experience: user.experience?.length ? `${user.experience.length}+ years experience` : 'Experience not specified',
+          experience: determineExperience(user.experience),
           skills: user.skills || [],
-          about: user.about || 'No description provided.'
+          about: determineAbout(user)
         }));
         
-        // Sort by views (default)
-        const sortedData = transformedData.sort((a, b) => b.views - a.views);
-        setUsers(sortedData);
+        // Sort by the selected category
+        processedData.sort((a, b) => {
+          if (category === 'views') return b.views - a.views;
+          if (category === 'likes') return b.likes - a.likes;
+          return b.engagement - a.engagement;
+        });
+        
+        setUsers(processedData);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.error('Error fetching users:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
         setLoading(false);
       }
     };
     
     fetchUsers();
-  }, []);
+  }, [category]);
 
-  // Helper function to determine role category
-  const determineRole = (role: string) => {
-    if (!role) return 'all';
-    const lowerRole = role.toLowerCase();
-    if (lowerRole.includes('develop') || lowerRole.includes('engineer') || lowerRole.includes('program')) {
-      return 'developer';
-    } else if (lowerRole.includes('design')) {
+  // Helper functions
+  const determineTitle = (skills: string[]): string => {
+    if (!skills || skills.length === 0) return 'Professional';
+    
+    if (skills.some(s => ['React', 'Angular', 'Vue', 'JavaScript', 'TypeScript'].includes(s))) {
+      return 'Frontend Developer';
+    } else if (skills.some(s => ['Node.js', 'Java', 'Python', 'C#', '.NET', 'PHP'].includes(s))) {
+      return 'Backend Developer';
+    } else if (skills.some(s => ['UI', 'UX', 'Figma', 'Design'].includes(s))) {
+      return 'UX Designer';
+    } else if (skills.some(s => ['Product', 'Manager', 'Agile', 'Scrum'].includes(s))) {
+      return 'Product Manager';
+    } else if (skills.some(s => ['Data', 'Machine Learning', 'AI', 'Python', 'TensorFlow'].includes(s))) {
+      return 'Data Scientist';
+    }
+    
+    return 'Full Stack Developer';
+  };
+  
+  const determineRole = (skills: string[]): string => {
+    if (!skills || skills.length === 0) return 'developer';
+    
+    if (skills.some(s => ['UI', 'UX', 'Figma', 'Design'].includes(s))) {
       return 'designer';
-    } else if (lowerRole.includes('manager') || lowerRole.includes('director') || lowerRole.includes('lead')) {
+    } else if (skills.some(s => ['Product', 'Manager', 'Agile', 'Scrum'].includes(s))) {
       return 'manager';
     }
-    return 'all';
+    
+    return 'developer';
   };
-
-  // Helper function to assign badges
-  const determineBadge = (index: number) => {
+  
+  const calculateEngagement = (user: User): number => {
+    const views = user.profileViews || 0;
+    if (views === 0) return 0;
+    
+    const interactions = (user.profileLikes || 0) + (user.profileClicks || 0) + (user.profileBookmarks || 0);
+    return Math.min(Math.round((interactions / views) * 100), 100);
+  };
+  
+  const determineBadge = (index: number): string | null => {
     if (index === 0) return 'top-performer';
     if (index === 1) return 'rising-star';
     if (index === 2) return 'consistent';
     if (index === 4) return 'fast-climber';
     return null;
   };
+  
+  const determineExperience = (experience: { company: string; role: string; duration: string }[]): string => {
+    if (!experience || experience.length === 0) return 'Experience not specified';
+    return `${experience.length}+ years experience`;
+  };
+  
+  const determineAbout = (user: User): string => {
+    if (user.about) return user.about;
+    
+    const skills = user.skills ? user.skills.join(', ') : 'various technologies';
+    const experience = user.experience ? user.experience.length : 'several';
+    
+    return `Professional with experience in ${skills}. Has worked on ${experience} projects or roles.`;
+  };
 
-  // Replace leaderboardData with users
   const filteredData = users.filter(item => 
     roleFilter === 'all' || item.role === roleFilter
   );
@@ -99,7 +189,7 @@ const Leaderboard = () => {
     }
   };
 
-  const getBadgeColor = (badge: string | null) => {
+  const getBadgeColor = (badge: string | null): string => {
     switch (badge) {
       case 'top-performer':
         return 'bg-yellow-100 text-yellow-800';
@@ -114,11 +204,7 @@ const Leaderboard = () => {
     }
   };
 
-  const getCurrentValue = (item: {
-    views: number;
-    likes: number;
-    engagement: number;
-  }) => {
+  const getCurrentValue = (item: ProcessedUser): string => {
     switch (category) {
       case 'views':
         return item.views.toLocaleString();
@@ -131,30 +217,27 @@ const Leaderboard = () => {
     }
   };
 
-  const ProfileModal = ({ user }: { user: {
-    rank: number;
-    name: string;
-    title: string;
-    role: string;
-    avatar: string;
-    views: number;
-    likes: number;
-    engagement: number;
-    change: string;
-    badge: string | null;
-    email: string;
-    phone: string;
-    location: string;
-    experience: string;
-    skills: string[];
-    about: string;
-  }}) => (
+  const checkAuth = () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      navigate('/login');
+      return false;
+    }
+    return true;
+  };
+
+  const ProfileModal = ({ user }: { user: ProcessedUser }) => (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
           className="ml-4 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+          onClick={(e) => {
+            if (!checkAuth(() => {})) {
+              e.preventDefault(); // Prevent dialog from opening
+            }
+          }}
         >
           View Profile
         </Button>
@@ -256,6 +339,14 @@ const Leaderboard = () => {
     </Dialog>
   );
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -280,7 +371,7 @@ const Leaderboard = () => {
                   {['week', 'month', 'all'].map((option) => (
                     <button
                       key={option}
-                      onClick={() => setTimeframe(option as any)}
+                      onClick={() => setTimeframe(option as 'week' | 'month' | 'all')}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
                         timeframe === option
                           ? 'bg-white text-blue-700 shadow-sm'
@@ -310,7 +401,7 @@ const Leaderboard = () => {
                     return (
                       <button
                         key={option.key}
-                        onClick={() => setCategory(option.key as any)}
+                        onClick={() => setCategory(option.key as 'views' | 'likes' | 'engagement')}
                         className={`flex items-center px-3 py-1 rounded-md text-sm font-medium transition-all ${
                           category === option.key
                             ? 'bg-white text-blue-700 shadow-sm'
@@ -341,7 +432,7 @@ const Leaderboard = () => {
                   ].map((option) => (
                     <button
                       key={option.key}
-                      onClick={() => setRoleFilter(option.key as any)}
+                      onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'manager')}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
                         roleFilter === option.key
                           ? 'bg-white text-blue-700 shadow-sm'

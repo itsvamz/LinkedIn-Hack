@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   phone: { type: String },
   location: { type: String },
-  
+  avatar: { type: String },
   // Professional profiles
   linkedin: { type: String },
   github: { type: String },

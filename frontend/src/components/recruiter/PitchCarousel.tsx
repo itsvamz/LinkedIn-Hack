@@ -8,7 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { candidatesData } from '@/data/candidatesData';
+// Add this import
+import { useEffect } from 'react';
+import axios from 'axios';
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -18,15 +21,79 @@ interface PitchCarouselProps {
   onCandidateSelect: (candidate: any) => void;
 }
 
+// Remove this import as we'll fetch data from the API
+// import { candidatesData } from '@/data/candidatesData';
+
 const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [notes, setNotes] = useState<{[key: string]: string}>({});
   const [actions, setActions] = useState<{[key: string]: 'shortlist' | 'reject' | 'bookmark' | null}>({});
-  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set(candidatesData.map(c => c.id)));
+  const [candidates, setCandidates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/user/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        // Transform the data to match the expected format
+        const transformedData = res.data.map((user: any, index: number) => ({
+          id: user._id,
+          name: user.fullName,
+          role: user.role || 'Professional',
+          experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
+          avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
+          skills: user.skills || ['React', 'JavaScript'],
+          about: user.about || 'No description provided.',
+          email: user.email,
+          phone: user.phone || 'Not provided',
+          location: user.location || 'Remote'
+        }));
+        
+        setCandidates(transformedData);
+        // Initialize visible cards with all candidate IDs
+        setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
+        setLoading(false);
+        
+        // Select the first candidate if available
+        if (transformedData.length > 0) {
+          onCandidateSelect(transformedData[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching users:", err);
+        setLoading(false);
+      }
+    };
+    
+    fetchUsers();
+  }, [onCandidateSelect]);
+
+  // Replace this line
+  // const handleAction = (candidateId: number, action: 'shortlist' | 'reject' | 'bookmark') => {
+  //   setActions(prev => ({ ...prev, [candidateId]: action }));
+  //   // Replace candidatesData with candidates
+  //   onCandidateSelect(candidatesData[currentIndex]);
+    
+  //   if (action === 'reject') {
+  //     // Hide the card when rejected
+  //     setVisibleCards(prev => {
+  //       const newSet = new Set(prev);
+  //       newSet.delete(candidateId);
+  //       return newSet;
+  //     });
+  //   }
+  // };
+  
+  // With this updated version
   const handleAction = (candidateId: number, action: 'shortlist' | 'reject' | 'bookmark') => {
     setActions(prev => ({ ...prev, [candidateId]: action }));
-    onCandidateSelect(candidatesData[currentIndex]);
+    // Use candidates instead of candidatesData
+    onCandidateSelect(candidates[currentIndex]);
     
     if (action === 'reject') {
       // Hide the card when rejected
@@ -45,14 +112,16 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
   const handleSlideChange = (swiper: any) => {
     const activeIndex = swiper.activeIndex;
     setCurrentIndex(activeIndex);
-    const visibleCandidates = candidatesData.filter(c => visibleCards.has(c.id));
+    // Replace candidatesData with candidates
+    const visibleCandidates = candidates.filter(c => visibleCards.has(c.id));
     if (visibleCandidates[activeIndex]) {
       onCandidateSelect(visibleCandidates[activeIndex]);
     }
   };
 
   // Filter visible candidates
-  const visibleCandidates = candidatesData.filter(candidate => visibleCards.has(candidate.id));
+  // Replace candidatesData with candidates
+  const visibleCandidates = candidates.filter(candidate => visibleCards.has(candidate.id));
 
   // Mock availability data - in real app, this would come from the candidate data
   const getAvailabilityStatus = (candidateId: number) => {

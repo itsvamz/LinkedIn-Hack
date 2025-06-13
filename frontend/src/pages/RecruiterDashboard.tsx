@@ -22,7 +22,12 @@ const RecruiterDashboard = () => {
   const [messageModalOpen, setMessageModalOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<{
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+  } | null>(null);
 
   const handleResumeUpload = () => {
     resumeFileRef.current?.click();
@@ -76,12 +81,17 @@ const RecruiterDashboard = () => {
     setReplyModalOpen(true);
   };
 
-  const handleViewApplicantProfile = (applicant: any) => {
+  const handleViewApplicantProfile = (applicant: { id: number; name: string }) => {
     console.log('Viewing profile for:', applicant);
     // Handle profile view logic
   };
 
-  const handleInterviewApplicant = (applicant: any) => {
+  const handleInterviewApplicant = (applicant: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+  }) => {
     setSelectedCandidate(applicant);
     setInterviewModalOpen(true);
   };

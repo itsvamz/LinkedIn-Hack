@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const { getAllUsers } = require("../controllers/userController");
 const express = require("express");
 const router = express.Router();
 const {
@@ -17,11 +18,15 @@ const {
   getPublicProfile,
   getPublicPitch,
   getUserById,
+   // Add this import
 } = require("../controllers/userController");
+
+// Then add the route
+router.get("/all", getAllUsers);
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
-// Public routes
+// Public routes (no authentication required)
 router.get("/public/:id", getPublicProfile);
 router.get("/public/:id/pitch", getPublicPitch);
 router.post("/analytics/:id", incrementAnalytics);
@@ -29,10 +34,7 @@ router.post("/analytics/:id", incrementAnalytics);
 // Protected routes (require authentication)
 router.use(authMiddleware);
 
-// User-specific routes (require user role)
-router.use(roleMiddleware("user"));
-
-// Profile routes
+// User profile routes (protected)
 router.get("/profile", getProfile);
 router.put("/profile", updateProfile);
 router.post("/resume", uploadResume);

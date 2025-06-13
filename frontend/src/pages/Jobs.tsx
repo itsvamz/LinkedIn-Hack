@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Briefcase, Calendar, Users, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,63 +7,43 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Jobs = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock jobs data
-  const jobs = [
-    {
-      id: 1,
-      title: 'Senior Frontend Developer',
-      company: 'TechCorp Inc.',
-      location: 'San Francisco, CA',
-      type: 'Full-time',
-      salary: '$120k - $150k',
-      applicants: 24,
-      postedDate: '2024-01-15',
-      skills: ['React', 'TypeScript', 'Next.js'],
-      description: 'We are looking for a senior frontend developer to join our team...'
-    },
-    {
-      id: 2,
-      title: 'UX Designer',
-      company: 'DesignStudio',
-      location: 'Remote',
-      type: 'Contract',
-      salary: '$80k - $100k',
-      applicants: 18,
-      postedDate: '2024-01-12',
-      skills: ['Figma', 'UI/UX', 'Design Systems'],
-      description: 'Join our design team to create amazing user experiences...'
-    },
-    {
-      id: 3,
-      title: 'Data Scientist',
-      company: 'AI Solutions',
-      location: 'New York, NY',
-      type: 'Full-time',
-      salary: '$130k - $170k',
-      applicants: 31,
-      postedDate: '2024-01-10',
-      skills: ['Python', 'Machine Learning', 'TensorFlow'],
-      description: 'We need a data scientist to work on cutting-edge AI projects...'
-    }
-  ];
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        // Update the API endpoint to match the backend route
+        const response = await axios.get('http://localhost:5000/api/jobs');
+        setJobs(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const filteredJobs = jobs.filter(job => 
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+    job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleApplyJob = (jobId: number) => {
+  const handleApplyJob = (jobId) => {
     navigate('/job-application');
   };
 
-  const renderJobCard = (job: any) => (
-    <Card key={job.id} className="border-gray-200 hover:shadow-lg transition-all duration-300">
+  const renderJobCard = (job) => (
+    <Card key={job._id} className="border-gray-200 hover:shadow-lg transition-all duration-300">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
@@ -89,7 +69,7 @@ const Jobs = () => {
           </div>
           <div className="flex items-center">
             <Users className="w-4 h-4 mr-2" />
-            {job.applicants} applicants
+            {job.applicants?.length || 0} applicants
           </div>
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-2" />
@@ -100,7 +80,7 @@ const Jobs = () => {
         {/* Skills */}
         <div>
           <div className="flex flex-wrap gap-1">
-            {job.skills.map((skill: string, idx: number) => (
+            {job.skills?.map((skill, idx) => (
               <Badge key={idx} variant="outline" className="text-xs">
                 {skill}
               </Badge>
@@ -114,7 +94,7 @@ const Jobs = () => {
         {/* Apply Button */}
         <Button 
           className="w-full bg-blue-600 hover:bg-blue-700"
-          onClick={() => handleApplyJob(job.id)}
+          onClick={() => handleApplyJob(job._id)}
         >
           Apply Now
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -149,17 +129,20 @@ const Jobs = () => {
           </div>
         </div>
 
-        {/* Jobs Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredJobs.map(renderJobCard)}
-        </div>
-
-        {/* No Results */}
-        {filteredJobs.length === 0 && (
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading jobs...</p>
+          </div>
+        ) : filteredJobs.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">💼</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
             <p className="text-gray-600">Try adjusting your search criteria</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredJobs.map(renderJobCard)}
           </div>
         )}
       </div>
