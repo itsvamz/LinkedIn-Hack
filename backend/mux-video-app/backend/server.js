@@ -4,7 +4,11 @@ const axios = require("axios");
 const app = express();
 require("dotenv").config();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 const MUX_TOKEN_ID = process.env.MUX_TOKEN_ID;
 const MUX_SECRET = process.env.MUX_SECRET;
