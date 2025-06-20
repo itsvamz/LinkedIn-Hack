@@ -62,13 +62,12 @@ const Navbar = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name: string) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
-  };
 
   const handleProfileClick = () => {
     if (userProfile.role === "recruiter") {
@@ -114,33 +113,36 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            {userProfile.role === "recruiter" && (
+              <Link
+                to="/bookmarks"
+                className={`text-sm font-medium transition-colors ${
+                  isActive("/bookmarks")
+                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                    : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                }`}
+              >
+                Bookmarks
+              </Link>
+            )}
           </div>
 
-          {/* Auth Section with Google Translate and Dark Mode */}
+          {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Dark Mode Toggle */}
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleDarkMode}
               className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
             >
-              {isDarkMode ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
 
-            {/* Google Translate Dropdown */}
             <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <span className="flex items-center">
                 🌐 <span className="ml-1">Language:</span>
               </span>
-              <div
-                id="google_translate_element"
-                className="translate-dropdown"
-              />
+              <div id="google_translate_element" className="translate-dropdown" />
             </div>
 
             {isLoggedIn ? (
@@ -149,10 +151,7 @@ const Navbar = () => {
                   className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
                   onClick={handleProfileClick}
                 >
-                  <AvatarImage
-                    src={userProfile.avatar}
-                    alt={userProfile.name}
-                  />
+                  <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
                   <AvatarFallback className="bg-blue-600 text-white text-sm">
                     {getInitials(userProfile.name)}
                   </AvatarFallback>
@@ -168,10 +167,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button
-                    variant="ghost"
-                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                     <LogIn className="w-4 h-4 mr-2" />
                     Sign In
                   </Button>
@@ -191,11 +187,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 p-2"
             >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -223,8 +215,20 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
+              {userProfile.role === "recruiter" && (
+                <Link
+                  to="/bookmarks"
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive("/bookmarks")
+                      ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-md"
+                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+                  }`}
+                >
+                  Bookmarks
+                </Link>
+              )}
 
-              {/* Dark Mode Toggle in mobile */}
               <div className="px-3 py-2">
                 <Button
                   variant="ghost"
@@ -232,30 +236,21 @@ const Navbar = () => {
                   onClick={toggleDarkMode}
                   className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                 >
-                  {isDarkMode ? (
-                    <Sun className="w-4 h-4 mr-2" />
-                  ) : (
-                    <Moon className="w-4 h-4 mr-2" />
-                  )}
+                  {isDarkMode ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
                   {isDarkMode ? "Light Mode" : "Dark Mode"}
                 </Button>
               </div>
 
-              {/* Google Translate in mobile */}
               <div className="px-3 py-2">
                 <div id="google_translate_element" className="text-sm mb-2" />
               </div>
 
-              {/* Mobile Auth Section */}
               <div className="pt-2 space-y-2">
                 {isLoggedIn ? (
                   <>
                     <div className="flex items-center px-3 py-2">
                       <Avatar className="w-8 h-8 mr-3">
-                        <AvatarImage
-                          src={userProfile.avatar}
-                          alt={userProfile.name}
-                        />
+                        <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
                         <AvatarFallback className="bg-blue-600 text-white text-sm">
                           {getInitials(userProfile.name)}
                         </AvatarFallback>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mic, Play, Pause, RotateCcw, Wand2, Save, Video } from 'lucide-react';
+import { Wand2, RotateCcw, Save, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -18,17 +17,19 @@ const ElevatorPitch = () => {
     setVideoUrl('');
   };
 
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
   const handleGenerateVideo = () => {
-    // Simulate video generation
     setTimeout(() => {
-      setVideoUrl('https://www.w3schools.com/html/mov_bbb.mp4'); // Replace with actual video link from backend later
+      setVideoUrl('https://www.w3schools.com/html/mov_bbb.mp4'); // Placeholder, replace with real video
       setVideoGenerated(true);
     }, 1000);
   };
 
   return (
     <div className="space-y-6">
-
       {/* AI Pitch Box */}
       <Card className="border-violet-100">
         <CardHeader>
@@ -44,7 +45,7 @@ const ElevatorPitch = () => {
           {!aiPitchText ? (
             <Button
               onClick={handleGenerateAI}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
             >
               <Wand2 className="w-4 h-4 mr-2" />
               Generate with AI
@@ -57,10 +58,24 @@ const ElevatorPitch = () => {
                 readOnly={!isEditing}
                 className="w-full h-32 p-4 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
               />
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsEditing((prev) => !prev)}>
-                  ✏️ {isEditing ? 'Done Editing' : 'Edit'}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleEditToggle}
+                >
+                  {isEditing ? (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save
+                    </>
+                  ) : (
+                    <>
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Edit
+                    </>
+                  )}
                 </Button>
+
                 <Button
                   onClick={handleGenerateVideo}
                   className="bg-violet-600 text-white hover:bg-violet-700"
@@ -72,7 +87,6 @@ const ElevatorPitch = () => {
             </>
           )}
 
-          {/* Display generated video */}
           {videoGenerated && videoUrl && (
             <div className="mt-4">
               <video controls className="w-full rounded-lg shadow-md border">
@@ -84,8 +98,7 @@ const ElevatorPitch = () => {
         </CardContent>
       </Card>
 
-      {/* Keep your original pitch and recording UI below */}
-      {/* ...existing pitch text, record, playback, and tips sections here... */}
+      {/* Optionally, original recording/mic section can go below */}
     </div>
   );
 };
