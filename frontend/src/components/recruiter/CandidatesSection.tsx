@@ -62,7 +62,7 @@ const CandidatesSection = () => {
           </TabsList>
 
           <TabsContent value="carousel" className="mt-6">
-            <PitchCarousel onCandidateSelect={setSelectedCandidate} />
+            <PitchCarousel onCandidateSelect={setSelectedCandidate} isRecruiterDashboard={true} />
           </TabsContent>
 
           <TabsContent value="chat" className="mt-6">

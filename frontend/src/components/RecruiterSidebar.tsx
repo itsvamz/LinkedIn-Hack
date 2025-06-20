@@ -1,24 +1,26 @@
+// Replace the entire file with this updated version
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Video, FileText, BarChart3, Settings, LogOut, ArrowLeft, MessageSquare } from 'lucide-react';
+import { User, Video, FileText, BarChart3, Settings, LogOut, ArrowLeft, MessageSquare, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-interface UserSidebarProps {
+interface RecruiterSidebarProps {
   activeSection: string;
-  onSectionChange: (section: 'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings') => void;
-  userData?: any;
+  setActiveSection: (section: 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings') => void;
+  recruiterData?: any;
 }
 
-const UserSidebar: React.FC<UserSidebarProps> = ({ activeSection, onSectionChange, userData }) => {
+const RecruiterSidebar: React.FC<RecruiterSidebarProps> = ({ activeSection, setActiveSection, recruiterData }) => {
   // Menu items configuration
   const menuItems = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'avatar', label: 'Avatar', icon: Video },
-    { id: 'pitch', label: 'Pitch', icon: FileText },
+    { id: 'jobs', label: 'Jobs', icon: FileText },
+    { id: 'candidates', label: 'Candidates', icon: Users },
     { id: 'messaging', label: 'Messaging', icon: MessageSquare },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -27,8 +29,8 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ activeSection, onSectionChang
     window.location.href = '/';
   };
 
-  // Get user name from userData
-  const userName = userData?.fullName || "User";
+  // Get recruiter name from recruiterData
+  const recruiterName = recruiterData?.fullName || "Recruiter";
 
   return (
     <motion.aside
@@ -46,17 +48,17 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ activeSection, onSectionChang
           </span>
         </Link>
 
-        {/* User Profile at Top */}
+        {/* Recruiter Profile at Top */}
         <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
-            <AvatarImage src={userData?.avatar || "/placeholder.svg"} alt="Profile" />
+            <AvatarImage src={recruiterData?.avatar || "/placeholder.svg"} alt="Profile" />
             <AvatarFallback className="bg-blue-600 text-white">
-              {userName.split(" ").map(name => name[0]).join("").toUpperCase()}
+              {recruiterName.split(" ").map(name => name[0]).join("").toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-gray-900">{userName}</h3>
-            <p className="text-sm text-gray-600">Welcome, {userName.split(" ")[0]}!</p>
+            <h3 className="font-semibold text-gray-900">{recruiterName}</h3>
+            <p className="text-sm text-gray-600">Welcome, {recruiterName.split(" ")[0]}!</p>
           </div>
         </div>
 
@@ -69,7 +71,7 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ activeSection, onSectionChang
             return (
               <button
                 key={item.id}
-                onClick={() => onSectionChange(item.id as 'profile' | 'avatar' | 'pitch' | 'messaging' | 'analytics' | 'settings')}
+                onClick={() => setActiveSection(item.id as any)}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md'
@@ -99,4 +101,4 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ activeSection, onSectionChang
   );
 };
 
-export default UserSidebar;
+export default RecruiterSidebar;

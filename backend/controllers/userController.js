@@ -505,3 +505,62 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+
+// Avatar upload handler
+// Add this function to the exports
+exports.uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Create the URL for the uploaded file
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const avatarUrl = `${baseUrl}/uploads/avatars/${req.file.filename}`;
+
+    // Update the user's avatar field in the database
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { avatar: avatarUrl },
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Track the event in mixpanel
+    mixpanel.track("Avatar Updated", {
+      distinct_id: req.user.id,
+    });
+
+    res.json({ 
+      message: "Avatar uploaded successfully", 
+      avatarUrl: avatarUrl,
+      user: user
+    });
+  } catch (err) {
+    console.error("Error uploading avatar:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
+// Get avatar
+exports.getAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("avatar");
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    if (!user.avatar) {
+      return res.status(404).json({ error: "Avatar not found" });
+    }
+    
+    res.json({ avatarUrl: user.avatar });
+  } catch (err) {
+    console.error("Error getting avatar:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+};

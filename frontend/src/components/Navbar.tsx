@@ -113,7 +113,7 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
-            {userProfile.role === "recruiter" && (
+            {/* {userProfile.role === "recruiter" && (
               <Link
                 to="/bookmarks"
                 className={`text-sm font-medium transition-colors ${
@@ -124,7 +124,7 @@ const Navbar = () => {
               >
                 Bookmarks
               </Link>
-            )}
+            )} */}
           </div>
 
           {/* Auth Section */}

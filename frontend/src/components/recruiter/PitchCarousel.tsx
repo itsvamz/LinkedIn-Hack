@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, EffectCards } from 'swiper/modules';
 import { motion } from 'framer-motion';
@@ -8,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-// Add this import
-import { useEffect } from 'react';
 import axios from 'axios';
 
 import 'swiper/css';
@@ -19,30 +16,33 @@ import 'swiper/css/effect-cards';
 
 interface PitchCarouselProps {
   onCandidateSelect: (candidate: any) => void;
+  isRecruiterDashboard?: boolean;
 }
 
-// Remove this import as we'll fetch data from the API
-// import { candidatesData } from '@/data/candidatesData';
-
-const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
+const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecruiterDashboard }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [notes, setNotes] = useState<{[key: string]: string}>({});
   const [actions, setActions] = useState<{[key: string]: 'shortlist' | 'reject' | 'bookmark' | null}>({});
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
+  const [likes, setLikes] = useState<{[key: string]: number}>({});
+  const [bookmarks, setBookmarks] = useState<{[key: string]: boolean}>({});
+  const [userRole, setUserRole] = useState<string>("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
+        const role = localStorage.getItem("userRole");
+        setUserRole(role || "");
+
         const res = await axios.get("http://localhost:5000/api/user/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        // Transform the data to match the expected format
-        const transformedData = res.data.map((user: any, index: number) => ({
+        const transformedData = res.data.map((user: any) => ({
           id: user._id,
           name: user.fullName,
           role: user.role || 'Professional',
@@ -52,20 +52,39 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
           about: user.about || 'No description provided.',
           email: user.email,
           phone: user.phone || 'Not provided',
-          location: user.location || 'Remote'
+          location: user.location || 'Remote',
+          profileLikes: user.profileLikes || 0
         }));
         
         setCandidates(transformedData);
-        // Initialize visible cards with all candidate IDs
         setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
+        
+        // Initialize likes
+        const initialLikes: {[key: string]: number} = {};
+        transformedData.forEach((user: any) => {
+          initialLikes[user.id] = user.profileLikes || 0;
+        });
+        setLikes(initialLikes);
+
+        if (role === "recruiter") {
+          const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          const bookmarkedMap: {[key: string]: boolean} = {};
+          bookmarksRes.data.forEach((candidate: any) => {
+            bookmarkedMap[candidate._id] = true;
+          });
+          setBookmarks(bookmarkedMap);
+        }
+
         setLoading(false);
         
-        // Select the first candidate if available
         if (transformedData.length > 0) {
           onCandidateSelect(transformedData[0]);
         }
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.error("Error fetching data:", err);
         setLoading(false);
       }
     };
@@ -73,30 +92,11 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
     fetchUsers();
   }, [onCandidateSelect]);
 
-  // Replace this line
-  // const handleAction = (candidateId: number, action: 'shortlist' | 'reject' | 'bookmark') => {
-  //   setActions(prev => ({ ...prev, [candidateId]: action }));
-  //   // Replace candidatesData with candidates
-  //   onCandidateSelect(candidatesData[currentIndex]);
-    
-  //   if (action === 'reject') {
-  //     // Hide the card when rejected
-  //     setVisibleCards(prev => {
-  //       const newSet = new Set(prev);
-  //       newSet.delete(candidateId);
-  //       return newSet;
-  //     });
-  //   }
-  // };
-  
-  // With this updated version
-  const handleAction = (candidateId: number, action: 'shortlist' | 'reject' | 'bookmark') => {
+  const handleAction = (candidateId: string, action: 'shortlist' | 'reject' | 'bookmark') => {
     setActions(prev => ({ ...prev, [candidateId]: action }));
-    // Use candidates instead of candidatesData
     onCandidateSelect(candidates[currentIndex]);
     
     if (action === 'reject') {
-      // Hide the card when rejected
       setVisibleCards(prev => {
         const newSet = new Set(prev);
         newSet.delete(candidateId);
@@ -105,42 +105,67 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
     }
   };
 
-  const handleNoteChange = (candidateId: number, note: string) => {
+  const handleLike = async (candidateId: string) => {
+    try {
+      setLikes(prev => ({
+        ...prev,
+        [candidateId]: (prev[candidateId] || 0) + 1
+      }));
+
+      const token = localStorage.getItem("token");
+      await axios.post(`http://localhost:5000/api/user/analytics/${candidateId}`, {
+        action: 'like'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      console.error("Error liking profile:", error);
+      setLikes(prev => ({
+        ...prev,
+        [candidateId]: Math.max((prev[candidateId] || 0) - 1, 0)
+      }));
+    }
+  };
+
+  const handleBookmark = async (candidateId: string) => {
+    try {
+      setBookmarks(prev => ({
+        ...prev,
+        [candidateId]: !prev[candidateId]
+      }));
+
+      const token = localStorage.getItem("token");
+      await axios.post("http://localhost:5000/api/recruiter/bookmark", {
+        candidateId
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      console.error("Error bookmarking candidate:", error);
+      setBookmarks(prev => ({
+        ...prev,
+        [candidateId]: !prev[candidateId]
+      }));
+    }
+  };
+
+  const handleNoteChange = (candidateId: string, note: string) => {
     setNotes(prev => ({ ...prev, [candidateId]: note }));
   };
 
   const handleSlideChange = (swiper: any) => {
     const activeIndex = swiper.activeIndex;
     setCurrentIndex(activeIndex);
-    // Replace candidatesData with candidates
     const visibleCandidates = candidates.filter(c => visibleCards.has(c.id));
     if (visibleCandidates[activeIndex]) {
       onCandidateSelect(visibleCandidates[activeIndex]);
     }
   };
 
-  // Filter visible candidates
-  // Replace candidatesData with candidates
   const visibleCandidates = candidates.filter(candidate => visibleCards.has(candidate.id));
 
-  // Mock availability data - in real app, this would come from the candidate data
-  const getAvailabilityStatus = (candidateId: number) => {
-    const statuses = ['Immediately Available', 'Available in 2 weeks', 'Available in 1 month', 'Not Available'];
-    return statuses[candidateId % statuses.length];
-  };
-
-  const getAvailabilityColor = (status: string) => {
-    switch (status) {
-      case 'Immediately Available':
-        return 'bg-emerald-100 text-emerald-700';
-      case 'Available in 2 weeks':
-        return 'bg-blue-100 text-blue-700';
-      case 'Available in 1 month':
-        return 'bg-orange-100 text-orange-700';
-      default:
-        return 'bg-red-100 text-red-700';
-    }
-  };
+  // Rest of the component remains the same...
+  // (Keep all the existing JSX and helper functions)
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -205,9 +230,9 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
 
                         {/* Availability Status */}
                         <div className="mb-4">
-                          <Badge className={`${getAvailabilityColor(getAvailabilityStatus(candidate.id))} border-0`}>
+                          <Badge className="bg-green-100 text-green-700 border-0">
                             <Clock className="w-3 h-3 mr-1" />
-                            {getAvailabilityStatus(candidate.id)}
+                            {"Available Now"}
                           </Badge>
                         </div>
 
@@ -314,29 +339,11 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect }) => {
             </CardContent>
           </Card>
 
-          {/* Action History */}
-          <Card className="border-gray-200 shadow-lg">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Recent Actions</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center text-emerald-600">
-                  <Heart className="w-4 h-4 mr-2" />
-                  Shortlisted Sarah Johnson
-                </div>
-                <div className="flex items-center text-amber-600">
-                  <Bookmark className="w-4 h-4 mr-2" />
-                  Bookmarked Michael Chen
-                </div>
-                <div className="flex items-center text-red-600">
-                  <X className="w-4 h-4 mr-2" />
-                  Rejected David Park
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          
         </div>
       </div>
     </div>
+     
   );
 };
 

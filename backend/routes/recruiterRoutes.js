@@ -9,11 +9,17 @@ const {
   bookmarkCandidate,
   getBookmarkedCandidates,
   getAllRecruiters,
-  getProfile,  // Add these imports
-  updateProfile
+  getProfile,
+  updateProfile,
+  uploadAvatar,     // ✅ Add this
+  getAvatar         // ✅ And this
 } = require("../controllers/recruiterController");
+
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 // Public route - no auth required
 router.get("/all", getAllRecruiters);
@@ -39,5 +45,28 @@ router.get("/candidates", getCandidates);
 // Bookmark routes
 router.post("/bookmark", bookmarkCandidate);
 router.get("/bookmarked", getBookmarkedCandidates);
+
+// Configure multer storage for avatar uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, "../uploads/avatars");
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'avatar-' + uniqueSuffix + ext);
+  }
+});
+
+const avatarUpload = multer({ storage: storage });
+
+// Add this route before the module.exports line
+router.post("/avatar", authMiddleware, avatarUpload.single("avatar"), uploadAvatar);
+router.get("/avatar", authMiddleware, getAvatar);
 
 module.exports = router;

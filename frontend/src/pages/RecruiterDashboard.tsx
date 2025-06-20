@@ -96,18 +96,86 @@ const RecruiterDashboard = () => {
 
   const handleResumeFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      console.log('Resume uploaded:', file.name);
-      // Handle file upload logic here
-    }
+    if (!file) return;
+    
+    // Show loading state
+    setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+    
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    // Upload and parse the resume
+    axios.post("http://localhost:5000/api/parse-resume", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(response => {
+      console.log("Resume parsed:", response.data);
+      
+      // Update recruiter data with parsed information
+      setUserData(prev => ({
+        ...prev,
+        ...response.data.profileData,
+        education: response.data.education,
+        experience: response.data.experience,
+        skills: response.data.skills.join(", ") // Convert array to comma-separated string
+      }));
+      
+      setSaveMessage({ 
+        type: "success", 
+        text: "Resume parsed and profile updated successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error parsing resume:", error);
+      setSaveMessage({ 
+        type: "error", 
+        text: `Failed to parse resume: ${error.response?.data?.error?.message || error.message}` 
+      });
+    });
   };
 
+  // Replace the existing handleAvatarFileChange function with this one
   const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      console.log('Avatar image uploaded:', file.name);
-      // Handle file upload logic here
-    }
+    if (!file) return;
+    
+    // Show loading state
+    setSaveMessage({ type: "info", text: "Uploading avatar..." });
+    
+    const formData = new FormData();
+    formData.append("avatar", file);
+    
+    // Upload the avatar
+    axios.post("http://localhost:5000/api/recruiter/avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(response => {
+      console.log("Avatar uploaded:", response.data);
+      
+      // Update user data with new avatar URL
+      setUserData(prev => ({
+        ...prev,
+        avatar: response.data.avatarUrl
+      }));
+      
+      setSaveMessage({ 
+        type: "success", 
+        text: "Avatar updated successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error uploading avatar:", error);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to upload avatar. Please try again." 
+      });
+    });
   };
 
   const handleOverviewModeSelect = (mode: string) => {
@@ -357,17 +425,7 @@ const RecruiterDashboard = () => {
             className="hidden"
           />
 
-          {/* Previous Avatars */}
-          <div>
-            <h4 className="font-medium mb-3">Previous Avatars</h4>
-            <div className="grid grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-200">
-                  <Briefcase className="w-8 h-8 text-gray-400" />
-                </div>
-              ))}
-            </div>
-          </div>
+         
 
           <Button className="w-full bg-blue-600 hover:bg-blue-700">Generate New Avatar</Button>
         </div>

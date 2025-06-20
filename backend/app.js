@@ -4,21 +4,48 @@ const resumeParserRoute = require("./routes/resumeParser");
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const startPitchService = require('./startPitchService');
+const fs = require('fs');
+const path = require('path');
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 const app = express();
 connectDB();
 
+// Start the Elevator Pitch service
+const pitchService = startPitchService();
+
+// Gracefully shut down the pitch service when the Node.js process exits
+process.on('exit', () => {
+  if (pitchService) {
+    pitchService.kill();
+  }
+});
+
 // Remove the first generic cors() middleware and place the configured one here
+// CORS middleware is defined here
+// First apply CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:8080", // Updated to match your frontend origin
-    credentials: true, // allow cookies
+    origin: "http://localhost:8080",
+    credentials: true,
   })
 );
-app.use("/api", resumeParserRoute);
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Then register the resume parser route AFTER CORS is applied
+app.use("/api", resumeParserRoute);
+
+// Serve static files from the uploads directory
+// Add this line after the CORS middleware setup
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/recruiter", require("./routes/recruiterRoutes"));
