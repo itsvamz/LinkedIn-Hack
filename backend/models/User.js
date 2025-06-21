@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema({
     description: { type: String }
   }],
   
+  // Pitch and Video
+  pitch: { type: String },
+  videoUrl: { type: String },
+  
   // Analytics
   profileViews: { type: Number, default: 0 },
   profileClicks: { type: Number, default: 0 },

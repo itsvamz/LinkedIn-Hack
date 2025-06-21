@@ -41,10 +41,23 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Then register the resume parser route AFTER CORS is applied
-app.use("/api", resumeParserRoute);
+// Remove these lines
+// app.use('/api', resumeParserRoute);
+// const resumeParserRoutes = require('./routes/resumeParser');
+// app.use('/api/resume', resumeParserRoutes);
+
+// Replace with this single registration
+app.use('/api', resumeParserRoute);
 
 // Serve static files from the uploads directory
 // Add this line after the CORS middleware setup
+// Add this with your other route imports
+const resumeParserRoutes = require('./routes/resumeParser');
+
+// Add this with your other app.use statements
+app.use('/api/resume', resumeParserRoutes);
+
+// Make uploads directory accessible
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));

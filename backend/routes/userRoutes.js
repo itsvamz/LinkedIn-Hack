@@ -45,6 +45,7 @@ router.post("/resume", uploadResume);
 // Pitch
 router.post("/pitch", createPitch);
 router.put("/pitch", updatePitch);
+router.get("/pitch", getPitch);  // Add this line
 router.get("/analytics", getAnalytics);
 
 // Get user by ID

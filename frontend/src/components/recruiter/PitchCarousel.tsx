@@ -38,49 +38,86 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
         const role = localStorage.getItem("userRole");
         setUserRole(role || "");
 
-        const res = await axios.get("http://localhost:5000/api/user/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        const transformedData = res.data.map((user: any) => ({
-          id: user._id,
-          name: user.fullName,
-          role: user.role || 'Professional',
-          experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
-          avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
-          skills: user.skills || ['React', 'JavaScript'],
-          about: user.about || 'No description provided.',
-          email: user.email,
-          phone: user.phone || 'Not provided',
-          location: user.location || 'Remote',
-          profileLikes: user.profileLikes || 0
-        }));
-        
-        setCandidates(transformedData);
-        setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
-        
-        // Initialize likes
-        const initialLikes: {[key: string]: number} = {};
-        transformedData.forEach((user: any) => {
-          initialLikes[user.id] = user.profileLikes || 0;
-        });
-        setLikes(initialLikes);
-
-        if (role === "recruiter") {
+        // If we're on the recruiter dashboard, only fetch bookmarked candidates
+        if (isRecruiterDashboard && role === "recruiter") {
           const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
             headers: { Authorization: `Bearer ${token}` }
           });
           
+          const transformedData = bookmarksRes.data.map((user: any) => ({
+            id: user._id,
+            name: user.fullName,
+            role: user.role || 'Professional',
+            experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
+            avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
+            skills: user.skills || ['React', 'JavaScript'],
+            email: user.email,
+            phone: user.phone || 'Not provided',
+            location: user.location || 'Remote',
+            profileLikes: user.profileLikes || 0
+          }));
+          
+          setCandidates(transformedData);
+          setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
+          
+          // Initialize likes
+          const initialLikes: {[key: string]: number} = {};
+          transformedData.forEach((user: any) => {
+            initialLikes[user.id] = user.profileLikes || 0;
+          });
+          setLikes(initialLikes);
+          
+          // Set all candidates as bookmarked
           const bookmarkedMap: {[key: string]: boolean} = {};
-          bookmarksRes.data.forEach((candidate: any) => {
-            bookmarkedMap[candidate._id] = true;
+          transformedData.forEach((candidate: any) => {
+            bookmarkedMap[candidate.id] = true;
           });
           setBookmarks(bookmarkedMap);
+        } else {
+          // Original code for fetching all users
+          const res = await axios.get("http://localhost:5000/api/user/all", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          
+          const transformedData = res.data.map((user: any) => ({
+            id: user._id,
+            name: user.fullName,
+            role: user.role || 'Professional',
+            experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
+            avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
+            skills: user.skills || ['React', 'JavaScript'],
+            email: user.email,
+            phone: user.phone || 'Not provided',
+            location: user.location || 'Remote',
+            profileLikes: user.profileLikes || 0
+          }));
+          
+          setCandidates(transformedData);
+          setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
+          
+          // Initialize likes
+          const initialLikes: {[key: string]: number} = {};
+          transformedData.forEach((user: any) => {
+            initialLikes[user.id] = user.profileLikes || 0;
+          });
+          setLikes(initialLikes);
+
+          if (role === "recruiter") {
+            const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            const bookmarkedMap: {[key: string]: boolean} = {};
+            bookmarksRes.data.forEach((candidate: any) => {
+              bookmarkedMap[candidate._id] = true;
+            });
+            setBookmarks(bookmarkedMap);
+          }
         }
 
         setLoading(false);
         
-        if (transformedData.length > 0) {
+        if (transformedData && transformedData.length > 0) {
           onCandidateSelect(transformedData[0]);
         }
       } catch (err) {
@@ -90,7 +127,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
     };
     
     fetchUsers();
-  }, [onCandidateSelect]);
+  }, [onCandidateSelect, isRecruiterDashboard]);
 
   const handleAction = (candidateId: string, action: 'shortlist' | 'reject' | 'bookmark') => {
     setActions(prev => ({ ...prev, [candidateId]: action }));
@@ -111,10 +148,10 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
         ...prev,
         [candidateId]: (prev[candidateId] || 0) + 1
       }));
-
+  
       const token = localStorage.getItem("token");
       await axios.post(`http://localhost:5000/api/user/analytics/${candidateId}`, {
-        action: 'like'
+        type: 'profileLike'  // Changed from action: 'like' to match backend expectation
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -272,29 +309,6 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
                         <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">
                           {candidate.about}
                         </p>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="px-6 pb-6 mt-auto">
-                        <div className="flex gap-3">
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleAction(candidate.id, 'bookmark')}
-                            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                          >
-                            <Bookmark className="w-5 h-5 mx-auto" />
-                          </motion.button>
-                          
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleAction(candidate.id, 'shortlist')}
-                            className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                          >
-                            <Heart className="w-5 h-5 mx-auto" />
-                          </motion.button>
-                        </div>
                       </div>
                     </div>
                   </Card>

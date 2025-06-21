@@ -10,6 +10,8 @@ import {
   MessageSquare,
   User,
   Mail,
+  Heart,
+  Bookmark,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +53,7 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSkill, setSelectedSkill] = useState("");
   const [bookmarkedUsers, setBookmarkedUsers] = useState<Set<string>>(new Set());
+  const [likedUsers, setLikedUsers] = useState<Set<string>>(new Set());
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState({
     name: "",
@@ -59,6 +62,7 @@ const Users = () => {
     type: "candidate" as "candidate" | "recruiter",
   });
   const [users, setUsers] = useState<UserType[]>([]);
+  const [userRole, setUserRole] = useState("");
   const skills = ["React", "Python", "JavaScript", "Node.js", "UI/UX", "Data Science"];
 
   useEffect(() => {
@@ -74,6 +78,11 @@ const Users = () => {
         console.error("Error fetching users:", err);
       }
     };
+
+    // Get user role from localStorage or decode from token
+    const role = localStorage.getItem("userRole") || "candidate";
+    setUserRole(role);
+    
     fetchUsers();
   }, []);
 
@@ -99,6 +108,24 @@ const Users = () => {
     setBookmarkedUsers(newSet);
   };
 
+  const handleLike = (userId: string) => {
+    const newSet = new Set(likedUsers);
+    if (newSet.has(userId)) {
+      newSet.delete(userId);
+    } else {
+      newSet.add(userId);
+      // Optional: Send analytics for like action
+      axios.post(`http://localhost:5000/api/user/analytics/${userId}`, { type: "profileLike" }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }).catch(console.error);
+    }
+    setLikedUsers(newSet);
+  };
+
+  const handleBookmark = (userId: string) => {
+    toggleBookmark(userId);
+  };
+
   const handleContactCandidate = (user: UserType) => {
     setSelectedContact({
       name: user.fullName,
@@ -117,7 +144,7 @@ const Users = () => {
             Discover Talent
           </h1>
           <p className="text-lg text-gray-600 mt-2">
-            Connect with {users.length}+ professionals
+            Connect with Professionals
           </p>
         </div>
 
@@ -170,7 +197,11 @@ const Users = () => {
                     />
                     <div>
                       <h3 className="text-lg font-semibold">{user.fullName}</h3>
-                      <p className="text-blue-600">{user.role}</p>
+                      <p className="text-blue-600">
+                        {user.experience?.length
+                          ? user.experience[0].position
+                          : "Student"}
+                      </p>
                       <div className="flex items-center text-sm text-gray-500">
                         <MapPin className="w-4 h-4 mr-1" /> {user.location || "N/A"}
                       </div>
@@ -193,10 +224,6 @@ const Users = () => {
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">
-                    {user.about || "No description provided."}
-                  </p>
-
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <Dialog>
@@ -217,7 +244,6 @@ const Users = () => {
                               <User className="w-5 h-5 mr-2" /> {user.fullName}'s Profile
                             </DialogTitle>
                           </DialogHeader>
-                          {/* Add profile details here */}
                           <div className="space-y-4">
                             <div className="flex items-center gap-4">
                               <img
@@ -232,11 +258,6 @@ const Users = () => {
                                   <MapPin className="w-4 h-4 mr-1" /> {user.location || "N/A"}
                                 </div>
                               </div>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <h4 className="font-medium">About</h4>
-                              <p className="text-gray-600">{user.about || "No description provided."}</p>
                             </div>
 
                             <div className="space-y-2">
@@ -270,22 +291,33 @@ const Users = () => {
                         </DialogContent>
                       </Dialog>
 
+                      {/* Like Button */}
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => toggleBookmark(user._id)}
-                        className={
-                          bookmarkedUsers.has(user._id)
-                            ? "bg-yellow-100 border-yellow-300 text-yellow-600"
-                            : "border-gray-200 text-gray-400 hover:bg-yellow-50"
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(user._id);
+                        }}
+                        className={likedUsers.has(user._id) ? "bg-rose-100 border-rose-300 text-rose-600" : "border-gray-200 text-gray-400 hover:bg-rose-50"}
                       >
-                        <Star
-                          className={`w-4 h-4 ${
-                            bookmarkedUsers.has(user._id) ? "fill-current" : ""
-                          }`}
-                        />
+                        <Heart className={`w-4 h-4 ${likedUsers.has(user._id) ? "fill-current" : ""}`} />
                       </Button>
+
+                      {/* Bookmark Button - Only show for recruiters */}
+                      {userRole === "recruiter" && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBookmark(user._id);
+                          }}
+                          className={bookmarkedUsers.has(user._id) ? "bg-amber-100 border-amber-300 text-amber-600" : "border-gray-200 text-gray-400 hover:bg-amber-50"}
+                        >
+                          <Bookmark className={`w-4 h-4 ${bookmarkedUsers.has(user._id) ? "fill-current" : ""}`} />
+                        </Button>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <Dialog>
@@ -314,7 +346,7 @@ const Users = () => {
                         </DialogContent>
                       </Dialog>
                       <Button size="sm" variant="outline" onClick={() => handleContactCandidate(user)}>
-                        <MessageSquare className="w-4 h-4 mr-1" /> Chat
+                        <MessageSquare className="w-4 h-4 mr-1" /> Contact
                       </Button>
                     </div>
                   </div>

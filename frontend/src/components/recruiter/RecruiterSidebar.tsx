@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 interface RecruiterSidebarProps {
   activeSection: string;
   onSectionChange: (section: 'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings') => void;
+  recruiterData?: any; // Add this prop
 }
 
-const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarProps) => {
+const RecruiterSidebar = ({ activeSection, onSectionChange, recruiterData }: RecruiterSidebarProps) => {
   const menuItems = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'avatar', label: 'Avatar', icon: Video },
@@ -28,7 +29,8 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
   };
   
   // Get user name from localStorage
-  const userName = localStorage.getItem("userName") || "Recruiter";
+  // Use recruiterData for name if available, otherwise fallback to localStorage
+  const userName = recruiterData?.fullName || localStorage.getItem("userName") || "Recruiter";
   
   return (
     <motion.aside
@@ -51,7 +53,7 @@ const RecruiterSidebar = ({ activeSection, onSectionChange }: RecruiterSidebarPr
         {/* User Profile */}
         <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
-            <AvatarImage src="/placeholder.svg" alt="Profile" />
+            <AvatarImage src={recruiterData?.avatar || "/placeholder.svg"} alt="Profile" />
             <AvatarFallback className="bg-blue-600 text-white">
               {userName.split(" ").map(name => name[0]).join("").toUpperCase()}
             </AvatarFallback>

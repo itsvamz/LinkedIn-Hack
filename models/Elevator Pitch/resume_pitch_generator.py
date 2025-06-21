@@ -114,7 +114,7 @@ class ResumePitchGenerator:
                 pitch += "."
         
         # Closing
-        pitch += "\n\nI'm now eager to contribute to a forward-thinking organization where I can apply my expertise in software quality and testing excellence."
+        pitch += "\n\nI'm now eager to contribute to a forward-thinking organization where I can apply my skills and expertise to make a meaningful impact."
         
         return pitch
 

@@ -14,715 +14,341 @@ const connectDB = require("../config/db");
 // Sample data for users
 const users = [
   {
-    email: "john@example.com",
-    password: "password123",
+    email: "amit.verma@example.com",
+    password: "amitSecure2024",
     role: "user",
-    fullName: "John Doe",
-    phone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    linkedin: "linkedin.com/in/johndoe",
-    github: "github.com/johndoe",
-    leetcode: "leetcode.com/johndoe",
-    portfolio: "johndoe.dev",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    skills: ["React", "Node.js", "JavaScript", "TypeScript", "MongoDB", "Express", "Redux", "GraphQL"],
-    availability: "Available immediately",
+    fullName: "Amit Verma",
+    phone: "+91 98765 43210",
+    location: "Pune, Maharashtra, India",
+    avatar: "https://ik.imagekit.io/tpauozgxh/amit.png?updatedAt=1750491534480",
+    linkedin: "linkedin.com/in/amitverma-autosys",
+    github: "github.com/amitverma-dev",
+    leetcode: "leetcode.com/amitverma",
+    portfolio: "amitverma.tech",
+    skills: ["Python", "CAPL", "CANalyzer", "Node.js", "Data Science"],
     education: [
       {
-        institution: "Stanford University",
-        degree: "BS Computer Science",
-        year: "2018-2022",
-        gpa: "3.8"
+        institution: "Savitribai Phule Pune University",
+        degree: "BE Electronics and Communication Engineering",
+        year: "2009–2013",
+        gpa: "3.7"
       },
       {
-        institution: "Stanford University",
-        degree: "MS Computer Science",
-        year: "2022-2023",
-        gpa: "3.9"
+        institution: "ISTQB India Chapter",
+        degree: "ISTQB Foundation Certification",
+        year: "2014",
+        gpa: "Pass"
       }
     ],
     experience: [
       {
-        company: "Tech Startup",
-        position: "Frontend Developer",
-        duration: "2022-2023",
-        description: "Developed responsive web applications using React and TypeScript. Implemented state management with Redux and integrated RESTful APIs."
+        company: "Autotronix Solutions",
+        position: "Senior Systems Engineer",
+        duration: "2017–2023",
+        description: "Led testing and validation for body control modules in passenger vehicles. Worked extensively on CANalyzer, test automation using Python, and issue tracking in JIRA."
       },
       {
-        company: "Google",
-        position: "Software Engineering Intern",
-        duration: "Summer 2021",
-        description: "Worked on the Google Maps team to improve performance of location-based features. Reduced load times by 30% through code optimization."
+        company: "Infocar Systems",
+        position: "Embedded Systems Engineer",
+        duration: "2013–2017",
+        description: "Integrated hardware and software for real-time automotive systems. Supported in vehicle-level validation and diagnostics using CAN and LIN tools."
       }
     ],
     projects: [
       {
-        name: "E-commerce Platform",
-        tech: ["React", "Node.js", "MongoDB", "Express", "Stripe API"],
-        description: "Built a full-stack e-commerce platform with user authentication, product catalog, shopping cart, and payment processing using Stripe."
+        name: "In-Vehicle CAN Communication Validator",
+        tech: ["CANalyzer", "Python", "CAPL", "Excel VBA"],
+        description: "Developed validation scripts to test in-vehicle communication scenarios and perform automated report generation for automotive ECUs."
       },
       {
-        name: "Task Management App",
-        tech: ["React Native", "Firebase", "Redux"],
-        description: "Developed a cross-platform mobile app for task management with real-time updates, notifications, and team collaboration features."
+        name: "HIL Testing Framework",
+        tech: ["Python", "NI VeriStand", "Simulink", "dSPACE"],
+        description: "Built Hardware-in-the-Loop setups for testing embedded control units under real-time simulation environments."
       }
     ],
-    profileViews: 145,
+    profileViews: 139,
     profileClicks: 67,
-    profileLikes: 23,
-    profileBookmarks: 12,
-    pitchViews: 89
+    profileLikes: 24,
+    profileBookmarks: 10,
+    pitchViews: 82,
+    pitch: "Hi, I'm Amit Verma. I hold a Bachelor's degree in Electronics and Communication Engineering from Pune University, completed in 2013. I've worked as a Systems Engineer in the automotive domain for 9 years, focusing on embedded testing, hardware-software integration, and validation protocols. My key skills include CANalyzer, Python scripting, and real-time systems. I'm ISTQB Foundation certified and now keen to contribute to a technology-driven organization where precision engineering and quality assurance are core values.",
+    video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(1).mp4?updatedAt=1750483782541&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%281%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750483782541&updatedAt=1750483782541"
   },
   {
-    email: "jane@example.com",
-    password: "password123",
+    email: "shanti.priya@example.com",
+    password: "qaPriya2024",
     role: "user",
-    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-    fullName: "Jane Smith",
-    phone: "+1 (555) 234-5678",
-    location: "New York, NY",
-    linkedin: "linkedin.com/in/janesmith",
-    github: "github.com/janesmith",
-    leetcode: "leetcode.com/janesmith",
-    portfolio: "janesmith.io",
-    skills: ["Python", "Django", "Machine Learning", "SQL", "AWS", "TensorFlow", "Data Analysis", "Docker"],
-    availability: "Available in 2 weeks",
+    fullName: "Shanti Priya",
+    phone: "+91 98111 22334",
+    location: "New Delhi, India",
+    avatar: "https://ik.imagekit.io/tpauozgxh/Shanti.png?updatedAt=1750491471824",
+    linkedin: "linkedin.com/in/shantipriya-qa",
+    github: "github.com/shantipriya",
+    leetcode: "leetcode.com/shantipriya",
+    portfolio: "shantipriya.dev",
+    skills: ["Java", "Python", "Selenium", "JavaScript", "UI/UX"],
     education: [
       {
-        institution: "MIT",
-        degree: "MS Computer Science",
-        year: "2019-2021",
-        gpa: "3.9"
-      },
-      {
-        institution: "Cornell University",
-        degree: "BS Computer Science",
-        year: "2015-2019",
-        gpa: "3.7"
-      }
-    ],
-    experience: [
-      {
-        company: "Data Analytics Inc.",
-        position: "Data Scientist",
-        duration: "2021-2023",
-        description: "Developed machine learning models for predictive analytics. Implemented data pipelines and visualization dashboards for business intelligence."
-      },
-      {
-        company: "Amazon",
-        position: "Machine Learning Engineer",
-        duration: "2019-2021",
-        description: "Worked on recommendation systems to improve product suggestions. Increased click-through rates by 15% through algorithm optimization."
-      }
-    ],
-    projects: [
-      {
-        name: "Predictive Maintenance System",
-        tech: ["Python", "TensorFlow", "AWS", "IoT"],
-        description: "Built a system to predict equipment failures using machine learning models trained on sensor data from industrial equipment."
-      },
-      {
-        name: "Natural Language Processing Tool",
-        tech: ["Python", "NLTK", "SpaCy", "Transformers"],
-        description: "Developed a tool for sentiment analysis and entity recognition in customer feedback data, improving response prioritization."
-      }
-    ],
-    profileViews: 210,
-    profileClicks: 95,
-    profileLikes: 42,
-    profileBookmarks: 18,
-    pitchViews: 120
-  },
-  {
-    email: "alex@example.com",
-    password: "password123",
-    role: "user",
-    fullName: "Alex Johnson",
-    phone: "+1 (555) 345-6789",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    location: "Seattle, WA",
-    linkedin: "linkedin.com/in/alexjohnson",
-    github: "github.com/alexjohnson",
-    leetcode: "leetcode.com/alexjohnson",
-    portfolio: "alexjohnson.tech",
-    about: "Backend engineer specializing in microservices architecture and cloud infrastructure. I've led the development of scalable, resilient systems at Microsoft using Java and Spring Boot. My expertise includes designing APIs, optimizing database performance, and implementing CI/CD pipelines. I'm passionate about building systems that can handle high traffic while maintaining reliability and security.",
-    skills: ["Java", "Spring Boot", "Microservices", "Kubernetes", "Docker", "AWS", "CI/CD", "JUnit"],
-    availability: "Available in 1 month",
-    education: [
-      {
-        institution: "University of Washington",
-        degree: "BS Computer Science",
-        year: "2016-2020",
-        gpa: "3.6"
-      }
-    ],
-    experience: [
-      {
-        company: "Microsoft",
-        position: "Software Engineer",
-        duration: "2020-2023",
-        description: "Developed and maintained backend services for Microsoft Teams. Implemented scalable microservices architecture using Spring Boot and Kubernetes."
-      },
-      {
-        company: "Amazon Web Services",
-        position: "Cloud Solutions Intern",
-        duration: "Summer 2019",
-        description: "Assisted in developing cloud migration strategies for enterprise clients. Created automation scripts for infrastructure deployment."
-      }
-    ],
-    projects: [
-      {
-        name: "Distributed Task Scheduler",
-        tech: ["Java", "Spring Boot", "Redis", "Kubernetes"],
-        description: "Built a distributed task scheduling system capable of handling millions of tasks with fault tolerance and load balancing."
-      },
-      {
-        name: "DevOps Automation Platform",
-        tech: ["Python", "Terraform", "AWS", "Jenkins"],
-        description: "Created a platform to automate CI/CD pipelines, infrastructure provisioning, and monitoring for development teams."
-      }
-    ],
-    profileViews: 178,
-    profileClicks: 82,
-    profileLikes: 31,
-    profileBookmarks: 15,
-    pitchViews: 95
-  },
-  {
-    email: "priya@example.com",
-    password: "password123",
-    role: "user",
-    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-    fullName: "Priya Patel",
-    phone: "+1 (555) 456-7890",
-    location: "Austin, TX",
-    linkedin: "linkedin.com/in/priyapatel",
-    github: "github.com/priyapatel",
-    leetcode: "leetcode.com/priyapatel",
-    portfolio: "priyapatel.dev",
-    about: "UI/UX developer with a background in design and frontend engineering. I bridge the gap between design and development, creating beautiful, accessible interfaces that users love. My approach combines aesthetic sensibility with technical expertise in React and modern CSS frameworks. I'm particularly interested in design systems and component libraries that enable consistent user experiences across products.",
-    skills: ["React", "Vue.js", "Angular", "JavaScript", "CSS", "SASS", "UI/UX", "Figma"],
-    availability: "Available immediately",
-    education: [
-      {
-        institution: "University of Texas",
-        degree: "BFA Design",
-        year: "2017-2021",
-        gpa: "3.9"
-      },
-      {
-        institution: "Coding Bootcamp",
-        degree: "Full Stack Web Development",
-        year: "2021",
-        gpa: "4.0"
-      }
-    ],
-    experience: [
-      {
-        company: "Creative Agency",
-        position: "UI/UX Developer",
-        duration: "2021-2023",
-        description: "Designed and implemented user interfaces for web and mobile applications. Collaborated with UX researchers to create intuitive user experiences."
-      },
-      {
-        company: "Freelance",
-        position: "Frontend Developer",
-        duration: "2020-2021",
-        description: "Developed responsive websites for small businesses and startups. Specialized in creating engaging, accessible user interfaces."
-      }
-    ],
-    projects: [
-      {
-        name: "Design System Library",
-        tech: ["React", "Storybook", "SASS", "Jest"],
-        description: "Created a comprehensive component library and design system used across multiple products, ensuring consistent UI and reducing development time."
-      },
-      {
-        name: "Interactive Data Visualization",
-        tech: ["D3.js", "React", "SVG", "Canvas"],
-        description: "Built interactive data visualizations for financial analytics platform, making complex data accessible through intuitive visual representations."
-      }
-    ],
-    profileViews: 165,
-    profileClicks: 78,
-    profileLikes: 36,
-    profileBookmarks: 14,
-    pitchViews: 82
-  },
-  {
-    email: "david@example.com",
-    password: "password123",
-    role: "user",
-    fullName: "David Wilson",
-    phone: "+1 (555) 567-8901",
-    location: "Chicago, IL",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    linkedin: "linkedin.com/in/davidwilson",
-    github: "github.com/davidwilson",
-    leetcode: "leetcode.com/davidwilson",
-    portfolio: "davidwilson.net",
-    about: "Game developer and graphics programmer with expertise in Unity and C++. I've worked on mobile games with millions of downloads and VR experiences that push the boundaries of immersion. My technical focus includes physics simulation, shader programming, and performance optimization for resource-constrained environments. I'm looking for opportunities to create innovative interactive experiences.",
-    skills: ["C++", "C#", "Unity", "Game Development", "3D Modeling", "DirectX", "OpenGL", "Physics Simulation"],
-    availability: "Available in 3 weeks",
-    education: [
-      {
-        institution: "University of Illinois",
-        degree: "BS Computer Science",
-        year: "2015-2019",
-        gpa: "3.5"
-      },
-      {
-        institution: "DigiPen Institute of Technology",
-        degree: "MS Computer Science in Real-Time Interactive Simulation",
-        year: "2019-2021",
+        institution: "University of Delhi",
+        degree: "Bachelor of Computer Applications (BCA)",
+        year: "2009–2012",
         gpa: "3.8"
+      },
+      {
+        institution: "ISTQB India",
+        degree: "ISTQB Foundation Certification",
+        year: "2013",
+        gpa: "Pass"
       }
     ],
     experience: [
       {
-        company: "Game Studio Inc.",
-        position: "Game Developer",
-        duration: "2021-2023",
-        description: "Developed gameplay systems and optimized performance for mobile games. Implemented physics-based interactions and AI behavior systems."
+        company: "FinEdge Technologies",
+        position: "Senior QA Analyst",
+        duration: "2016–2024",
+        description: "Led the QA team in functional and regression testing for high-traffic fintech platforms. Developed and maintained automation suites using Selenium and TestNG, managed test cases and bug lifecycle via JIRA."
       },
       {
-        company: "VR Innovations",
-        position: "Software Engineer",
-        duration: "2019-2021",
-        description: "Created virtual reality experiences using Unity and C#. Developed custom shaders and rendering pipelines for immersive environments."
+        company: "Delta FinServ",
+        position: "QA Analyst",
+        duration: "2012–2016",
+        description: "Performed manual and API testing for core banking applications. Collaborated closely with developers in Agile sprints and ensured timely defect reporting and resolution."
       }
     ],
     projects: [
       {
-        name: "Physics-Based Puzzle Game",
-        tech: ["Unity", "C#", "Blender", "FMOD"],
-        description: "Developed a puzzle game featuring realistic physics interactions, procedurally generated levels, and adaptive difficulty scaling."
+        name: "Automated Banking Regression Suite",
+        tech: ["Selenium", "TestNG", "Java", "JIRA"],
+        description: "Built a scalable automation framework to test key banking workflows across releases. Reduced manual testing effort by 60%."
       },
       {
-        name: "Real-time Strategy Game Engine",
-        tech: ["C++", "DirectX", "ECS Architecture", "Lua"],
-        description: "Built a custom game engine optimized for real-time strategy games, supporting thousands of units with advanced pathfinding and AI."
+        name: "Payment Gateway API Validator",
+        tech: ["Postman", "REST Assured", "Python"],
+        description: "Designed and executed automated API tests for payment gateway integration, covering edge cases, security scenarios, and failure recovery."
       }
     ],
-    profileViews: 132,
-    profileClicks: 61,
-    profileLikes: 27,
-    profileBookmarks: 9,
-    pitchViews: 73
-  },
-  {
-    email: "michael@example.com",
-    password: "password123",
-    role: "user",
-    fullName: "Michael Rodriguez",
-    phone: "+1 (555) 678-9012",
-    location: "Los Angeles, CA",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    linkedin: "linkedin.com/in/michaelrodriguez",
-    github: "github.com/michaelrodriguez",
-    leetcode: "leetcode.com/michaelrodriguez",
-    portfolio: "michaelrodriguez.dev",
-    about: "Mobile app developer specializing in cross-platform solutions with React Native and Flutter. I've shipped apps used by millions of users across iOS and Android platforms. My expertise includes state management, native module integration, and optimizing performance for mobile devices. I'm passionate about creating seamless mobile experiences that feel native on every platform.",
-    skills: ["React Native", "Flutter", "JavaScript", "Dart", "Redux", "Firebase", "iOS", "Android"],
-    availability: "Available in 2 weeks",
-    education: [
-      {
-        institution: "UCLA",
-        degree: "BS Computer Science",
-        year: "2016-2020",
-        gpa: "3.7"
-      }
-    ],
-    experience: [
-      {
-        company: "Mobile App Studio",
-        position: "Senior Mobile Developer",
-        duration: "2021-2023",
-        description: "Led development of cross-platform mobile applications using React Native. Implemented complex features and optimized app performance across devices."
-      },
-      {
-        company: "Tech Startup",
-        position: "Mobile Developer",
-        duration: "2020-2021",
-        description: "Developed and maintained mobile applications for iOS and Android. Collaborated with design team to implement responsive UI components."
-      }
-    ],
-    projects: [
-      {
-        name: "Fitness Tracking App",
-        tech: ["React Native", "Redux", "Firebase", "HealthKit", "Google Fit"],
-        description: "Built a cross-platform fitness app with workout tracking, progress visualization, and social features. Integrated with native health APIs."
-      },
-      {
-        name: "Food Delivery Platform",
-        tech: ["Flutter", "Dart", "Google Maps API", "Stripe"],
-        description: "Developed a food delivery app with real-time order tracking, payment processing, and restaurant discovery features."
-      }
-    ],
-    profileViews: 156,
-    profileClicks: 72,
+    profileViews: 164,
+    profileClicks: 73,
     profileLikes: 33,
-    profileBookmarks: 11,
-    pitchViews: 85
+    profileBookmarks: 13,
+    pitchViews: 91,
+    pitch: "Hi, I'm Shanti Priya. I hold a Bachelor's degree in Computer Applications from Delhi University, completed in 2012. I've worked as a QA Analyst in the fintech sector for over 10 years, specializing in end-to-end functional testing, regression suites, and automation scripting. My key skills include Selenium, JIRA, API testing, Agile methodology, and defect lifecycle management. I'm ISTQB certified and now eager to contribute to an innovative organization that values precision, speed, and continuous improvement in software delivery.",
+    video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_full.mp4?updatedAt=1750483240176&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_full.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750483240176&updatedAt=1750483240176"
   },
   {
-    email: "sarah@example.com",
-    password: "password123",
+    email: "kevin.lang@example.com",
+    password: "secureLang2024",
     role: "user",
-    fullName: "Sarah Kim",
-    phone: "+1 (555) 789-0123",
+    fullName: "Kevin Lang",
+    phone: "+1 (617) 555-2290",
     location: "Boston, MA",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    linkedin: "linkedin.com/in/sarahkim",
-    github: "github.com/sarahkim",
-    leetcode: "leetcode.com/sarahkim",
-    portfolio: "sarahkim.tech",
-    about: "DevOps engineer with a focus on cloud infrastructure and automation. I specialize in building robust CI/CD pipelines and managing containerized applications in Kubernetes environments. My experience includes migrating legacy systems to cloud-native architectures and implementing infrastructure as code practices. I'm passionate about creating reliable, scalable, and secure infrastructure that enables development teams to deliver faster.",
-    skills: ["AWS", "Kubernetes", "Docker", "Terraform", "Jenkins", "Python", "Bash", "Prometheus"],
-    availability: "Available in 1 month",
+    avatar: "https://ik.imagekit.io/tpauozgxh/processed_face(1).png?updatedAt=1750491346187",
+    linkedin: "linkedin.com/in/kevin-lang-syseng",
+    github: "github.com/kevinlang-dev",
+    leetcode: "leetcode.com/kevinlang",
+    portfolio: "kevinlang.tech",
+    skills: ["Shell", "Python", "C", "React", "JavaScript"],
     education: [
       {
-        institution: "Boston University",
-        degree: "BS Computer Science",
-        year: "2017-2021",
-        gpa: "3.6"
+        institution: "Harvard University",
+        degree: "BS Electronics and Communication Engineering",
+        year: "2011–2015",
+        gpa: "3.8"
+      },
+      {
+        institution: "International Software Testing Qualifications Board",
+        degree: "ISTQB Foundation Certification",
+        year: "2016",
+        gpa: "Pass"
       }
     ],
     experience: [
       {
-        company: "Cloud Solutions Inc.",
-        position: "DevOps Engineer",
-        duration: "2021-2023",
-        description: "Designed and implemented cloud infrastructure using AWS and Kubernetes. Automated deployment processes and established monitoring systems."
+        company: "NextSys Technologies",
+        position: "Senior Systems Engineer",
+        duration: "2018–2024",
+        description: "Led embedded system validation and software integration for industrial control units. Developed validation protocols and automation scripts using shell and Python."
       },
       {
-        company: "Tech Enterprise",
-        position: "Systems Administrator",
-        duration: "2020-2021",
-        description: "Managed on-premises and cloud infrastructure. Implemented automation scripts and improved system reliability and security."
+        company: "EdgeCore Embedded",
+        position: "Systems Engineer",
+        duration: "2015–2018",
+        description: "Designed and tested embedded firmware for automotive microcontrollers. Worked on board bring-up and system-level diagnostics."
       }
     ],
     projects: [
       {
-        name: "Infrastructure as Code Framework",
-        tech: ["Terraform", "AWS", "Python", "GitHub Actions"],
-        description: "Developed a framework for managing cloud infrastructure as code, enabling consistent environment provisioning and configuration management."
+        name: "ECU Diagnostic Suite",
+        tech: ["C", "CANoe", "Shell", "Python"],
+        description: "Developed an in-house suite for automotive ECU testing covering diagnostics, bootloader, and protocol validation."
       },
       {
-        name: "Kubernetes Monitoring Solution",
-        tech: ["Prometheus", "Grafana", "Kubernetes", "Helm"],
-        description: "Built a comprehensive monitoring and alerting solution for Kubernetes clusters, providing visibility into application and infrastructure metrics."
+        name: "Embedded OS Integration",
+        tech: ["Linux Kernel", "Bash", "Yocto", "GCC"],
+        description: "Integrated and customized embedded Linux OS for custom boards used in smart automation systems."
+      }
+    ],
+    profileViews: 128,
+    profileClicks: 54,
+    profileLikes: 21,
+    profileBookmarks: 9,
+    pitchViews: 73,
+    pitch: "Hi, I'm Kevin Lang. I hold a Bachelor's degree in Electronics and Communication Engineering from Harvard University, completed in 2015. I've worked as a Systems Engineer in the system domain for 11 years, focusing on embedded testing, software integration, and validation protocols. My key skills include Shell scripting and Operating Systems. I'm ISTQB Foundation certified and now keen to contribute to a technology-driven organization.",
+    video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(3).mp4?updatedAt=1750489508088&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%283%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750489508088&updatedAt=1750489508088"
+  },
+  {
+    email: "linda.harris@example.com",
+    password: "testqueen2024",
+    role: "user",
+    fullName: "Linda Harris",
+    phone: "+44 7700 900456",
+    location: "Birmingham, UK",
+    avatar: "https://ik.imagekit.io/tpauozgxh/processed_face.png?updatedAt=1750490979817",
+    linkedin: "linkedin.com/in/lindaharris-qe",
+    github: "github.com/lindaharris",
+    leetcode: "leetcode.com/lindaharris",
+    portfolio: "lindaharris.dev",
+    skills: ["Java", "Selenium", "Python", "React", "Data Science"],
+    education: [
+      {
+        institution: "Nuneaton University",
+        degree: "BSc Software Engineering",
+        year: "2004–2008",
+        gpa: "3.6"
+      },
+      {
+        institution: "British Computer Society",
+        degree: "ISEB Foundation in Software Testing",
+        year: "2009",
+        gpa: "Pass"
+      }
+    ],
+    experience: [
+      {
+        company: "TeleComSoft Ltd.",
+        position: "Senior Test Engineer",
+        duration: "2008–2024",
+        description: "Led acceptance and exploratory testing for B2B telecom systems. Collaborated with cross-functional teams using Agile practices to ensure software reliability and technical investigation of bugs in test environments."
+      },
+      {
+        company: "QA AgileWorks",
+        position: "Test Consultant (Contract)",
+        duration: "2017–2018",
+        description: "Advised on end-to-end test strategy for government IT systems, focusing on automation feasibility and improving test efficiency in sprint cycles."
+      }
+    ],
+    projects: [
+      {
+        name: "Telecom Billing Verification Suite",
+        tech: ["Python", "Selenium", "JIRA", "Postman"],
+        description: "Built and maintained a test suite for telecom billing APIs. Enhanced test coverage and reduced regression time by 40%."
+      },
+      {
+        name: "Agile Test Automation Framework",
+        tech: ["Java", "TestNG", "Jenkins", "Docker"],
+        description: "Designed a reusable automation framework integrated with CI/CD pipelines for frequent releases in a DevOps setup."
       }
     ],
     profileViews: 142,
-    profileClicks: 65,
+    profileClicks: 61,
     profileLikes: 29,
-    profileBookmarks: 10,
-    pitchViews: 78
-  },
-  {
-    email: "carlos@example.com",
-    password: "password123",
-    role: "user",
-    fullName: "Carlos Mendez",
-    phone: "+1 (555) 890-1234",
-    location: "Miami, FL",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    linkedin: "linkedin.com/in/carlosmendez",
-    github: "github.com/carlosmendez",
-    leetcode: "leetcode.com/carlosmendez",
-    portfolio: "carlosmendez.io",
-    about: "Cybersecurity specialist with expertise in application security and penetration testing. I help organizations identify and remediate security vulnerabilities before they can be exploited. My background includes securing financial applications, implementing secure authentication systems, and developing security awareness programs. I'm passionate about building security into the development lifecycle rather than treating it as an afterthought.",
-    skills: ["Penetration Testing", "OWASP", "Python", "Network Security", "Cryptography", "Security Auditing", "Secure Coding", "Threat Modeling"],
-    availability: "Available immediately",
-    education: [
-      {
-        institution: "University of Florida",
-        degree: "BS Computer Science",
-        year: "2016-2020",
-        gpa: "3.8"
-      },
-      {
-        institution: "SANS Institute",
-        degree: "Cybersecurity Certification",
-        year: "2021",
-        gpa: "4.0"
-      }
-    ],
-    experience: [
-      {
-        company: "Security Consultants LLC",
-        position: "Security Engineer",
-        duration: "2021-2023",
-        description: "Conducted security assessments and penetration tests for client applications. Identified vulnerabilities and provided remediation recommendations."
-      },
-      {
-        company: "Financial Tech Company",
-        position: "Application Security Analyst",
-        duration: "2020-2021",
-        description: "Implemented secure coding practices and performed security code reviews. Developed security testing automation for CI/CD pipeline."
-      }
-    ],
-    projects: [
-      {
-        name: "Automated Vulnerability Scanner",
-        tech: ["Python", "Docker", "OWASP ZAP", "REST APIs"],
-        description: "Built an automated tool for scanning web applications for security vulnerabilities, generating detailed reports with remediation guidance."
-      },
-      {
-        name: "Secure Authentication System",
-        tech: ["Node.js", "JWT", "OAuth", "Biometric Authentication"],
-        description: "Developed a multi-factor authentication system with support for various authentication methods and comprehensive audit logging."
-      }
-    ],
-    profileViews: 168,
-    profileClicks: 77,
-    profileLikes: 35,
-    profileBookmarks: 13,
-    pitchViews: 91
-  },
-  {
-    email: "emma@example.com",
-    password: "password123",
-    role: "user",
-    fullName: "Emma Wilson",
-    phone: "+1 (555) 901-2345",
-    location: "Portland, OR",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    linkedin: "linkedin.com/in/emmawilson",
-    github: "github.com/emmawilson",
-    leetcode: "leetcode.com/emmawilson",
-    portfolio: "emmawilson.dev",
-    about: "Blockchain developer and smart contract engineer with a passion for decentralized applications. I've built DeFi protocols, NFT marketplaces, and DAO governance systems on Ethereum and other chains. My expertise includes Solidity development, security auditing of smart contracts, and integrating blockchain functionality into web applications. I'm excited about the potential of Web3 to create more transparent and equitable systems.",
-    skills: ["Solidity", "Ethereum", "Web3.js", "Smart Contracts", "DeFi", "React", "Node.js", "Hardhat"],
-    availability: "Available in 2 weeks",
-    education: [
-      {
-        institution: "Oregon State University",
-        degree: "BS Computer Science",
-        year: "2017-2021",
-        gpa: "3.9"
-      },
-      {
-        institution: "Blockchain Academy",
-        degree: "Blockchain Development Certification",
-        year: "2021",
-        gpa: "4.0"
-      }
-    ],
-    experience: [
-      {
-        company: "Blockchain Startup",
-        position: "Smart Contract Developer",
-        duration: "2021-2023",
-        description: "Developed and audited smart contracts for DeFi protocols. Implemented token standards and created secure, gas-efficient contracts."
-      },
-      {
-        company: "Web3 Agency",
-        position: "Blockchain Engineer",
-        duration: "2020-2021",
-        description: "Built decentralized applications with React and Ethereum. Integrated wallet connections and implemented on-chain interactions."
-      }
-    ],
-    projects: [
-      {
-        name: "NFT Marketplace",
-        tech: ["Solidity", "React", "IPFS", "Ethers.js"],
-        description: "Created a marketplace for digital collectibles with support for minting, buying, selling, and auctioning NFTs with royalty payments to creators."
-      },
-      {
-        name: "DAO Governance Platform",
-        tech: ["Solidity", "The Graph", "React", "TypeScript"],
-        description: "Built a decentralized governance platform allowing token holders to create and vote on proposals with automatic execution of passed proposals."
-      }
-    ],
-    profileViews: 175,
-    profileClicks: 83,
-    profileLikes: 38,
-    profileBookmarks: 16,
-    pitchViews: 97,
-    avatar: "https://randomuser.me/api/portraits/women/33.jpg"
+    profileBookmarks: 11,
+    pitchViews: 89,
+    pitch: "Hi, I'm Linda Harris. I hold a Bachelor's degree in Software Engineering from Nuneaton University, completed in 2008. I've worked as a Test Engineer at an IT & Telecoms company for 16 years, handling the entire test process—from planning to execution and reporting. My key skills include acceptance testing, exploratory testing, technical investigation, Agile, and test environments. I'm ISEB certified and now looking to bring my expertise in software quality and testing to a forward-thinking organization.",
+    video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(2).mp4?updatedAt=1750485214841&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%282%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750485214841&updatedAt=1750485214841"
   }
 ];
 
-// Sample data for recruiters
+
 const recruiters = [
   {
-    email: "sarah@techcorp.com",
+    email: "priya.sharma@elephantventures.com",
     password: "password123",
     role: "recruiter",
-    fullName: "Sarah Johnson",
-    phone: "+1 (555) 987-6543",
-    location: "San Francisco, CA",
-    linkedin: "linkedin.com/in/sarahjohnson",
-    portfolio: "sarahjohnson-recruiter.com",
-    company: "TechCorp Inc.",
-    position: "Senior Technical Recruiter",
-    industry: ["Software Development", "AI", "Cloud Computing", "Cybersecurity"],
-    about: "Experienced technical recruiter specializing in software engineering roles with 8+ years of experience connecting top talent with innovative companies. Passionate about building diverse engineering teams.",
-    profileViews: 245,
-    responseRate: 92,
-    avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-    avatarSettings: {
-      hair: "long-straight",
-      face: "oval",
-      outfit: "professional",
-      accessories: "glasses",
-      background: "office",
-      color: "blue"
-    }
-  },
-  {
-    email: "michael@designstudio.com",
-    password: "password123",
-    role: "recruiter",
-    fullName: "Michael Chen",
-    phone: "+1 (555) 876-5432",
-    location: "New York, NY",
-    linkedin: "linkedin.com/in/michaelchen",
-    portfolio: "michaelchen-talent.com",
-    company: "DesignStudio",
-    position: "Creative Talent Acquisition",
-    industry: ["UX/UI Design", "Graphic Design", "Product Design", "Creative Direction"],
-    about: "Talent acquisition specialist focused on creative roles. Former designer with a keen eye for exceptional portfolios and a deep understanding of creative workflows and team dynamics.",
-    profileViews: 187,
-    responseRate: 88,
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    avatarSettings: {
-      hair: "short",
-      face: "round",
-      outfit: "casual-smart",
-      accessories: "none",
-      background: "creative-studio",
-      color: "teal"
-    }
-  },
-  {
-    email: "jennifer@techinnovators.com",
-    password: "password123",
-    role: "recruiter",
-    fullName: "Jennifer Williams",
-    phone: "+1 (555) 765-4321",
-    location: "Boston, MA",
-    linkedin: "linkedin.com/in/jenniferwilliams",
-    portfolio: "jenniferwilliams-recruiting.com",
-    company: "Tech Innovators",
+    fullName: "Priya Sharma",
+    phone: "+91 98765 12345",
+    location: "Mumbai, Maharashtra, India",
+    linkedin: "linkedin.com/in/priyasharma",
+    portfolio: "priyasharma-recruiting.com",
+    company: "Elephant Ventures",
     position: "Technical Recruiting Manager",
     industry: ["Fintech", "Healthtech", "Edtech", "Blockchain"],
     about: "Recruiting leader with expertise in emerging technologies. Specialized in building engineering teams for startups and scale-ups in regulated industries like finance and healthcare.",
     profileViews: 213,
     responseRate: 95,
-    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
-    avatarSettings: {
-      hair: "short-curly",
-      face: "heart",
-      outfit: "business",
-      accessories: "earrings",
-      background: "modern-office",
-      color: "purple"
-    }
+    avatar: "https://ik.imagekit.io/tpauozgxh/priya-recruiter.png?updatedAt=1750491534480"
   },
   {
-    email: "robert@enterprisetech.com",
+    email: "rajesh.kumar@techinnovators.com",
     password: "password123",
     role: "recruiter",
-    fullName: "Robert Garcia",
-    phone: "+1 (555) 654-3210",
-    location: "Austin, TX",
-    linkedin: "linkedin.com/in/robertgarcia",
-    portfolio: "robertgarcia-recruiting.net",
-    company: "Enterprise Tech Solutions",
+    fullName: "Rajesh Kumar",
+    phone: "+91 99887 65432",
+    location: "Bangalore, Karnataka, India",
+    linkedin: "linkedin.com/in/rajeshkumar",
+    portfolio: "rajeshkumar-recruiting.com",
+    company: "Tech Innovators India",
     position: "Senior Technical Recruiter",
-    industry: ["Enterprise Software", "Cloud Infrastructure", "DevOps", "Data Engineering"],
-    about: "Technical recruiter specializing in backend, infrastructure, and data engineering roles. Former systems administrator with deep technical knowledge and a network of top engineering talent.",
-    profileViews: 176,
-    responseRate: 87,
-    avatar: "https://randomuser.me/api/portraits/men/64.jpg",
-    avatarSettings: {
-      hair: "bald",
-      face: "square",
-      outfit: "business-casual",
-      accessories: "watch",
-      background: "tech-office",
-      color: "green"
-    }
-  },
-  {
-    email: "lisa@startuptalent.com",
-    password: "password123",
-    role: "recruiter",
-    fullName: "Lisa Thompson",
-    phone: "+1 (555) 543-2109",
-    location: "Seattle, WA",
-    linkedin: "linkedin.com/in/lisathompson",
-    portfolio: "lisathompson-recruiting.io",
-    company: "Startup Talent Partners",
-    position: "Founder & Lead Recruiter",
-    industry: ["Startups", "SaaS", "Mobile Apps", "E-commerce"],
-    about: "Founder of a boutique recruiting firm specializing in early-stage startups. Expert in helping founders build their initial technical teams and scaling engineering organizations through Series A and B.",
-    profileViews: 231,
-    responseRate: 93,
-    avatar: "https://randomuser.me/api/portraits/women/15.jpg",
-    avatarSettings: {
-      hair: "ponytail",
-      face: "oval",
-      outfit: "startup-casual",
-      accessories: "necklace",
-      background: "coworking-space",
-      color: "coral"
-    }
-  },
-  {
-    email: "james@techtalent.com",
-    password: "password123",
-    role: "recruiter",
-    fullName: "James Wilson",
-    phone: "+1 (555) 987-6543",
-    location: "Chicago, IL",
-    linkedin: "linkedin.com/in/jameswilson",
-    portfolio: "jameswilson-recruiting.com",
-    company: "Tech Talent Solutions",
-    position: "Technical Recruiting Manager",
-    industry: ["AI", "Machine Learning", "Data Science", "Robotics"],
-    about: "Specialized in recruiting for AI and machine learning roles. Former data scientist with deep technical knowledge of the field and connections to top AI talent worldwide.",
+    industry: ["Software Development", "Cloud Computing", "DevOps", "AI/ML"],
+    about: "Passionate technical recruiter with deep understanding of software engineering roles. Expert in identifying top talent for high-growth tech companies and innovative startups.",
     profileViews: 189,
-    responseRate: 91,
-    avatar: "https://randomuser.me/api/portraits/men/42.jpg",
-    avatarSettings: {
-      hair: "short",
-      face: "round",
-      outfit: "business",
-      accessories: "glasses",
-      background: "modern-office",
-      color: "blue"
-    }
+    responseRate: 92,
+    avatar: "https://ik.imagekit.io/tpauozgxh/rajesh-recruiter.png?updatedAt=1750491534480"
   },
   {
-    email: "maria@healthrecruit.com",
+    email: "anita.patel@hireVue.com",
     password: "password123",
     role: "recruiter",
-    fullName: "Maria Rodriguez",
-    phone: "+1 (555) 765-4321",
-    location: "Boston, MA",
-    linkedin: "linkedin.com/in/mariarodriguez",
-    portfolio: "mariarodriguez-recruiting.net",
-    company: "HealthTech Recruiters",
-    position: "Senior Healthcare Recruiter",
-    industry: ["Healthcare", "Biotech", "Medical Devices", "Pharmaceuticals"],
-    about: "Specialized in recruiting for healthcare technology roles. Deep understanding of the healthcare industry and regulatory requirements. Passionate about connecting talent with companies making a difference in patient care.",
-    profileViews: 167,
-    responseRate: 88,
-    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-    avatarSettings: {
-      hair: "long",
-      face: "heart",
-      outfit: "professional",
-      accessories: "earrings",
-      background: "hospital",
-      color: "teal"
-    }
+    fullName: "Anita Patel",
+    phone: "+91 97654 32109",
+    location: "Ahmedabad, Gujarat, India",
+    linkedin: "linkedin.com/in/anitapatel",
+    portfolio: "anitapatel-recruiting.com",
+    company: "HireVue",
+    position: "Lead Talent Acquisition Specialist",
+    industry: ["QA Testing", "Automation", "Embedded Systems", "Automotive"],
+    about: "Specialized in quality assurance and testing recruitment. Helping companies build robust QA teams with expertise in automation, manual testing, and embedded systems validation.",
+    profileViews: 156,
+    responseRate: 89,
+    avatar: "https://ik.imagekit.io/tpauozgxh/anita-recruiter.png?updatedAt=1750491534480"
+  },
+  {
+    email: "vikram.singh@cohere.com",
+    password: "password123",
+    role: "recruiter",
+    fullName: "Vikram Singh",
+    phone: "+91 98123 45678",
+    location: "Gurgaon, Haryana, India",
+    linkedin: "linkedin.com/in/vikramsingh",
+    portfolio: "vikramsingh-recruiting.com",
+    company: "Cohere",
+    position: "Technical Recruiting Manager",
+    industry: ["Systems Engineering", "Infrastructure", "Cybersecurity", "Networking"],
+    about: "Expert in systems and infrastructure recruitment. Connecting talented engineers with companies building scalable, secure, and reliable technology platforms.",
+    profileViews: 201,
+    responseRate: 94,
+    avatar: "https://ik.imagekit.io/tpauozgxh/vikram-recruiter.png?updatedAt=1750491534480"
+  },
+  {
+    email: "meera.reddy@cred.com",
+    password: "password123",
+    role: "recruiter",
+    fullName: "Meera Reddy",
+    phone: "+91 94567 89012",
+    location: "Hyderabad, Telangana, India",
+    linkedin: "linkedin.com/in/meerareddy",
+    portfolio: "meerareddy-recruiting.com",
+    company: "CRED",
+    position: "Senior Technical Recruiter",
+    industry: ["Data Science", "Machine Learning", "Analytics", "Research"],
+    about: "Data science and ML recruitment specialist. Passionate about connecting data professionals with cutting-edge companies working on AI, analytics, and research initiatives.",
+    profileViews: 178,
+    responseRate: 91,
+    avatar: "https://ik.imagekit.io/tpauozgxh/meera-recruiter.png?updatedAt=1750491534480"
   }
 ];
+
+module.exports = { users, recruiters };
 
 // Update the pitches creation in the seedDatabase function
 const seedDatabase = async () => {
@@ -1287,16 +913,23 @@ const seedDatabase = async () => {
     
     // Create pitches for users
     const pitches = [];
-    
-    for (const user of createdUsers) {
-      pitches.push({
-        user: user._id,
-        content: `Hi, I'm ${user.fullName}, a ${user.skills[0]} developer with ${user.experience[0].duration} of experience. I specialize in ${user.skills.slice(0, 3).join(', ')}. I'm passionate about building ${user.projects[0].tech.includes('React') ? 'web applications' : user.projects[0].tech.includes('Python') ? 'data-driven solutions' : 'innovative software'}. I'm currently ${user.availability.toLowerCase()} and looking for opportunities in ${user.location}.`,
-        videoUrl: `https://example.com/pitches/${user._id}.mp4`,
-        views: Math.floor(Math.random() * 200) + 50,
-        likes: Math.floor(Math.random() * 50) + 5
-      });
-    }
+
+for (const user of createdUsers) {
+  // Find the original user data to get the video URL
+  const originalUserData = users.find(u => u.email === user.email);
+  
+  pitches.push({
+    user: user._id,
+    content: originalUserData.pitch || `Hi, I'm ${user.fullName}, a ${user.skills[0]} developer with ${user.experience[0].duration} of experience. I specialize in ${user.skills.slice(0, 3).join(', ')}. I'm passionate about building ${user.projects[0].tech.includes('React') ? 'web applications' : user.projects[0].tech.includes('Python') ? 'data-driven solutions' : 'innovative software'}. I'm currently ${user.availability.toLowerCase()} and looking for opportunities in ${user.location}.`,
+    videoUrl: originalUserData.video || `https://example.com/pitches/${user._id}.mp4`,
+    views: Math.floor(Math.random() * 200) + 50,
+    likes: Math.floor(Math.random() * 50) + 5
+  });
+  await User.findByIdAndUpdate(user._id, {
+    pitch: originalUserData.pitch,
+    videoUrl: originalUserData.video
+  });
+}
     
     const createdPitches = await Pitch.insertMany(pitches);
     console.log(`${createdPitches.length} pitches created`);
@@ -1375,26 +1008,26 @@ const seedDatabase = async () => {
     
     // Update recruiters with shortlisted and bookmarked candidates
     for (const recruiter of createdRecruiters) {
-      const shuffledUsers = [...createdUsers].sort(() => 0.5 - Math.random());
-      
-      // Shortlist 1-3 candidates
-      const shortlistedCount = 1 + Math.floor(Math.random() * 3);
-      const shortlistedCandidates = shuffledUsers.slice(0, shortlistedCount).map(user => user._id);
-      
-      // Bookmark 2-4 candidates (can include shortlisted ones)
-      const bookmarkedCount = 2 + Math.floor(Math.random() * 3);
-      const bookmarkedCandidates = shuffledUsers.slice(0, bookmarkedCount).map(user => user._id);
-      
-      // Reject 1-2 candidates (different from shortlisted)
-      const rejectedCount = 1 + Math.floor(Math.random() * 2);
-      const rejectedCandidates = shuffledUsers.slice(shortlistedCount + bookmarkedCount, shortlistedCount + bookmarkedCount + rejectedCount).map(user => user._id);
-      
-      await Recruiter.findByIdAndUpdate(recruiter._id, {
-        shortlistedCandidates,
-        bookmarkedCandidates,
-        rejectedCandidates
-      });
-    }
+  const shuffledUsers = [...createdUsers].sort(() => 0.5 - Math.random());
+  
+  // Shortlist 1-3 candidates
+  const shortlistedCount = 1 + Math.floor(Math.random() * 3);
+  const shortlistedCandidates = shuffledUsers.slice(0, shortlistedCount).map(user => user._id);
+  
+  // Bookmark 2-4 candidates (can include shortlisted ones)
+  const bookmarkedCount = 2 + Math.floor(Math.random() * 3);
+  const bookmarkedCandidates = shuffledUsers.slice(0, bookmarkedCount).map(user => user._id);
+  
+  // Reject 1-2 candidates (different from shortlisted)
+  const rejectedCount = 1 + Math.floor(Math.random() * 2);
+  const rejectedCandidates = shuffledUsers.slice(shortlistedCount + bookmarkedCount, shortlistedCount + bookmarkedCount + rejectedCount).map(user => user._id);
+  
+  await Recruiter.findByIdAndUpdate(recruiter._id, {
+    shortlistedCandidates,
+    bookmarkedCandidates,
+    rejectedCandidates
+  });
+}
     
     console.log("Recruiters updated with candidate lists");
     console.log("Database seeded successfully");

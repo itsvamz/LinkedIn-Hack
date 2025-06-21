@@ -103,11 +103,7 @@ const Recruiters = () => {
                 <MapPin className="w-4 h-4 mr-2" />
                 {recruiter.location}
               </div>
-              <div className="flex items-center mt-2">
-                <span className="text-yellow-400 mr-1">★</span>
-                <span className="text-sm text-gray-600">{recruiter.rating}</span>
-                <span className="text-sm text-gray-500 ml-2">({recruiter.activeJobs} active jobs)</span>
-              </div>
+              
             </div>
           </div>
 
@@ -130,16 +126,7 @@ const Recruiters = () => {
             <p className="text-gray-600 leading-relaxed">{recruiter.about}</p>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-lg mb-3">Specialties</h3>
-            <div className="flex flex-wrap gap-2">
-              {recruiter.specialties?.map((specialty) => (
-                <Badge key={specialty} variant="secondary" className="bg-blue-100 text-blue-700">
-                  {specialty}
-                </Badge>
-              )) || <span className="text-gray-500">No specialties listed</span>}
-            </div>
-          </div>
+          
 
           <div className="flex gap-4 pt-4">
             <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
@@ -314,23 +301,13 @@ const Recruiters = () => {
                       </AvatarFallback>
                     </Avatar>
                     <CardTitle className="text-xl">{recruiter.fullName}</CardTitle>
-                    <p className="text-sm text-gray-600">{recruiter.role}</p>
+                    <p className="text-sm text-gray-600">{recruiter.position}</p>
                     <p className="text-sm font-medium text-blue-600">{recruiter.company}</p>
-                    <div className="flex items-center justify-center mt-2">
-                      <span className="text-yellow-400">★</span>
-                      <span className="text-sm text-gray-600 ml-1">{recruiter.rating}</span>
-                      <span className="text-sm text-gray-500 ml-2">({recruiter.activeJobs} active jobs)</span>
-                    </div>
+                    
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-gray-600 text-center">{recruiter.description}</p>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {recruiter.specialties?.map((specialty) => (
-                        <Badge key={specialty} variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
-                          {specialty}
-                        </Badge>
-                      )) || <span className="text-xs text-gray-500">No specialties</span>}
-                    </div>
+                    
                     <div className="flex gap-2 pt-4">
                       <ProfileModal recruiter={recruiter} />
                       <AvatarChatModal recruiter={recruiter} />

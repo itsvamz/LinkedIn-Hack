@@ -673,7 +673,7 @@ exports.getAnalytics = async (req, res) => {
 // Add bookmarking functionality
 exports.bookmarkCandidate = async (req, res) => {
   try {
-    const { candidateId } = req.body;
+    const { candidateId, action } = req.body;
     
     if (!candidateId) {
       return res.status(400).json({ msg: "Candidate ID is required" });
@@ -685,37 +685,49 @@ exports.bookmarkCandidate = async (req, res) => {
       return res.status(404).json({ msg: "Recruiter not found" });
     }
     
-    // Check if the candidate is already bookmarked
+    // Initialize bookmarkedCandidates if it doesn't exist
     if (!recruiter.bookmarkedCandidates) {
       recruiter.bookmarkedCandidates = [];
     }
     
-    if (!recruiter.bookmarkedCandidates.includes(candidateId)) {
-      recruiter.bookmarkedCandidates.push(candidateId);
+    // Handle add/remove based on action parameter
+    if (action === "remove") {
+      // Remove candidate from bookmarks
+      recruiter.bookmarkedCandidates = recruiter.bookmarkedCandidates.filter(
+        id => id.toString() !== candidateId
+      );
       await recruiter.save();
+      res.json({ msg: "Candidate removed from bookmarks", success: true });
+    } else {
+      // Default action is to add bookmark if not already present
+      const alreadyBookmarked = recruiter.bookmarkedCandidates.some(
+        id => id.toString() === candidateId
+      );
+      
+      if (!alreadyBookmarked) {
+        recruiter.bookmarkedCandidates.push(candidateId);
+        await recruiter.save();
+      }
+      res.json({ msg: "Candidate bookmarked successfully", success: true });
     }
-    
-    res.json({ msg: "Candidate bookmarked successfully" });
   } catch (err) {
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error("Bookmark error:", err);
+    res.status(500).json({ msg: "Server error", error: err.message, success: false });
   }
 };
 
 exports.getBookmarkedCandidates = async (req, res) => {
   try {
-    const recruiter = await Recruiter.findById(req.user.id);
+    const recruiter = await Recruiter.findById(req.user.id).populate('bookmarkedCandidates', '-password');
     
     if (!recruiter) {
       return res.status(404).json({ msg: "Recruiter not found" });
     }
     
-    // Get bookmarked candidates with details
-    const bookmarkedCandidates = await User.find({
-      _id: { $in: recruiter.bookmarkedCandidates || [] }
-    }).select("-password");
-    
-    res.json(bookmarkedCandidates);
+    // Return the populated bookmarked candidates
+    res.json(recruiter.bookmarkedCandidates || []);
   } catch (err) {
+    console.error("Error fetching bookmarked candidates:", err);
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 };

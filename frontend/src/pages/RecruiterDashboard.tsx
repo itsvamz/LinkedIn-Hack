@@ -94,90 +94,195 @@ const RecruiterDashboard = () => {
     avatarFileRef.current?.click();
   };
 
-  const handleResumeFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleResumeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  
+  // Show loading state
+  setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+  
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  // Upload and parse the resume
+  axios.post("http://localhost:5000/api/parse-resume", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+  // Inside handleResumeFileChange function, after updating userData state
+  .then(response => {
+    console.log("Resume parsed:", response.data);
     
-    // Show loading state
-    setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+    // Extract profile data from the response
+    const profileData = response.data.data?.attributes?.result || {};
+    const parsedData = response.data.data || {};
     
-    const formData = new FormData();
-    formData.append("file", file);
+    // Safely handle skills data - check if it exists and is an array
+    const skillsData = response.data.skills || profileData.skills;
+    const skillsString = Array.isArray(skillsData) 
+      ? skillsData.join(", ") 
+      : typeof skillsData === 'string' 
+        ? skillsData 
+        : "";
     
-    // Upload and parse the resume
-    axios.post("http://localhost:5000/api/parse-resume", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+    // Extract professional profiles from text content if available
+    const extractProfileUrl = (text, platform) => {
+      if (!text) return "";
+      const regex = {
+        linkedin: /linkedin\.com\/in\/([\w-]+)/i,
+        github: /github\.com\/([\w-]+)/i,
+        leetcode: /leetcode\.com\/([\w-]+)/i,
+        portfolio: /(https?:\/\/[\w.-]+\.[\w.-]+\/?[\w\/-]*)/i
+      };
+      
+      const match = text.match(regex[platform]);
+      return match ? match[0] : "";
+    };
+    
+    // Get text content if available
+    const textContent = parsedData.text_content || "";
+    
+    // Create updated user data object
+    const updatedUserData = {
+      fullName: profileData.candidate_name || response.data.profileData?.name || "",
+      email: profileData.candidate_email || response.data.profileData?.email || "",
+      phone: profileData.candidate_phone || response.data.profileData?.phone || "",
+      location: profileData.candidate_location || response.data.profileData?.location || "",
+      linkedin: profileData.linkedin || extractProfileUrl(textContent, "linkedin") || "",
+      github: profileData.github || extractProfileUrl(textContent, "github") || "",
+      leetcode: profileData.leetcode || extractProfileUrl(textContent, "leetcode") || "",
+      portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || "",
+      education: response.data.education || profileData.education_qualifications || [],
+      experience: response.data.experience || profileData.positions || [],
+      skills: skillsString || ""
+    };
+    
+    // Update user data state
+    setUserData(prev => ({
+      ...prev,
+      ...updatedUserData
+    }));
+    
+    // Automatically save the updated profile to the database
+    const token = localStorage.getItem("token");
+    axios.put(
+      "http://localhost:5000/api/recruiter/profile",
+      updatedUserData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
+    )
+    .then(profileResponse => {
+      console.log("Profile automatically updated:", profileResponse.data);
     })
-    .then(response => {
-      console.log("Resume parsed:", response.data);
-      
-      // Update recruiter data with parsed information
-      setUserData(prev => ({
-        ...prev,
-        ...response.data.profileData,
-        education: response.data.education,
-        experience: response.data.experience,
-        skills: response.data.skills.join(", ") // Convert array to comma-separated string
-      }));
-      
-      setSaveMessage({ 
-        type: "success", 
-        text: "Resume parsed and profile updated successfully!" 
-      });
-    })
-    .catch(error => {
-      console.error("Error parsing resume:", error);
-      setSaveMessage({ 
-        type: "error", 
-        text: `Failed to parse resume: ${error.response?.data?.error?.message || error.message}` 
-      });
+    .catch(profileError => {
+      console.error("Error auto-updating profile:", profileError);
     });
-  };
-
-  // Replace the existing handleAvatarFileChange function with this one
-  const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
     
-    // Show loading state
-    setSaveMessage({ type: "info", text: "Uploading avatar..." });
-    
-    const formData = new FormData();
-    formData.append("avatar", file);
-    
-    // Upload the avatar
-    axios.post("http://localhost:5000/api/recruiter/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    })
-    .then(response => {
-      console.log("Avatar uploaded:", response.data);
+    // Generate a pitch based on the parsed resume data
+    if (response.data.data && response.data.data.pitch) {
+      // If the Python service already generated a pitch, use it
+      setPitchText(response.data.data.pitch);
       
-      // Update user data with new avatar URL
-      setUserData(prev => ({
-        ...prev,
-        avatar: response.data.avatarUrl
-      }));
+      // Automatically save the pitch to the database
+      axios.post("http://localhost:5000/api/recruiter/pitch", 
+        { content: response.data.data.pitch },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      .then(saveResponse => {
+        console.log("Pitch automatically saved:", saveResponse.data);
+      })
+      .catch(saveError => {
+        console.error("Error auto-saving pitch:", saveError);
+      });
+    } else if (response.data.pitch) {
+      // If pitch is directly in the response
+      setPitchText(response.data.pitch);
       
-      setSaveMessage({ 
-        type: "success", 
-        text: "Avatar updated successfully!" 
+      // Automatically save the pitch to the database
+      axios.post("http://localhost:5000/api/recruiter/pitch", 
+        { content: response.data.pitch },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      .then(saveResponse => {
+        console.log("Pitch automatically saved:", saveResponse.data);
+      })
+      .catch(saveError => {
+        console.error("Error auto-saving pitch:", saveError);
       });
-    })
-    .catch(error => {
-      console.error("Error uploading avatar:", error);
-      setSaveMessage({ 
-        type: "error", 
-        text: "Failed to upload avatar. Please try again." 
+    } else {
+      // Otherwise, call the pitch generation endpoint
+      axios.post("http://localhost:8000/generate-pitch", {
+        data: response.data.data || response.data
+      })
+      .then(pitchResponse => {
+        if (pitchResponse.data && pitchResponse.data.pitch) {
+          const generatedPitch = pitchResponse.data.pitch;
+          setPitchText(generatedPitch);
+          
+          // Automatically save the pitch to the database
+          axios.post("http://localhost:5000/api/recruiter/pitch", 
+            { content: generatedPitch },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          )
+          .then(saveResponse => {
+            console.log("Pitch automatically saved:", saveResponse.data);
+          })
+          .catch(saveError => {
+            console.error("Error auto-saving pitch:", saveError);
+          });
+        }
+      })
+      .catch(pitchError => {
+        console.error("Error generating pitch:", pitchError);
+        // Keep the current pitch text if generation fails
       });
+    }
+    
+    setSaveMessage({ 
+      type: "success", 
+      text: "Resume parsed and profile updated successfully!" 
     });
-  };
-
+    
+    // Switch to profile section to show the updated profile
+    setActiveSection("profile");
+  })
+  .catch(error => {
+    console.error("Error parsing resume:", error);
+    
+    // Extract the most useful error message
+    let errorMessage = "Failed to parse resume. Please try again.";
+    
+    if (error.response?.data?.error?.message) {
+      errorMessage = error.response.data.error.message;
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    setSaveMessage({ 
+      type: "error", 
+      text: errorMessage
+    });
+  });
+};
   const handleOverviewModeSelect = (mode: string) => {
     switch (mode) {
       case 'candidates':
@@ -401,8 +506,16 @@ const RecruiterDashboard = () => {
         <div className="space-y-6">
           {/* Current Avatar */}
           <div className="text-center">
-            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <Briefcase className="w-16 h-16 text-blue-600" />
+            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden">
+              {userData?.avatar ? (
+                <img 
+                  src={userData.avatar} 
+                  alt="User Avatar" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Briefcase className="w-16 h-16 text-blue-600" />
+              )}
             </div>
             <h3 className="text-lg font-semibold mb-2">Current Avatar</h3>
             <p className="text-gray-600 mb-4">Upload a clear photo to generate your professional avatar</p>
@@ -424,8 +537,6 @@ const RecruiterDashboard = () => {
             onChange={handleAvatarFileChange}
             className="hidden"
           />
-
-         
 
           <Button className="w-full bg-blue-600 hover:bg-blue-700">Generate New Avatar</Button>
         </div>
@@ -613,6 +724,7 @@ const RecruiterDashboard = () => {
         <RecruiterSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
+          recruiterData={userData} // Add this prop
         />
         
         <main className="flex-1 p-6 ml-64">

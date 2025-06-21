@@ -74,7 +74,6 @@ const Leaderboard = () => {
           location: user.location || 'Not specified',
           experience: user.experience?.length ? `${user.experience.length}+ years experience` : 'Experience not specified',
           skills: user.skills || [],
-          about: user.about || 'No description provided.'
         }));
         
         // Sort by views (default)

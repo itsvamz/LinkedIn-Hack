@@ -1,221 +1,175 @@
-const express = require("express");
-const axios = require("axios");
-const multer = require("multer");
-const fs = require("fs");
-const FormData = require("form-data");
-const User = require("../models/User");
-const Pitch = require("../models/Pitch");
-const authMiddleware = require("../middleware/authMiddleware");
-require("dotenv").config();
-
+const express = require('express');
 const router = express.Router();
-const upload = multer({ dest: "uploads/" });
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const axios = require('axios');
+const FormData = require('form-data');
+const User = require('../models/User');
 
-const waitForResult = async (statusUrl, maxAttempts = 10, delay = 2000) => {
-  let attempts = 0;
-
-  while (attempts < maxAttempts) {
-    await new Promise((resolve) => setTimeout(resolve, delay));
-
-    const statusRes = await axios.get(statusUrl, {
-      headers: { "apy-token": process.env.APYHUB_API_KEY },
-    });
-
-    const job = statusRes.data.job;
-
-    if (!job) {
-      throw new Error("Invalid job status response.");
+// Configure multer storage for resume uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '../uploads/resumes');
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
     }
-
-    if (job.status === "completed") {
-      return job.result;
-    } else if (job.status === "failed") {
-      throw new Error("Resume parsing failed.");
-    }
-
-    attempts++;
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'resume-' + uniqueSuffix + ext);
   }
+});
 
-  throw new Error("Resume parsing timed out.");
-};
+const resumeUpload = multer({ storage: storage });
 
-const generatePitch = async (resumeData) => {
-  try {
-    const formattedData = {
-      data: {
-        attributes: {
-          result: resumeData
-        }
-      }
-    };
+// Python service URL
+const PYTHON_SERVICE_URL = 'http://127.0.0.1:8000';
 
-    const response = await axios.post(
-      "http://localhost:8080/generate-pitch",
-      formattedData
-    );
-
-    return response.data.pitch;
-  } catch (error) {
-    console.error("Error generating pitch:", error.message);
-    throw new Error("Failed to generate elevator pitch");
-  }
-};
-
-router.post("/parse-resume", authMiddleware, upload.single("file"), async (req, res) => {
+// Updated route to use your Python FastAPI service
+router.post('/parse-resume', resumeUpload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: { message: "No file uploaded" } });
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (req.file.mimetype && !allowedTypes.includes(req.file.mimetype)) {
-      return res.status(400).json({ 
-        error: { message: `Invalid file type: ${req.file.mimetype}. Please upload a PDF or Word document.` }
-      });
-    }
+    console.log('File received:', req.file.filename);
 
-    const filePath = req.file.path;
-    const userId = req.user.id;
-
-    const form = new FormData();
-    form.append("file", fs.createReadStream(filePath));
-    form.append("language", req.body.language || "English");
-
-    if (!process.env.APYHUB_API_KEY) {
-      throw new Error("API key for resume parsing service is not configured");
-    }
-
-    console.log(`Sending request to ApyHub API with key: ${process.env.APYHUB_API_KEY.substring(0, 10)}...`);
-
-    const submitRes = await axios.post(
-      "https://api.apilayer.com/resume_parser/url?url=https%3A%2F%2Fassets.apilayer.com%2Fapis%2Fcodes%2Fresume_parser%2Fsample_resume.docx",
-      form,
-      {
-        headers: {
-          ...form.getHeaders(),
-          "apy-token": process.env.APYHUB_API_KEY,
-        },
-      }
-    );
-
-    if (!submitRes.data || !submitRes.data.status_url) {
-      throw new Error("Invalid response from resume parsing service");
-    }
-
-    const statusUrl = submitRes.data.status_url;
-
-    try {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    } catch (unlinkError) {
-      console.warn(`Warning: Could not delete temporary file ${filePath}:`, unlinkError.message);
-    }
-
-    const parsedData = await waitForResult(statusUrl);
-    const pitchContent = await generatePitch(parsedData);
-
-    const profileData = {
-      fullName: parsedData.candidate_name || "",
-      email: parsedData.candidate_email || "",
-      phone: parsedData.candidate_phone || "",
-      location: parsedData.candidate_location || "",
-    };
-
-    const education = parsedData.education_qualifications?.map(edu => ({
-      institution: edu.school_name || "",
-      degree: edu.degree_type || "",
-      year: edu.end_date ? edu.end_date.split("-")[0] : "",
-      gpa: edu.grade || ""
-    })) || [];
-
-    const experience = parsedData.positions?.map(exp => ({
-      company: exp.company_name || "",
-      position: exp.position_name || "",
-      duration: `${exp.start_date || ""} - ${exp.end_date || "Present"}`,
-      description: exp.job_details || ""
-    })) || [];
-
-    const skills = [];
-    parsedData.positions?.forEach(pos => {
-      if (pos.skills && Array.isArray(pos.skills)) {
-        skills.push(...pos.skills);
-      }
+    // Create FormData to send file to Python service
+    const formData = new FormData();
+    const fileStream = fs.createReadStream(req.file.path);
+    formData.append('file', fileStream, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype
     });
 
-    if (userId) {
-      await User.findByIdAndUpdate(
-        userId,
-        {
-          $set: {
-            ...profileData,
-            education,
-            experience,
-            skills: [...new Set(skills)]
-          }
-        },
-        { new: true }
-      );
-
-      const existingPitch = await Pitch.findOne({ user: userId });
-
-      if (existingPitch) {
-        await Pitch.findOneAndUpdate(
-          { user: userId },
-          { 
-            content: pitchContent,
-            updatedAt: Date.now() 
-          },
-          { new: true }
-        );
-      } else {
-        const newPitch = new Pitch({
-          user: userId,
-          content: pitchContent
-        });
-        await newPitch.save();
-      }
-    }
-
-    res.status(200).json({
-      message: "Resume parsed successfully!",
-      parsedData,
-      profileData,
-      education,
-      experience,
-      skills,
-      pitch: pitchContent
+    // Call your Python FastAPI service
+    const response = await axios.post(`${PYTHON_SERVICE_URL}/parse-resume`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 30000 // 30 second timeout
     });
 
-  } catch (error) {
-    console.error("❌ Error during parsing:", error.response?.data || error.message);
+    console.log('Python service response:', response.data);
 
-    if (req.file && req.file.path) {
-      try {
-        if (fs.existsSync(req.file.path)) {
-          fs.unlinkSync(req.file.path);
-        }
-      } catch (unlinkError) {
-        console.warn(`Warning: Could not delete temporary file ${req.file.path}:`, unlinkError.message);
-      }
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    // Return the parsed data from your Python service
+    res.json({
+      success: true,
+      data: response.data,
+      message: 'Resume parsed successfully'
+    });
+
+  } catch (err) {
+    console.error('Error parsing resume:', err.response?.data || err.message);
+    
+    // Clean up uploaded file even if there was an error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    res.status(500).json({ 
+      error: 'Resume parsing failed', 
+      details: err.response?.data || err.message 
+    });
+  }
+});
+
+// Fallback route using external API (apilayer)
+router.post('/parse-resume-external', resumeUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    if (error.response && error.response.status) {
-      if (error.response.headers['content-type']?.includes('text/html')) {
-        return res.status(500).json({
-          error: { 
-            message: "Invalid response from resume parsing service. Please check your API key and try again.",
-            details: { apiError: "Received HTML response instead of JSON" }
-          }
-        });
-      }
+    // Create the URL for the uploaded file
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const fileUrl = `${baseUrl}/uploads/resumes/${req.file.filename}`;
+    
+    // Call the API Layer resume parser with the provided API key
+    const apiUrl = `https://api.apilayer.com/resume_parser/url?url=${encodeURIComponent(fileUrl)}`;
+    
+    const response = await axios.get(apiUrl, {
+      headers: {
+        apikey: 'ES4RiFmezFQ30w6fFhaRNxY9GmPx9hLb'
+      },
+      timeout: 30000
+    });
+
+    // Process the parsed data
+    const parsedData = response.data;
+
+    // Return the complete parsed data
+    res.json({
+      profileData: {
+        name: parsedData.data?.attributes?.result?.candidate_name || '',
+        email: parsedData.data?.attributes?.result?.candidate_email || '',
+        phone: parsedData.data?.attributes?.result?.candidate_phone || ''
+      },
+      education: parsedData.data?.attributes?.result?.education_qualifications || [],
+      experience: parsedData.data?.attributes?.result?.positions || [],
+      skills: parsedData.data?.attributes?.result?.skills || [],
+      rawData: parsedData
+    });
+  } catch (err) {
+    console.error('Error parsing resume:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Resume parsing failed', details: err.message });
+  }
+});
+
+// Updated upload route to use Python service
+router.post('/upload', resumeUpload.single('resume'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
-    const errorDetails = error.response?.data || {};
+    console.log('File received for upload:', req.file.filename);
 
-    res.status(500).json({
-      error: { message: errorMessage, details: errorDetails },
+    // Create FormData to send file to Python service
+    const formData = new FormData();
+    const fileStream = fs.createReadStream(req.file.path);
+    formData.append('file', fileStream, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype
+    });
+
+    // Call your Python FastAPI service
+    const response = await axios.post(`${PYTHON_SERVICE_URL}/parse-resume`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 30000
+    });
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    // Return the parsed data
+    res.json({ 
+      success: true,
+      parsed: response.data 
+    });
+
+  } catch (err) {
+    console.error('Error parsing resume:', err.response?.data || err.message);
+    
+    // Clean up uploaded file even if there was an error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    res.status(500).json({ 
+      error: 'Resume parsing failed', 
+      details: err.response?.data || err.message 
     });
   }
 });

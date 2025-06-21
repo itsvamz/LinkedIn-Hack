@@ -76,78 +76,238 @@ const UserDashboard: React.FC = () => {
         });
         console.log("Fetched user data:", res.data);
         setUserData(res.data);
+        
+        // Fetch the user's pitch
+        const pitchRes = await axios.get("http://localhost:5000/api/user/pitch", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (pitchRes.data) {
+          setPitchText(pitchRes.data.content);
+          if (pitchRes.data.videoUrl) {
+            setHasGeneratedVideo(true);
+            // Update userData with the video URL from the pitch
+            setUserData(prevData => ({
+              ...prevData,
+              videoUrl: pitchRes.data.videoUrl
+            }));
+          }
+        }
       } catch (err) {
         console.error(err);
       }
     };
-
+  
     fetchUser();
   }, []);
 
   const handleResumeUpload = () => resumeFileRef.current?.click();
   const handleAvatarUpload = () => avatarFileRef.current?.click();
 
-  // Update the handleResumeFileChange function
+  // Update the handleResumeFileChange function with proper error handling
   const handleResumeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const file = e.target.files?.[0];
+  if (!file) return;
+  
+  // Show loading state
+  setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+  
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  // Upload and parse the resume
+  axios.post("http://localhost:5000/api/parse-resume", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+  // Inside handleResumeFileChange function
+  .then(response => {
+    console.log("Resume parsed:", response.data);
     
-    // Show loading state
-    setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+    // Extract profile data from the response
+    const profileData = response.data.data?.attributes?.result || {};
+    const parsedData = response.data.data || {};
     
-    const formData = new FormData();
-    formData.append("file", file);
-    // Remove this line as it's not needed - the user ID is already in the auth token
-    // formData.append("userId", userData?._id || "");
+    // Extract skills and format as string
+    const skillsData = response.data.skills || profileData.skills || [];
+    const skillsString = Array.isArray(skillsData) 
+      ? skillsData.join(", ") 
+      : typeof skillsData === 'string' 
+        ? skillsData 
+        : "";
     
-    // Upload and parse the resume
-    axios.post("http://localhost:5000/api/parse-resume", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    })
-    .then(response => {
-      console.log("Resume parsed:", response.data);
+    // Extract professional profiles from text content
+    const extractProfileUrl = (text, platform) => {
+      if (!text) return "";
+      const regex = {
+        linkedin: /linkedin\.com\/in\/([\w-]+)/i,
+        github: /github\.com\/([\w-]+)/i,
+        leetcode: /leetcode\.com\/([\w-]+)/i,
+        portfolio: /(https?:\/\/[\w.-]+\.[\w.-]+\/?[\w\/-]*)/i
+      };
       
-      // Update user data with parsed information
-      setUserData(prev => ({
+      const match = text.match(regex[platform]);
+      return match ? match[0] : "";
+    };
+    
+    // Get text content if available
+    const textContent = parsedData.text_content || "";
+    
+    // Create updated user data object
+    const updatedUserData = {
+      fullName: profileData.candidate_name || response.data.profileData?.name || "",
+      email: profileData.candidate_email || response.data.profileData?.email || "",
+      phone: profileData.candidate_phone || response.data.profileData?.phone || "",
+      location: profileData.candidate_location || response.data.profileData?.location || "",
+      linkedin: profileData.linkedin || extractProfileUrl(textContent, "linkedin") || "",
+      github: profileData.github || extractProfileUrl(textContent, "github") || "",
+      leetcode: profileData.leetcode || extractProfileUrl(textContent, "leetcode") || "",
+      portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || "",
+      education: response.data.education || profileData.education_qualifications || [],
+      experience: response.data.experience || profileData.positions || [],
+      skills: skillsString || ""
+    };
+    
+    // Update user data state
+    setUserData(prev => {
+      // Create merged data that preserves existing data when parsed data is empty
+      const mergedData = {
         ...prev,
-        ...response.data.profileData,
-        education: response.data.education,
-        experience: response.data.experience,
-        skills: response.data.skills.join(", ") // Convert array to comma-separated string
-      }));
+        fullName: profileData.candidate_name || response.data.profileData?.name || prev.fullName || "",
+        email: profileData.candidate_email || response.data.profileData?.email || prev.email || "",
+        phone: profileData.candidate_phone || response.data.profileData?.phone || prev.phone || "",
+        location: profileData.candidate_location || response.data.profileData?.location || prev.location || "",
+        linkedin: profileData.linkedin || extractProfileUrl(textContent, "linkedin") || prev.linkedin || "",
+        github: profileData.github || extractProfileUrl(textContent, "github") || prev.github || "",
+        leetcode: profileData.leetcode || extractProfileUrl(textContent, "leetcode") || prev.leetcode || "",
+        portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || prev.portfolio || "",
+        education: response.data.education || profileData.education_qualifications || prev.education || [],
+        experience: response.data.experience || profileData.positions || prev.experience || [],
+        skills: skillsString || prev.skills || ""
+      };
       
-      // Update pitch text
-      setPitchText(response.data.pitch);
-      
-      setSaveMessage({ 
-        type: "success", 
-        text: "Resume parsed and profile updated successfully!" 
-      });
-      
-      // Switch to pitch section to show the generated pitch
-      setActiveSection("pitch");
-    })
-    .catch(error => {
-      console.error("Error parsing resume:", error);
-      
-      // Extract the most useful error message
-      let errorMessage = "Failed to parse resume. Please try again.";
-      
-      if (error.response?.data?.error?.message) {
-        errorMessage = error.response.data.error.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      
-      setSaveMessage({ 
-        type: "error", 
-        text: errorMessage
-      });
+      return mergedData;
     });
-  };
+    
+    // Automatically save the updated profile to the database
+    const token = localStorage.getItem("token");
+    
+    // Get current user data first to merge with parsed data
+    axios.get("http://localhost:5000/api/user/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(currentProfileResponse => {
+      const currentData = currentProfileResponse.data;
+      
+      // Create merged data that preserves existing data when parsed data is empty
+      const mergedData = {
+        fullName: profileData.candidate_name || response.data.profileData?.name || currentData.fullName || "",
+        email: profileData.candidate_email || response.data.profileData?.email || currentData.email || "",
+        phone: profileData.candidate_phone || response.data.profileData?.phone || currentData.phone || "",
+        location: profileData.candidate_location || response.data.profileData?.location || currentData.location || "",
+        linkedin: profileData.linkedin || extractProfileUrl(textContent, "linkedin") || currentData.linkedin || "",
+        github: profileData.github || extractProfileUrl(textContent, "github") || currentData.github || "",
+        leetcode: profileData.leetcode || extractProfileUrl(textContent, "leetcode") || currentData.leetcode || "",
+        portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || currentData.portfolio || "",
+        education: response.data.education || profileData.education_qualifications || currentData.education || [],
+        experience: response.data.experience || profileData.positions || currentData.experience || [],
+        skills: skillsString || currentData.skills || ""
+      };
+      
+      // Update the database with merged data
+      return axios.put(
+        "http://localhost:5000/api/user/profile",
+        mergedData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+    })
+    .then(profileResponse => {
+      console.log("Profile automatically updated:", profileResponse.data);
+    })
+    .catch(profileError => {
+      console.error("Error auto-updating profile:", profileError);
+    });
+    
+    // Generate a pitch based on the parsed resume data
+    if (response.data.data && response.data.data.pitch) {
+      // If the Python service already generated a pitch, use it
+      setPitchText(response.data.data.pitch);
+    } else if (response.data.pitch) {
+      // If pitch is directly in the response
+      setPitchText(response.data.pitch);
+    } else {
+      // Otherwise, call the pitch generation endpoint
+      axios.post("http://localhost:8000/generate-pitch", {
+        data: response.data.data || response.data
+      })
+      // Inside handleResumeFileChange function, after pitch generation
+      .then(pitchResponse => {
+        if (pitchResponse.data && pitchResponse.data.pitch) {
+          const generatedPitch = pitchResponse.data.pitch;
+          setPitchText(generatedPitch);
+          
+          // Automatically save the pitch to the database
+          const token = localStorage.getItem("token");
+          axios.post("http://localhost:5000/api/user/pitch", 
+            { content: generatedPitch },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          )
+          .then(saveResponse => {
+            console.log("Pitch automatically saved:", saveResponse.data);
+          })
+          .catch(saveError => {
+            console.error("Error auto-saving pitch:", saveError);
+          });
+        }
+      })
+      .catch(pitchError => {
+        console.error("Error generating pitch:", pitchError);
+        // Keep the current pitch text if generation fails
+      });
+    }
+    
+    setSaveMessage({ 
+      type: "success", 
+      text: "Resume parsed and profile updated successfully!" 
+    });
+    
+    // Switch to profile section to show the updated profile
+    setActiveSection("profile");
+  })
+  .catch(error => {
+    console.error("Error parsing resume:", error);
+    
+    // Extract the most useful error message
+    let errorMessage = "Failed to parse resume. Please try again.";
+    
+    if (error.response?.data?.error?.message) {
+      errorMessage = error.response.data.error.message;
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    setSaveMessage({ 
+      type: "error", 
+      text: errorMessage
+    });
+  });
+};
 
   // Update the handleAvatarFileChange function
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,17 +363,77 @@ const UserDashboard: React.FC = () => {
   };
 
   const handleSavePitch = () => {
-    setIsEditingPitch(false);
-    console.log('Pitch saved:', pitchText);
+    // Save the pitch to the backend
+    const token = localStorage.getItem("token");
+    
+    axios.post("http://localhost:5000/api/user/pitch", 
+      { pitch: pitchText },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    .then(response => {
+      setIsEditingPitch(false);
+      setSaveMessage({ 
+        type: "success", 
+        text: "Pitch saved successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error saving pitch:", error);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to save pitch. Please try again." 
+      });
+    });
   };
 
   const handleGenerateVideo = () => {
     setIsGeneratingVideo(true);
-    // Simulate video generation process
-    setTimeout(() => {
+    const token = localStorage.getItem("token");
+    
+    // Call the backend to generate a video from the pitch text
+    axios.post("http://localhost:5000/api/generate-video", 
+      { pitch: pitchText },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    .then(response => {
       setIsGeneratingVideo(false);
       setHasGeneratedVideo(true);
-    }, 3000);
+      
+      // Save the video URL to the pitch
+      return axios.put("http://localhost:5000/api/user/pitch", 
+        { 
+          pitch: pitchText,
+          videoUrl: response.data.videoUrl 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+    })
+    .then(response => {
+      setSaveMessage({ 
+        type: "success", 
+        text: "Video generated and saved successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error generating video:", error);
+      setIsGeneratingVideo(false);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to generate video. Please try again." 
+      });
+    });
   };
 
   const saveProfile = async () => {
@@ -560,11 +780,19 @@ const UserDashboard: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-gray-800">Generated Pitch Video</h4>
             <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center relative overflow-hidden">
-              <div className="text-center text-white">
-                <Play className="w-16 h-16 mx-auto mb-4 opacity-75" />
-                <p className="text-lg font-medium">Your Pitch Video</p>
-                <p className="text-sm opacity-75">AI Generated • 1 minute</p>
-              </div>
+              {userData?.videoUrl ? (
+                <iframe
+                  src={userData.videoUrl}
+                  className="w-full h-full"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="text-center text-white">
+                  <Play className="w-16 h-16 mx-auto mb-4 opacity-75" />
+                  <p className="text-lg font-medium">Your Pitch Video</p>
+                  <p className="text-sm opacity-75">AI Generated • 1 minute</p>
+                </div>
+              )}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Button size="sm" className="bg-white text-black hover:bg-gray-200">
@@ -711,3 +939,56 @@ const UserDashboard: React.FC = () => {
 };
 
 export default UserDashboard;
+
+// Update handleGenerateVideo to save the video URL
+const handleGenerateVideo = () => {
+  setIsGeneratingVideo(true);
+  const token = localStorage.getItem("token");
+  
+  // Call the backend to generate a video from the pitch text
+  axios.post("http://localhost:5000/api/generate-video", 
+    { pitch: pitchText },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+  .then(response => {
+    setIsGeneratingVideo(false);
+    setHasGeneratedVideo(true);
+    
+    // Update userData with the new videoUrl
+    setUserData(prev => ({
+      ...prev,
+      videoUrl: response.data.videoUrl
+    }));
+    
+    // Save the video URL to the pitch
+    return axios.put("http://localhost:5000/api/user/pitch", 
+      { 
+        pitch: pitchText,
+        videoUrl: response.data.videoUrl 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+  })
+    .then(response => {
+      setSaveMessage({ 
+        type: "success", 
+        text: "Video generated and saved successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error generating video:", error);
+      setIsGeneratingVideo(false);
+      setSaveMessage({ 
+        type: "error", 
+        text: "Failed to generate video. Please try again." 
+      });
+    });
+  };

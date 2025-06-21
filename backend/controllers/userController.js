@@ -131,7 +131,13 @@ exports.uploadResume = async (req, res) => {
 
 // Pitch Management
 exports.createPitch = async (req, res) => {
-  const { content, videoUrl } = req.body;
+  // Accept either content or pitch in the request body
+  const content = req.body.content || req.body.pitch;
+  const videoUrl = req.body.videoUrl;
+
+  if (!content) {
+    return res.status(400).json({ msg: "Pitch content is required" });
+  }
 
   try {
     const pitch = new Pitch({
@@ -156,7 +162,13 @@ exports.createPitch = async (req, res) => {
 };
 
 exports.updatePitch = async (req, res) => {
-  const { content, videoUrl } = req.body;
+  // Accept either content or pitch in the request body
+  const content = req.body.content || req.body.pitch;
+  const videoUrl = req.body.videoUrl;
+
+  if (!content) {
+    return res.status(400).json({ msg: "Pitch content is required" });
+  }
 
   try {
     let pitch = await Pitch.findOne({ user: req.user.id });
