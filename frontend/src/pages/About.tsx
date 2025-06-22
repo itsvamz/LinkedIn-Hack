@@ -16,11 +16,37 @@ const About = () => {
     message: ''
   });
 
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Contact form submitted:', contactForm);
-    // Handle form submission
-  };
+  // Replace your existing handleContactSubmit function with this simple version:
+
+const handleContactSubmit = (e) => {
+  e.preventDefault();
+  
+  // Create the email subject and body
+  const subject = encodeURIComponent(contactForm.subject || 'Contact Form Submission from AVIRI Website');
+  const body = encodeURIComponent(
+    `Hi,\n\n` +
+    `You have received a new message from your AVIRI website contact form:\n\n` +
+    `Name: ${contactForm.fullName}\n` +
+    `Email: ${contactForm.email}\n` +
+    `Subject: ${contactForm.subject}\n\n` +
+    `Message:\n${contactForm.message}\n\n` +
+    `Best regards,\n${contactForm.fullName}`
+  );
+  
+  // Create mailto link
+  const mailtoLink = `mailto:vamika.mendiratta1304@gmail.com?subject=${subject}&body=${body}`;
+  
+  // Open email client
+  window.location.href = mailtoLink;
+  
+  // Reset form after showing popup
+  setContactForm({
+    fullName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+};
 
   const handleInputChange = (field: string, value: string) => {
     setContactForm(prev => ({ ...prev, [field]: value }));
@@ -31,31 +57,31 @@ const About = () => {
       name: 'Vamika Mendiratta',
       role: 'Project Ideator & AI Developer',
       description: 'Designed Project Vision and Built AI Models for automated chatbots, pitch script generation and resume parsing',
-      avatar: '/placeholder.svg'
+      avatar: 'https://ik.imagekit.io/abhiPriyaDarshini/image(3).png?updatedAt=1750614749804'
     },
     {
       name: 'Manaswi Singh',
       role: 'AI Developer',
       description: 'Built a pipeline to generate talking avatar videos including voice synthesis, face detection, background cleanup and avatar animation.',
-      avatar: '/placeholder.svg'
+      avatar: 'https://ik.imagekit.io/abhiPriyaDarshini/image.png?updatedAt=1750614749233'
     },
     {
       name: 'Abhi Priya Darshini Kurasa',
-      role: 'Frontend-Backend Integration & Authentication Specialist',
+      role: 'Frontend-Backend Integration, Authentication & DB Specialist',
       description: 'Focused on connecting frontend with backend, managing authentication, database interactions, and recruiter-user recommendations.',
-      avatar: '/placeholder.svg'
+      avatar: 'https://ik.imagekit.io/abhiPriyaDarshini/profilePic.jpg?updatedAt=1750613384506'
     },
     {
       name: 'Shreya Dubey',
       role: 'Frontend Development and Multilingual AI Integration',
       description: 'frontend development and seamless integration of multilingual AI systems',
-      avatar: '/placeholder.svg'
+      avatar: 'https://ik.imagekit.io/abhiPriyaDarshini/image(1).png?updatedAt=1750614749975'
     },
     {
       name: 'Ruchi Fatehchandani',
       role: 'Backend Development',
       description: 'Oversees backend architecture and is in charge of developing AI models for analyzing pitch videos and generating insights from user profiles',
-      avatar: '/placeholder.svg'
+      avatar: 'https://ik.imagekit.io/abhiPriyaDarshini/image(2).png?updatedAt=1750614745207'
     }
   ];
 
@@ -216,11 +242,11 @@ const About = () => {
                     </div>
                     <div className="flex items-center">
                       <Phone className="w-5 h-5 text-blue-600 mr-3" />
-                      <span className="text-gray-700">+91 98765 43210</span>
+                      <span className="text-gray-700">+91 XXXXXXXXXX</span>
                     </div>
                     <div className="flex items-center">
                       <MapPin className="w-5 h-5 text-blue-600 mr-3" />
-                      <span className="text-gray-700">Whitefield, Bangalore, India</span>
+                      <span className="text-gray-700">LinkedIn Hackathon, India</span>
                     </div>
                   </div>
                 </div>
