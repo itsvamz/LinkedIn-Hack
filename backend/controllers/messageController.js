@@ -151,3 +151,26 @@ exports.getMessages = async (req, res) => {
     res.status(500).json({ message: "Error fetching messages", error: err.message });
   }
 };
+
+// Get all messages for a user
+exports.getAllMessages = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userModel = req.user.role === 'recruiter' ? 'Recruiter' : 'User';
+
+    // Find all messages where the user is either sender or receiver
+    const messages = await Message.find({
+      $or: [
+        { sender: userId, senderModel: userModel },
+        { receiver: userId, receiverModel: userModel }
+      ]
+    })
+    .populate('sender', 'fullName email')
+    .populate('receiver', 'fullName email')
+    .sort({ createdAt: -1 });
+
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching messages", error: err.message });
+  }
+};

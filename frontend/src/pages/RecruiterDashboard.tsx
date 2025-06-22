@@ -17,30 +17,9 @@ import MessagingSection from '@/components/recruiter/MessagingSection';
 import Settings from '@/components/Settings';
 
 const RecruiterDashboard = () => {
+  // State declarations at the top - ALL hooks must be here
   const [activeSection, setActiveSection] = useState<'profile' | 'avatar' | 'overview' | 'jobs' | 'candidates' | 'messaging' | 'analytics' | 'settings'>('overview');
   const [userData, setUserData] = useState(null);
-  
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        
-        const res = await axios.get("http://localhost:5000/api/recruiter/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUserData(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    
-    fetchUser();
-  }, []);
-
-  const resumeFileRef = useRef<HTMLInputElement>(null);
-  const avatarFileRef = useRef<HTMLInputElement>(null);
   const [messageModalOpen, setMessageModalOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
@@ -51,341 +30,169 @@ const RecruiterDashboard = () => {
     phone: string;
   } | null>(null);
   const [saveMessage, setSaveMessage] = useState({ type: "", text: "" });
+  const [pitchText, setPitchText] = useState("");
   
-  const saveProfile = async () => {
+  // Messaging-related state (moved from renderMessagingSection)
+  const [sentMessages, setSentMessages] = useState([]);
+  const [receivedMessages, setReceivedMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+
+  // Refs
+  const resumeFileRef = useRef<HTMLInputElement>(null);
+  const avatarFileRef = useRef<HTMLInputElement>(null);
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/recruiter/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserData(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // Fetch messages effect (moved from renderMessagingSection)
+  useEffect(() => {
+    if (activeSection === 'messaging') {
+      fetchMessages();
+    }
+  }, [activeSection]);
+
+  // Message fetching function (moved from renderMessagingSection)
+  const fetchMessages = async () => {
+    setMessagesLoading(true);
     try {
-      setSaveMessage({ type: "", text: "" }); // Clear previous messages
-      const token = localStorage.getItem("token");
-      
-      const response = await axios.put(
-        "http://localhost:5000/api/recruiter/profile",
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      
-      setSaveMessage({ 
-        type: "success", 
-        text: "Profile updated successfully!" 
-      });
-      
-      // Update localStorage with new name if it changed
-      if (userData?.fullName) {
-        localStorage.setItem("userName", userData.fullName);
-      }
-      
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      setSaveMessage({ 
-        type: "error", 
-        text: "Failed to update profile. Please try again." 
-      });
-    }
-  };
-  
-  const handleResumeUpload = () => {
-    resumeFileRef.current?.click();
-  };
-
-  const handleAvatarUpload = () => {
-    avatarFileRef.current?.click();
-  };
-  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  // Show loading state
-  setSaveMessage({ type: "info", text: "Uploading avatar..." });
-
-  const formData = new FormData();
-  formData.append("avatar", file);
-
-  // Upload the avatar
-  axios.post("http://localhost:5000/api/recruiter/avatar", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
-  })
-    .then(response => {
-      console.log("Avatar uploaded:", response.data);
-
-      // Update user data with new avatar URL
-      if (response.data.avatarUrl) {
-        setUserData(prev => ({
-          ...prev,
-          avatar: response.data.avatarUrl
-        }));
-      }
-
-      setSaveMessage({ 
-        type: "success", 
-        text: "Avatar uploaded successfully!" 
-      });
-    })
-    .catch(error => {
-      console.error("Error uploading avatar:", error);
-
-      // Extract the most useful error message
-      let errorMessage = "Failed to upload avatar. Please try again.";
-
-      if (error.response?.data?.error?.message) {
-        errorMessage = error.response.data.error.message;
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      setSaveMessage({ 
-        type: "error", 
-        text: errorMessage
-      });
-    });
-};
-
-const handleGenerateAvatar = () => {
-  if (avatarFileRef.current?.files?.length) {
-    handleAvatarFileChange({ 
-      target: { files: avatarFileRef.current.files } 
-    } as React.ChangeEvent<HTMLInputElement>);
-  } else {
-    setSaveMessage({ 
-      type: "error", 
-      text: "Please select an image first." 
-    });
-  }
-};
-
-
-  const handleResumeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  
-  // Show loading state
-  setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
-
-  
-  const formData = new FormData();
-  formData.append("file", file);
-  
-
-  // Upload and parse the resume
-  axios.post("http://localhost:5000/api/parse-resume", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
-  })
-  // Inside handleResumeFileChange function, after updating userData state
-  .then(response => {
-    console.log("Resume parsed:", response.data);
-    
-    // Extract profile data from the response
-    const profileData = response.data.data?.attributes?.result || {};
-    const parsedData = response.data.data || {};
-    
-    // Safely handle skills data - check if it exists and is an array
-    const skillsData = response.data.skills || profileData.skills;
-    const skillsString = Array.isArray(skillsData) 
-      ? skillsData.join(", ") 
-      : typeof skillsData === 'string' 
-        ? skillsData 
-        : "";
-    
-    // Extract professional profiles from text content if available
-    const extractProfileUrl = (text, platform) => {
-      if (!text) return "";
-      const regex = {
-        linkedin: /linkedin\.com\/in\/([\w-]+)/i,
-        github: /github\.com\/([\w-]+)/i,
-        leetcode: /leetcode\.com\/([\w-]+)/i,
-        portfolio: /(https?:\/\/[\w.-]+\.[\w.-]+\/?[\w\/-]*)/i
-      };
-      
-      const match = text.match(regex[platform]);
-      return match ? match[0] : "";
-    };
-    
-    // Get text content if available
-    const textContent = parsedData.text_content || "";
-    
-    // Create updated user data object
-    const updatedUserData = {
-      fullName: profileData.candidate_name || response.data.profileData?.name || "",
-      email: profileData.candidate_email || response.data.profileData?.email || "",
-      phone: profileData.candidate_phone || response.data.profileData?.phone || "",
-      location: profileData.candidate_location || response.data.profileData?.location || "",
-      linkedin: profileData.linkedin || extractProfileUrl(textContent, "linkedin") || "",
-      github: profileData.github || extractProfileUrl(textContent, "github") || "",
-      leetcode: profileData.leetcode || extractProfileUrl(textContent, "leetcode") || "",
-      portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || "",
-      education: response.data.education || profileData.education_qualifications || [],
-      experience: response.data.experience || profileData.positions || [],
-      skills: skillsString || "",
-      resumePath: response.data.resumePath || ""
-    };
-    
-    // Update user data state
-    setUserData(prev => ({
-      ...prev,
-      ...updatedUserData
-    }));
-    
-    // Automatically save the updated profile to the database
-    const token = localStorage.getItem("token");
-    axios.put(
-      "http://localhost:5000/api/recruiter/profile",
-      updatedUserData,
-      {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/messages', {
         headers: {
           Authorization: `Bearer ${token}`
         }
+      });
+      
+      // Process messages into sent and received
+      const allMessages = response.data;
+      const sent = [];
+      const received = [];
+      
+      allMessages.forEach(msg => {
+        const messageObj = {
+          id: msg._id,
+          candidate: msg.receiverModel === 'User' ? 
+            (msg.receiver?.fullName || 'Candidate') : 
+            (msg.sender?.fullName || 'Candidate'),
+          content: msg.content,
+          timestamp: new Date(msg.createdAt).toLocaleString(),
+          status: msg.read ? 'read' : 'unread'
+        };
+        
+        if (msg.senderModel === 'Recruiter') {
+          sent.push(messageObj);
+        } else {
+          received.push(messageObj);
+        }
+      });
+      
+      setSentMessages(sent);
+      setReceivedMessages(received);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
+  // Profile management handlers
+  const saveProfile = async () => {
+    try {
+      setSaveMessage({ type: "", text: "" });
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "http://localhost:5000/api/recruiter/profile",
+        userData,
+        { headers: { Authorization: `Bearer ${token}` }}
+      );
+      
+      setSaveMessage({ type: "success", text: "Profile updated successfully!" });
+      if (userData?.fullName) {
+        localStorage.setItem("userName", userData.fullName);
       }
-    )
-    .then(profileResponse => {
-      console.log("Profile automatically updated:", profileResponse.data);
-    })
-    .catch(profileError => {
-      console.error("Error auto-updating profile:", profileError);
-    });
-    
-    // Generate a pitch based on the parsed resume data
-    if (response.data.data && response.data.data.pitch) {
-      // If the Python service already generated a pitch, use it
-      setPitchText(response.data.data.pitch);
-      
-      // Automatically save the pitch to the database
-      axios.post("http://localhost:5000/api/recruiter/pitch", 
-        { content: response.data.data.pitch },
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setSaveMessage({ type: "error", text: "Failed to update profile. Please try again." });
+    }
+  };
+
+  // File upload handlers
+  const handleResumeUpload = () => resumeFileRef.current?.click();
+  const handleAvatarUpload = () => avatarFileRef.current?.click();
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaveMessage({ type: "info", text: "Uploading avatar..." });
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/recruiter/avatar", 
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
           }
         }
-      )
-      .then(saveResponse => {
-        console.log("Pitch automatically saved:", saveResponse.data);
-      })
-      .catch(saveError => {
-        console.error("Error auto-saving pitch:", saveError);
-      });
-    } else if (response.data.pitch) {
-      // If pitch is directly in the response
-      setPitchText(response.data.pitch);
-      
-      // Automatically save the pitch to the database
-      axios.post("http://localhost:5000/api/recruiter/pitch", 
-        { content: response.data.pitch },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
-      .then(saveResponse => {
-        console.log("Pitch automatically saved:", saveResponse.data);
-      })
-      .catch(saveError => {
-        console.error("Error auto-saving pitch:", saveError);
-      });
+      );
+
+      if (response.data.avatarUrl) {
+        setUserData(prev => ({ ...prev, avatar: response.data.avatarUrl }));
+      }
+      setSaveMessage({ type: "success", text: "Avatar uploaded successfully!" });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      const errorMessage = error.response?.data?.error?.message || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          "Failed to upload avatar. Please try again.";
+      setSaveMessage({ type: "error", text: errorMessage });
+    }
+  };
+
+  const handleGenerateAvatar = () => {
+    if (avatarFileRef.current?.files?.length) {
+      handleAvatarFileChange({ 
+        target: { files: avatarFileRef.current.files } 
+      } as React.ChangeEvent<HTMLInputElement>);
     } else {
-      // Otherwise, call the pitch generation endpoint
-      axios.post("http://localhost:8000/generate-pitch", {
-        data: response.data.data || response.data
-      })
-      .then(pitchResponse => {
-        if (pitchResponse.data && pitchResponse.data.pitch) {
-          const generatedPitch = pitchResponse.data.pitch;
-          setPitchText(generatedPitch);
-          
-          // Automatically save the pitch to the database
-          axios.post("http://localhost:5000/api/recruiter/pitch", 
-            { content: generatedPitch },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          )
-          .then(saveResponse => {
-            console.log("Pitch automatically saved:", saveResponse.data);
-          })
-          .catch(saveError => {
-            console.error("Error auto-saving pitch:", saveError);
-          });
-        }
-      })
-      .catch(pitchError => {
-        console.error("Error generating pitch:", pitchError);
-        // Keep the current pitch text if generation fails
-      });
+      setSaveMessage({ type: "error", text: "Please select an image first." });
     }
-    
-    setSaveMessage({ 
-      type: "success", 
-      text: "Resume parsed and profile updated successfully!" 
-    });
-    
-    // Switch to profile section to show the updated profile
-    setActiveSection("profile");
-  })
-  .catch(error => {
-    console.error("Error parsing resume:", error);
-    
-    // Extract the most useful error message
-    let errorMessage = "Failed to parse resume. Please try again.";
-    
-    if (error.response?.data?.error?.message) {
-      errorMessage = error.response.data.error.message;
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    
-    setSaveMessage({ 
-      type: "error", 
-      text: errorMessage
-    });
-  });
-};
+  };
+
+  // Navigation handlers
   const handleOverviewModeSelect = (mode: string) => {
-    switch (mode) {
-      case 'candidates':
-        setActiveSection('candidates');
-        break;
-      case 'jobs':
-        setActiveSection('jobs');
-        break;
-      case 'messaging':
-        setActiveSection('messaging');
-        break;
-      default:
-        setActiveSection('candidates');
-    }
+    const sectionMap = {
+      candidates: 'candidates',
+      jobs: 'jobs',
+      messaging: 'messaging'
+    };
+    setActiveSection(sectionMap[mode] || 'candidates');
   };
 
-  const handleSendMessage = () => {
-    setMessageModalOpen(true);
-  };
-
-  const handleScheduleInterview = () => {
-    setInterviewModalOpen(true);
-  };
-
-  const handleReply = () => {
-    setReplyModalOpen(true);
-  };
-
+  // Modal handlers
+  const handleSendMessage = () => setMessageModalOpen(true);
+  const handleScheduleInterview = () => setInterviewModalOpen(true);
+  const handleReply = () => setReplyModalOpen(true);
   const handleViewApplicantProfile = (applicant: { id: number; name: string }) => {
     console.log('Viewing profile for:', applicant);
-    // Handle profile view logic
   };
-
   const handleInterviewApplicant = (applicant: {
     id: number;
     name: string;
@@ -396,6 +203,7 @@ const handleGenerateAvatar = () => {
     setInterviewModalOpen(true);
   };
 
+  // Section renderers
   const renderOverviewSection = () => (
     <DashboardOverview onModeSelect={handleOverviewModeSelect} activeMode={activeSection} />
   );
@@ -619,54 +427,65 @@ const handleGenerateAvatar = () => {
     </Card>
   );
 
-  const renderMessagingSection = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Messages</CardTitle>
-        <CardDescription>Manage your conversations with candidates</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">
-        <Tabs defaultValue="received" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="received">Messages from Candidates</TabsTrigger>
-            <TabsTrigger value="sent">Messages Sent to Candidates</TabsTrigger>
-          </TabsList>
-          <TabsContent value="received" className="space-y-4">
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">John Doe - Software Engineer</h4>
-                      <span className="text-sm text-gray-500">2 hours ago</span>
-                    </div>
-                    <p className="text-gray-600 mb-2">Thank you for reaching out about the React position...</p>
-                    <Button size="sm" variant="outline" onClick={handleReply}>Reply</Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="sent" className="space-y-4">
-            <div className="space-y-4">
-              {[1, 2].map((i) => (
-                <Card key={i} className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">To: Jane Smith - UX Designer</h4>
-                      <span className="text-sm text-gray-500">1 day ago</span>
-                    </div>
-                    <p className="text-gray-600 mb-2">Hi Jane, I noticed your impressive portfolio and would love to discuss...</p>
-                    <Button size="sm" variant="outline">View Thread</Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
+  // Fixed messaging section - no hooks inside
+  const renderMessagingSection = () => {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Messages</CardTitle>
+          <CardDescription>Manage your conversations with candidates</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          {messagesLoading ? (
+            <div className="flex justify-center p-4">Loading messages...</div>
+          ) : (
+            <Tabs defaultValue="received" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="received">Messages from Candidates</TabsTrigger>
+                <TabsTrigger value="sent">Messages Sent to Candidates</TabsTrigger>
+              </TabsList>
+              <TabsContent value="received" className="space-y-4">
+                <div className="space-y-4">
+                  {receivedMessages.length > 0 ? receivedMessages.map((message) => (
+                    <Card key={message.id} className="border border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold">{message.candidate}</h4>
+                          <span className="text-sm text-gray-500">{message.timestamp}</span>
+                        </div>
+                        <p className="text-gray-600 mb-2">{message.content}</p>
+                        <Button size="sm" variant="outline" onClick={handleReply}>Reply</Button>
+                      </CardContent>
+                    </Card>
+                  )) : (
+                    <p className="text-center text-gray-500">No messages received yet</p>
+                  )}
+                </div>
+              </TabsContent>
+              <TabsContent value="sent" className="space-y-4">
+                <div className="space-y-4">
+                  {sentMessages.length > 0 ? sentMessages.map((message) => (
+                    <Card key={message.id} className="border border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold">To: {message.candidate}</h4>
+                          <span className="text-sm text-gray-500">{message.timestamp}</span>
+                        </div>
+                        <p className="text-gray-600 mb-2">{message.content}</p>
+                        <Button size="sm" variant="outline">View Thread</Button>
+                      </CardContent>
+                    </Card>
+                  )) : (
+                    <p className="text-center text-gray-500">No messages sent yet</p>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderAnalyticsSection = () => (
     <Card>
@@ -793,15 +612,14 @@ const handleGenerateAvatar = () => {
     }
   };
 
-  return (
+return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-black dark:via-black dark:to-black">
       <div className="flex">
         <RecruiterSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
-          recruiterData={userData} // Add this prop
+          recruiterData={userData}
         />
-        
         <main className="flex-1 p-6 ml-64">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

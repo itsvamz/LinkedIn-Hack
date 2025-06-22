@@ -66,11 +66,11 @@ const users = [
         description: "Built Hardware-in-the-Loop setups for testing embedded control units under real-time simulation environments."
       }
     ],
-    profileViews: 139,
-    profileClicks: 67,
-    profileLikes: 24,
-    profileBookmarks: 10,
-    pitchViews: 82,
+    profileViews: 7,
+    profileClicks: 10,
+    profileLikes: 3,
+    profileBookmarks: 2,
+    pitchViews: 6,
     pitch: "Hi, I'm Amit Verma. I hold a Bachelor's degree in Electronics and Communication Engineering from Pune University, completed in 2013. I've worked as a Systems Engineer in the automotive domain for 9 years, focusing on embedded testing, hardware-software integration, and validation protocols. My key skills include CANalyzer, Python scripting, and real-time systems. I'm ISTQB Foundation certified and now keen to contribute to a technology-driven organization where precision engineering and quality assurance are core values.",
     video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(1).mp4?updatedAt=1750483782541&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%281%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750483782541&updatedAt=1750483782541"
   },
@@ -127,11 +127,11 @@ const users = [
         description: "Designed and executed automated API tests for payment gateway integration, covering edge cases, security scenarios, and failure recovery."
       }
     ],
-    profileViews: 164,
-    profileClicks: 73,
-    profileLikes: 33,
-    profileBookmarks: 13,
-    pitchViews: 91,
+    profileViews: 8,
+    profileClicks: 9,
+    profileLikes: 5,
+    profileBookmarks: 4,
+    pitchViews: 5,
     pitch: "Hi, I'm Shanti Priya. I hold a Bachelor's degree in Computer Applications from Delhi University, completed in 2012. I've worked as a QA Analyst in the fintech sector for over 10 years, specializing in end-to-end functional testing, regression suites, and automation scripting. My key skills include Selenium, JIRA, API testing, Agile methodology, and defect lifecycle management. I'm ISTQB certified and now eager to contribute to an innovative organization that values precision, speed, and continuous improvement in software delivery.",
     video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_full.mp4?updatedAt=1750483240176&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_full.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750483240176&updatedAt=1750483240176"
   },
@@ -188,11 +188,11 @@ const users = [
         description: "Integrated and customized embedded Linux OS for custom boards used in smart automation systems."
       }
     ],
-    profileViews: 128,
-    profileClicks: 54,
-    profileLikes: 21,
-    profileBookmarks: 9,
-    pitchViews: 73,
+    profileViews: 4,
+    profileClicks: 4,
+    profileLikes: 1,
+    profileBookmarks: 0,
+    pitchViews: 2,
     pitch: "Hi, I'm Kevin Lang. I hold a Bachelor's degree in Electronics and Communication Engineering from Harvard University, completed in 2015. I've worked as a Systems Engineer in the system domain for 11 years, focusing on embedded testing, software integration, and validation protocols. My key skills include Shell scripting and Operating Systems. I'm ISTQB Foundation certified and now keen to contribute to a technology-driven organization.",
     video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(3).mp4?updatedAt=1750489508088&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%283%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750489508088&updatedAt=1750489508088"
   },
@@ -249,11 +249,11 @@ const users = [
         description: "Designed a reusable automation framework integrated with CI/CD pipelines for frequent releases in a DevOps setup."
       }
     ],
-    profileViews: 142,
-    profileClicks: 61,
-    profileLikes: 29,
-    profileBookmarks: 11,
-    pitchViews: 89,
+    profileViews: 9,
+    profileClicks: 7,
+    profileLikes: 3,
+    profileBookmarks: 4,
+    pitchViews: 8,
     pitch: "Hi, I'm Linda Harris. I hold a Bachelor's degree in Software Engineering from Nuneaton University, completed in 2008. I've worked as a Test Engineer at an IT & Telecoms company for 16 years, handling the entire test process—from planning to execution and reporting. My key skills include acceptance testing, exploratory testing, technical investigation, Agile, and test environments. I'm ISEB certified and now looking to bring my expertise in software quality and testing to a forward-thinking organization.",
     video: "https://imagekit.io/player/embed/tpauozgxh/imagespeech-0-100_enhanced%20(2).mp4?updatedAt=1750485214841&thumbnail=https%3A%2F%2Fik.imagekit.io%2Ftpauozgxh%2Fimagespeech-0-100_enhanced%2520%282%29.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1750485214841&updatedAt=1750485214841"
   }
@@ -274,7 +274,7 @@ const recruiters = [
     position: "Technical Recruiting Manager",
     industry: ["Fintech", "Healthtech", "Edtech", "Blockchain"],
     about: "Recruiting leader with expertise in emerging technologies. Specialized in building engineering teams for startups and scale-ups in regulated industries like finance and healthcare.",
-    profileViews: 213,
+    profileViews: 3,
     responseRate: 95,
     avatar: "https://randomuser.me/api/portraits/women/1.jpg"
   },
@@ -291,8 +291,8 @@ const recruiters = [
     position: "Senior Technical Recruiter",
     industry: ["Software Development", "Cloud Computing", "DevOps", "AI/ML"],
     about: "Passionate technical recruiter with deep understanding of software engineering roles. Expert in identifying top talent for high-growth tech companies and innovative startups.",
-    profileViews: 189,
-    responseRate: 92,
+    profileViews: 4,
+    responseRate: 83,
     avatar: "https://randomuser.me/api/portraits/men/2.jpg"
   },
   {
@@ -308,7 +308,7 @@ const recruiters = [
     position: "Lead Talent Acquisition Specialist",
     industry: ["QA Testing", "Automation", "Embedded Systems", "Automotive"],
     about: "Specialized in quality assurance and testing recruitment. Helping companies build robust QA teams with expertise in automation, manual testing, and embedded systems validation.",
-    profileViews: 156,
+    profileViews: 2,
     responseRate: 89,
     avatar: "https://randomuser.me/api/portraits/women/2.jpg"
   },
@@ -325,7 +325,7 @@ const recruiters = [
     position: "Technical Recruiting Manager",
     industry: ["Systems Engineering", "Infrastructure", "Cybersecurity", "Networking"],
     about: "Expert in systems and infrastructure recruitment. Connecting talented engineers with companies building scalable, secure, and reliable technology platforms.",
-    profileViews: 201,
+    profileViews: 4,
     responseRate: 94,
     avatar: "https://randomuser.me/api/portraits/men/1.jpg"
   },
@@ -342,7 +342,7 @@ const recruiters = [
     position: "Senior Technical Recruiter",
     industry: ["Data Science", "Machine Learning", "Analytics", "Research"],
     about: "Data science and ML recruitment specialist. Passionate about connecting data professionals with cutting-edge companies working on AI, analytics, and research initiatives.",
-    profileViews: 178,
+    profileViews: 3,
     responseRate: 91,
     avatar: "https://randomuser.me/api/portraits/women/3.jpg"
   }
@@ -350,7 +350,6 @@ const recruiters = [
 
 module.exports = { users, recruiters };
 
-// Update the pitches creation in the seedDatabase function
 const seedDatabase = async () => {
   try {
     // Connect to database
@@ -394,500 +393,321 @@ const seedDatabase = async () => {
     
     console.log(`${createdRecruiters.length} recruiters created`);
     
-    // Create jobs
-    const jobs = [
+    // Create jobs - ENSURE EVERY RECRUITER HAS AT LEAST 2 JOBS
+    const jobsData = [
+      // Jobs for Priya Sharma (Elephant Ventures) - Fintech, Healthtech, Edtech, Blockchain
       {
-        title: "Senior Frontend Developer",
-        company: "TechCorp Inc.",
-        location: "San Francisco, CA",
+        title: "Senior Frontend Developer - Fintech",
+        company: "Elephant Ventures",
+        location: "Mumbai, Maharashtra, India",
         type: "Full-time",
-        salary: "$120k - $150k",
-        description: "We are looking for a senior frontend developer to join our team to build innovative web applications. The ideal candidate has deep expertise in React and modern JavaScript frameworks, with a passion for creating exceptional user experiences.",
+        salary: "₹18L - ₹25L",
+        description: "We are looking for a senior frontend developer to join our fintech team to build innovative financial applications. The ideal candidate has deep expertise in React and modern JavaScript frameworks.",
         requirements: [
           "5+ years of experience with React",
           "Strong knowledge of TypeScript",
-          "Experience with state management libraries (Redux, MobX, etc.)",
-          "Proficiency in modern CSS and responsive design",
-          "Understanding of web performance optimization",
-          "Experience with testing frameworks (Jest, React Testing Library)"
+          "Experience with financial applications",
+          "Understanding of payment gateways"
         ],
         responsibilities: [
-          "Develop and maintain high-quality React applications",
-          "Collaborate with design and backend teams",
-          "Optimize applications for maximum speed and scalability",
-          "Implement responsive design and ensure cross-browser compatibility",
-          "Participate in code reviews and mentor junior developers",
-          "Stay up-to-date with emerging trends and technologies"
+          "Develop and maintain fintech applications",
+          "Collaborate with backend teams on API integration",
+          "Ensure security and compliance standards"
         ],
-        skills: ["React", "TypeScript", "Next.js", "Redux", "Tailwind CSS", "GraphQL", "Jest", "Webpack"],
-        benefits: [
-          "Competitive salary and equity",
-          "Health, dental, and vision insurance",
-          "401(k) matching",
-          "Flexible work arrangements",
-          "Professional development budget",
-          "Unlimited PTO",
-          "Home office stipend"
-        ],
+        skills: ["React", "TypeScript", "JavaScript", "Redux", "Payment APIs"],
+        benefits: ["Health insurance", "Stock options", "Flexible work", "Learning budget"],
         status: "Active",
-        postedBy: createdRecruiters[0]._id,
-        views: 342,
-        applications: 28
+        postedBy: null, // Will be set below
+        views: Math.floor(Math.random() * 10) ,
+        applications: 0,
+        recruiterIndex: 0 // Priya Sharma
       },
       {
-        title: "UX Designer",
-        company: "DesignStudio",
-        location: "Remote",
-        type: "Contract",
-        salary: "$80k - $100k",
-        description: "Join our design team to create amazing user experiences for our clients in the e-commerce and fintech sectors. We're looking for a UX designer who can translate complex requirements into intuitive, accessible interfaces.",
-        requirements: [
-          "3+ years of UX design experience",
-          "Proficiency in Figma and Adobe Creative Suite",
-          "Portfolio demonstrating user-centered design process",
-          "Experience conducting user research and usability testing",
-          "Understanding of accessibility standards",
-          "Excellent communication and presentation skills"
-        ],
-        responsibilities: [
-          "Create wireframes, prototypes, and user flows",
-          "Conduct user research and usability testing",
-          "Collaborate with developers to implement designs",
-          "Create and maintain design systems",
-          "Present design concepts to clients and stakeholders",
-          "Iterate designs based on user feedback and analytics"
-        ],
-        skills: ["Figma", "UI/UX", "Design Systems", "User Research", "Prototyping", "Information Architecture", "Accessibility", "Adobe XD"],
-        benefits: [
-          "Flexible hours",
-          "Remote work",
-          "Creative environment",
-          "Professional development opportunities",
-          "Collaborative team culture",
-          "Project variety"
-        ],
-        status: "Active",
-        postedBy: createdRecruiters[1]._id,
-        views: 287,
-        applications: 19
-      },
-      {
-        title: "Full Stack Developer",
-        company: "Tech Innovators",
-        location: "Boston, MA",
+        title: "QA Automation Engineer - Healthtech",
+        company: "Elephant Ventures",
+        location: "Mumbai, Maharashtra, India",
         type: "Full-time",
-        salary: "$100k - $130k",
-        description: "We're seeking a talented Full Stack Developer to join our growing team. You'll work on cutting-edge applications in the healthcare technology space, building features that help medical professionals deliver better patient care.",
+        salary: "₹12L - ₹18L",
+        description: "Join our healthtech division to ensure quality in healthcare applications. We need an experienced QA professional with automation expertise.",
         requirements: [
-          "3+ years of full stack development experience",
-          "Proficiency in React, Node.js, and Express",
-          "Experience with SQL and NoSQL databases",
-          "Understanding of RESTful APIs and microservices",
-          "Knowledge of cloud services (AWS, Azure, or GCP)",
-          "Familiarity with agile development methodologies"
+          "3+ years QA experience",
+          "Selenium automation expertise",
+          "Healthcare domain knowledge preferred",
+          "API testing experience"
         ],
         responsibilities: [
-          "Develop end-to-end features across frontend and backend",
-          "Design and implement database schemas and APIs",
-          "Ensure application security and data privacy",
-          "Collaborate with product managers and designers",
-          "Participate in code reviews and technical planning",
-          "Troubleshoot and debug production issues"
+          "Design and execute test strategies",
+          "Build automation frameworks",
+          "Ensure regulatory compliance testing"
         ],
-        skills: ["JavaScript", "React", "Node.js", "Express", "MongoDB", "PostgreSQL", "AWS", "Docker"],
-        benefits: [
-          "Competitive salary",
-          "Comprehensive health benefits",
-          "Flexible work schedule",
-          "Remote work options",
-          "Continuing education allowance",
-          "Gym membership",
-          "Catered lunches"
-        ],
+        skills: ["Selenium", "Java", "Python", "API Testing", "Healthcare"],
+        benefits: ["Medical insurance", "Performance bonus", "Remote work", "Certification support"],
         status: "Active",
-        postedBy: createdRecruiters[2]._id,
-        views: 312,
-        applications: 24
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 3,
+        recruiterIndex: 0 // Priya Sharma
+      },
+      
+      // Jobs for Rajesh Kumar (Tech Innovators India) - Software Development, Cloud Computing, DevOps, AI/ML
+      {
+        title: "Cloud Solutions Architect",
+        company: "Tech Innovators India",
+        location: "Bangalore, Karnataka, India",
+        type: "Full-time",
+        salary: "₹25L - ₹35L",
+        description: "Lead cloud architecture initiatives for our enterprise clients. Design scalable, secure cloud solutions using modern technologies.",
+        requirements: [
+          "7+ years cloud architecture experience",
+          "AWS/Azure certifications",
+          "Strong system design skills",
+          "DevOps practices knowledge"
+        ],
+        responsibilities: [
+          "Design cloud architecture solutions",
+          "Lead technical discussions with clients",
+          "Mentor development teams"
+        ],
+        skills: ["AWS", "Azure", "System Design", "DevOps", "Kubernetes"],
+        benefits: ["Competitive salary", "Stock options", "International travel", "Training budget"],
+        status: "Active",
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 2,
+        recruiterIndex: 1 // Rajesh Kumar
       },
       {
-        title: "DevOps Engineer",
-        company: "Enterprise Tech Solutions",
-        location: "Austin, TX",
+        title: "Python Developer - AI/ML",
+        company: "Tech Innovators India",
+        location: "Bangalore, Karnataka, India",
         type: "Full-time",
-        salary: "$110k - $140k",
-        description: "We are looking for a DevOps Engineer to help us build and maintain our cloud infrastructure and CI/CD pipelines. The ideal candidate will have a strong background in cloud technologies and automation.",
+        salary: "₹15L - ₹22L",
+        description: "Join our AI/ML team to build intelligent solutions. Work with cutting-edge technologies in machine learning and data science.",
         requirements: [
-          "4+ years of experience in DevOps or SRE roles",
-          "Strong knowledge of AWS or Azure cloud services",
-          "Experience with infrastructure as code (Terraform, CloudFormation)",
-          "Proficiency with containerization (Docker, Kubernetes)",
-          "Understanding of CI/CD pipelines",
-          "Scripting skills (Python, Bash)"
+          "4+ years Python development",
+          "Machine learning frameworks experience",
+          "Data science background",
+          "Statistical analysis skills"
         ],
         responsibilities: [
-          "Design and implement cloud infrastructure",
-          "Automate deployment and scaling processes",
-          "Monitor system performance and troubleshoot issues",
-          "Implement security best practices",
-          "Optimize resource utilization and costs",
-          "Collaborate with development teams to improve delivery processes"
+          "Develop ML models and algorithms",
+          "Collaborate with data science team",
+          "Deploy models to production"
         ],
-        skills: ["AWS", "Terraform", "Docker", "Kubernetes", "Jenkins", "Python", "Linux", "Monitoring"],
-        benefits: [
-          "Competitive salary",
-          "Health and retirement benefits",
-          "Flexible work arrangements",
-          "Professional certification support",
-          "Home office stipend",
-          "Regular team events",
-          "Paid parental leave"
-        ],
+        skills: ["Python", "Machine Learning", "TensorFlow", "Data Science", "Statistics"],
+        benefits: ["Learning opportunities", "Conference attendance", "Flexible hours", "Health coverage"],
         status: "Active",
-        postedBy: createdRecruiters[3]._id,
-        views: 276,
-        applications: 17
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 4,
+        recruiterIndex: 1 // Rajesh Kumar
+      },
+      
+      // Jobs for Anita Patel (HireVue) - QA Testing, Automation, Embedded Systems, Automotive
+      {
+        title: "Senior QA Engineer - Automotive Testing",
+        company: "HireVue",
+        location: "Ahmedabad, Gujarat, India",
+        type: "Full-time",
+        salary: "₹16L - ₹24L",
+        description: "Lead quality assurance for automotive embedded systems. Work with cutting-edge automotive technologies and testing frameworks.",
+        requirements: [
+          "6+ years automotive QA experience",
+          "Embedded systems testing",
+          "CANalyzer/CANoe knowledge",
+          "ISTQB certification preferred"
+        ],
+        responsibilities: [
+          "Design automotive test strategies",
+          "Lead embedded systems validation",
+          "Coordinate with hardware teams"
+        ],
+        skills: ["Automotive Testing", "CANalyzer", "Embedded Systems", "Python", "C"],
+        benefits: ["Industry leading salary", "Car allowance", "Technical training", "Health insurance"],
+        status: "Active",
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 1,
+        recruiterIndex: 2 // Anita Patel
       },
       {
-        title: "Mobile App Developer",
-        company: "Startup Talent Partners",
-        location: "Seattle, WA",
+        title: "Test Automation Lead",
+        company: "HireVue",
+        location: "Ahmedabad, Gujarat, India",
         type: "Full-time",
-        salary: "$90k - $120k",
-        description: "Join an exciting startup building the next generation of mobile fitness applications. We're looking for a talented mobile developer who can create engaging, performant experiences for iOS and Android platforms.",
+        salary: "₹20L - ₹28L",
+        description: "Lead our test automation initiatives across multiple projects. Build and maintain robust automation frameworks.",
         requirements: [
-          "3+ years of mobile app development experience",
-          "Proficiency in React Native or Flutter",
-          "Experience with native development (Swift or Kotlin) a plus",
-          "Understanding of mobile UI/UX best practices",
-          "Knowledge of RESTful APIs and state management",
-          "Experience with app store submission processes"
+          "8+ years automation experience",
+          "Team leadership experience",
+          "Multiple automation tools expertise",
+          "CI/CD pipeline knowledge"
         ],
         responsibilities: [
-          "Develop cross-platform mobile applications",
-          "Implement responsive UI components and animations",
-          "Integrate with backend services and APIs",
-          "Optimize app performance and battery usage",
-          "Fix bugs and improve application quality",
-          "Collaborate with design and product teams"
+          "Lead automation team",
+          "Design automation strategies",
+          "Implement CI/CD practices"
         ],
-        skills: ["React Native", "JavaScript", "TypeScript", "Redux", "iOS", "Android", "API Integration", "Firebase"],
-        benefits: [
-          "Competitive salary and equity",
-          "Flexible work environment",
-          "Health insurance",
-          "Unlimited PTO",
-          "Home office setup",
-          "Professional development budget",
-          "Wellness program"
-        ],
+        skills: ["Selenium", "Java", "Python", "Jenkins", "Leadership"],
+        benefits: ["Leadership development", "Stock options", "Flexible work", "Premium healthcare"],
         status: "Active",
-        postedBy: createdRecruiters[4]._id,
-        views: 298,
-        applications: 22
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 3,
+        recruiterIndex: 2 // Anita Patel
+      },
+      
+      // Jobs for Vikram Singh (Cohere) - Systems Engineering, Infrastructure, Cybersecurity, Networking
+      {
+        title: "Senior Systems Engineer - Infrastructure",
+        company: "Cohere",
+        location: "Gurgaon, Haryana, India",
+        type: "Full-time",
+        salary: "₹22L - ₹30L",
+        description: "Build and maintain large-scale infrastructure systems. Work with modern cloud technologies and system architecture.",
+        requirements: [
+          "6+ years systems engineering",
+          "Linux system administration",
+          "Cloud infrastructure experience",
+          "Networking knowledge"
+        ],
+        responsibilities: [
+          "Design infrastructure solutions",
+          "Maintain system reliability",
+          "Optimize performance and security"
+        ],
+        skills: ["Linux", "AWS", "Docker", "Kubernetes", "Networking"],
+        benefits: ["Cutting-edge tech", "Remote work", "Learning budget", "Health coverage"],
+        status: "Active",
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 0,
+        recruiterIndex: 3 // Vikram Singh
       },
       {
-        title: "Backend Engineer",
-        company: "FinTech Solutions",
-        location: "Chicago, IL",
+        title: "Cybersecurity Engineer",
+        company: "Cohere",
+        location: "Gurgaon, Haryana, India",
         type: "Full-time",
-        salary: "$115k - $145k",
-        description: "Join our backend team to build scalable financial services APIs and microservices. You'll be working on high-throughput systems that process millions of transactions daily.",
+        salary: "₹18L - ₹26L",
+        description: "Protect our infrastructure and applications from security threats. Implement security best practices and monitoring.",
         requirements: [
-          "4+ years of backend development experience",
-          "Strong knowledge of Java or Kotlin",
-          "Experience with Spring Boot framework",
-          "Familiarity with relational databases and SQL",
-          "Understanding of microservices architecture",
-          "Knowledge of financial services a plus"
+          "5+ years cybersecurity experience",
+          "Security frameworks knowledge",
+          "Incident response experience",
+          "Security certifications preferred"
         ],
         responsibilities: [
-          "Design and implement RESTful APIs",
-          "Build scalable microservices",
-          "Optimize database queries and performance",
-          "Implement security best practices",
-          "Write comprehensive unit and integration tests",
-          "Participate in code reviews and architectural discussions"
+          "Implement security measures",
+          "Monitor for threats",
+          "Conduct security assessments"
         ],
-        skills: ["Java", "Spring Boot", "Microservices", "PostgreSQL", "Kafka", "Docker", "JUnit", "CI/CD"],
-        benefits: [
-          "Competitive salary",
-          "Health and dental insurance",
-          "401(k) with company match",
-          "Flexible work arrangements",
-          "Professional development budget",
-          "Paid time off",
-          "Parental leave"
-        ],
+        skills: ["Cybersecurity", "Networking", "Python", "Security Tools", "Linux"],
+        benefits: ["Security training", "Certification support", "Competitive salary", "Work-life balance"],
         status: "Active",
-        postedBy: createdRecruiters[0]._id,
-        views: 289,
-        applications: 21
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 0,
+        recruiterIndex: 3 // Vikram Singh
       },
+      
+      // Jobs for Meera Reddy (CRED) - Data Science, Machine Learning, Analytics, Research
       {
-        title: "Data Engineer",
-        company: "Analytics Pro",
-        location: "Remote",
+        title: "Senior Data Scientist",
+        company: "CRED",
+        location: "Hyderabad, Telangana, India",
         type: "Full-time",
-        salary: "$125k - $155k",
-        description: "We're looking for a Data Engineer to help build and maintain our data infrastructure. You'll work on ETL pipelines, data warehousing, and analytics platforms to enable data-driven decision making.",
+        salary: "₹20L - ₹32L",
+        description: "Drive data-driven decision making at CRED. Build ML models and analytics solutions for our fintech platform.",
         requirements: [
-          "3+ years of data engineering experience",
-          "Proficiency with Python and SQL",
-          "Experience with data processing frameworks (Spark, Hadoop)",
-          "Knowledge of cloud data services (AWS Redshift, Snowflake, BigQuery)",
-          "Understanding of data modeling and warehouse design",
-          "Familiarity with BI tools (Tableau, Power BI, Looker)"
+          "5+ years data science experience",
+          "Strong statistical background",
+          "ML model development",
+          "Fintech domain knowledge"
         ],
         responsibilities: [
-          "Design and implement ETL pipelines",
-          "Build and maintain data warehouses",
-          "Optimize data models for analytics",
-          "Ensure data quality and integrity",
-          "Collaborate with data scientists and analysts",
-          "Implement data governance practices"
+          "Develop predictive models",
+          "Analyze user behavior data",
+          "Present insights to stakeholders"
         ],
-        skills: ["Python", "SQL", "Spark", "AWS", "Airflow", "Snowflake", "dbt", "Terraform"],
-        benefits: [
-          "Competitive salary",
-          "Remote-first culture",
-          "Health and wellness benefits",
-          "Flexible working hours",
-          "Learning and development stipend",
-          "Home office allowance",
-          "Regular team retreats"
-        ],
+        skills: ["Python", "Machine Learning", "Statistics", "SQL", "Data Science"],
+        benefits: ["Stock options", "Learning budget", "Flexible work", "Premium benefits"],
         status: "Active",
-        postedBy: createdRecruiters[1]._id,
-        views: 267,
-        applications: 19
-      },
-      {
-        title: "Cloud Security Architect",
-        company: "SecureCloud Inc.",
-        location: "Washington, DC",
-        type: "Full-time",
-        salary: "$140k - $180k",
-        description: "We're seeking a Cloud Security Architect to design and implement secure cloud infrastructure for government and enterprise clients. You'll be responsible for ensuring our cloud solutions meet the highest security standards.",
-        requirements: [
-          "5+ years of experience in cloud security",
-          "AWS, Azure, or GCP security certifications",
-          "Knowledge of security frameworks (NIST, ISO 27001)",
-          "Experience with infrastructure as code",
-          "Understanding of network security principles",
-          "Background in security assessment and compliance"
-        ],
-        responsibilities: [
-          "Design secure cloud architectures",
-          "Implement security controls and guardrails",
-          "Conduct security assessments and audits",
-          "Develop security policies and procedures",
-          "Respond to security incidents",
-          "Advise on compliance requirements"
-        ],
-        skills: ["AWS", "Azure", "Security", "Terraform", "IAM", "Compliance", "SIEM", "Penetration Testing"],
-        benefits: [
-          "Top-tier compensation",
-          "Comprehensive benefits package",
-          "Security certification reimbursement",
-          "Flexible work arrangements",
-          "Professional development opportunities",
-          "Paid time off",
-          "Retirement plan with matching"
-        ],
-        status: "Active",
-        postedBy: createdRecruiters[2]._id,
-        views: 231,
-        applications: 15
-      },
-      {
-        title: "Machine Learning Engineer",
-        company: "AI Innovations",
-        location: "Boston, MA",
-        type: "Full-time",
-        salary: "$130k - $170k",
-        description: "Join our team of ML engineers building cutting-edge AI solutions for healthcare and life sciences. You'll work on developing and deploying machine learning models that help improve patient outcomes and accelerate drug discovery.",
-        requirements: [
-          "MS or PhD in Computer Science, Machine Learning, or related field",
-          "3+ years of experience in applied machine learning",
-          "Proficiency in Python and ML frameworks (TensorFlow, PyTorch)",
-          "Experience with data processing and feature engineering",
-          "Understanding of ML ops and model deployment",
-          "Knowledge of healthcare data a plus"
-        ],
-        responsibilities: [
-          "Develop and train machine learning models",
-          "Process and analyze large datasets",
-          "Implement ML pipelines for production",
-          "Collaborate with data scientists and domain experts",
-          "Evaluate and improve model performance",
-          "Stay current with ML research and techniques"
-        ],
-        skills: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "MLOps", "Docker", "Kubernetes", "SQL"],
-        benefits: [
-          "Competitive salary and equity",
-          "Health, dental, and vision insurance",
-          "Flexible work arrangements",
-          "Conference and education budget",
-          "Gym membership",
-          "Catered lunches",
-          "Relocation assistance"
-        ],
-        status: "Active",
-        postedBy: createdRecruiters[3]._id,
-        views: 312,
-        applications: 26
-      },
-      {
-        title: "Product Designer",
-        company: "User First Design",
-        location: "Portland, OR",
-        type: "Full-time",
-        salary: "$95k - $125k",
-        description: "We're looking for a Product Designer to join our team and help create beautiful, functional digital products. You'll work closely with product managers, engineers, and stakeholders to design user-centered experiences.",
-        requirements: [
-          "3+ years of product design experience",
-          "Strong portfolio demonstrating UX/UI skills",
-          "Proficiency in design tools (Figma, Sketch)",
-          "Experience with design systems",
-          "Understanding of user research methods",
-          "Excellent communication skills"
-        ],
-        responsibilities: [
-          "Create wireframes, prototypes, and high-fidelity designs",
-          "Conduct user research and usability testing",
-          "Develop and maintain design systems",
-          "Collaborate with cross-functional teams",
-          "Present design concepts to stakeholders",
-          "Iterate based on feedback and data"
-        ],
-        skills: ["UI/UX", "Figma", "Design Systems", "Prototyping", "User Research", "Visual Design", "Interaction Design", "Accessibility"],
-        benefits: [
-          "Competitive salary",
-          "Health and wellness benefits",
-          "Flexible work schedule",
-          "Remote work options",
-          "Professional development budget",
-          "Creative team environment",
-          "Design conference stipend"
-        ],
-        status: "Active",
-        postedBy: createdRecruiters[4]._id,
-        views: 254,
-        applications: 18
-      },
-      {
-        title: "Blockchain Developer",
-        company: "Web3 Ventures",
-        location: "Miami, FL",
-        type: "Full-time",
-        salary: "$120k - $160k",
-        description: "Join our blockchain team to build decentralized applications and smart contracts. You'll be working on cutting-edge Web3 technologies that are reshaping the future of finance and digital ownership.",
-        requirements: [
-          "2+ years of blockchain development experience",
-          "Proficiency in Solidity and Ethereum development",
-          "Experience with Web3.js or Ethers.js",
-          "Understanding of DeFi protocols and NFTs",
-          "Knowledge of blockchain security best practices",
-          "Background in full-stack development a plus"
-        ],
-        responsibilities: [
-          "Develop and audit smart contracts",
-          "Build decentralized application frontends",
-          "Integrate with blockchain networks and protocols",
-          "Implement wallet connections and authentication",
-          "Optimize gas usage and transaction costs",
-          "Research and implement new blockchain technologies"
-        ],
-        skills: ["Solidity", "Ethereum", "Web3.js", "React", "Smart Contracts", "DeFi", "NFTs", "Hardhat"],
-        benefits: [
-          "Competitive salary and token incentives",
-          "Flexible work location",
-          "Health insurance",
-          "Crypto conference budget",
-          "Continuous learning opportunities",
-          "Vibrant Web3 community",
-          "Hackathon participation"
-        ],
-        status: "Active",
-        postedBy: createdRecruiters[0]._id,
-        views: 278,
-        applications: 20
+        postedBy: null,
+        views: Math.floor(Math.random() * 10),
+        applications: 0,
+        recruiterIndex: 4 // Meera Reddy
       }
     ];
     
-    const createdJobs = await Job.insertMany(jobs);
+    // Assign recruiters to jobs and create them
+    const createdJobs = [];
+    for (const jobData of jobsData) {
+      const recruiterIndex = jobData.recruiterIndex;
+      delete jobData.recruiterIndex; // Remove this field before creating
+      
+      const job = await Job.create({
+        ...jobData,
+        postedBy: createdRecruiters[recruiterIndex]._id
+      });
+      createdJobs.push(job);
+    }
+    
     console.log(`${createdJobs.length} jobs created`);
     
-    // Create avatars for users and recruiters
-    const avatars = [];
-    
-    // Create a set to track used indices
-    const usedIndices = new Set();
-    
-    // Function to get a unique random index
-    const getUniqueIndex = () => {
-      let index;
-      do {
-        index = Math.floor(Math.random() * 100);
-      } while (usedIndices.has(index));
-      usedIndices.add(index);
-      return index;
-    };
-    
-    // User avatars
-    for (const user of createdUsers) {
-      const gender = Math.random() > 0.5 ? 'men' : 'women';
-      const uniqueIndex = getUniqueIndex();
-      
-      avatars.push({
-        user: user._id,
-        userModel: 'User',
-        settings: {
-          hair: ['short', 'long', 'curly', 'straight', 'bald'][Math.floor(Math.random() * 5)],
-          face: ['round', 'oval', 'square', 'heart'][Math.floor(Math.random() * 4)],
-          outfit: ['casual', 'business', 'creative', 'tech'][Math.floor(Math.random() * 4)],
-          accessories: ['glasses', 'watch', 'none', 'earrings'][Math.floor(Math.random() * 4)],
-          background: ['office', 'outdoor', 'gradient', 'tech'][Math.floor(Math.random() * 4)],
-          color: ['blue', 'green', 'purple', 'orange', 'teal'][Math.floor(Math.random() * 5)]
-        },
-        imageUrl: `https://randomuser.me/api/portraits/${gender}/${uniqueIndex}.jpg`
-      });
-    }
-    
-    // Recruiter avatars
-    for (const recruiter of createdRecruiters) {
-      const gender = Math.random() > 0.5 ? 'men' : 'women';
-      const uniqueIndex = getUniqueIndex();
-      
-      avatars.push({
-        user: recruiter._id,
-        userModel: 'Recruiter',
-        settings: {
-          hair: ['short', 'long', 'curly', 'straight', 'bald'][Math.floor(Math.random() * 5)],
-          face: ['round', 'oval', 'square', 'heart'][Math.floor(Math.random() * 4)],
-          outfit: ['business', 'professional', 'business-casual', 'smart'][Math.floor(Math.random() * 4)],
-          accessories: ['glasses', 'watch', 'none', 'tie'][Math.floor(Math.random() * 4)],
-          background: ['office', 'corporate', 'gradient', 'modern'][Math.floor(Math.random() * 4)],
-          color: ['blue', 'navy', 'gray', 'maroon', 'teal'][Math.floor(Math.random() * 5)]
-        },
-        imageUrl: `https://randomuser.me/api/portraits/${gender}/${uniqueIndex}.jpg`
-      });
-    }
-    
-    const createdAvatars = await Avatar.insertMany(avatars);
-    console.log(`${createdAvatars.length} avatars created`);
-    
-    // Create applications
+    // Create applications - Each user applies to 2-3 relevant jobs
     const applications = [];
     
-    // Each user applies to 2-3 random jobs
     for (const user of createdUsers) {
-      const numApplications = 2 + Math.floor(Math.random() * 2); // 2-3 applications
-      const shuffledJobs = [...createdJobs].sort(() => 0.5 - Math.random());
+      // Filter jobs based on user's skills and background
+      let relevantJobs = [];
       
-      for (let i = 0; i < Math.min(numApplications, shuffledJobs.length); i++) {
-        const job = shuffledJobs[i];
-        const statuses = ['Applied', 'Reviewing', 'Shortlisted', 'Rejected', 'Hired'];
+      // Amit Verma (Automotive/Systems) - matches automotive and systems jobs
+      if (user.email === "amit.verma@example.com") {
+        relevantJobs = createdJobs.filter(job => 
+          job.title.includes("Automotive") || 
+          job.title.includes("Systems") ||
+          job.skills.some(skill => user.skills.includes(skill))
+        );
+      }
+      // Shanti Priya (QA) - matches QA and testing jobs
+      else if (user.email === "shanti.priya@example.com") {
+        relevantJobs = createdJobs.filter(job => 
+          job.title.includes("QA") || 
+          job.title.includes("Test") ||
+          job.skills.some(skill => user.skills.includes(skill))
+        );
+      }
+      // Kevin Lang (Systems) - matches systems and infrastructure jobs
+      else if (user.email === "kevin.lang@example.com") {
+        relevantJobs = createdJobs.filter(job => 
+          job.title.includes("Systems") || 
+          job.title.includes("Infrastructure") ||
+          job.skills.some(skill => user.skills.includes(skill))
+        );
+      }
+      // Linda Harris (QA/Testing) - matches QA and automation jobs
+      else if (user.email === "linda.harris@example.com") {
+        relevantJobs = createdJobs.filter(job => 
+          job.title.includes("QA") || 
+          job.title.includes("Test") || 
+          job.title.includes("Automation") ||
+          job.skills.some(skill => user.skills.includes(skill))
+        );
+      }
+      
+      // If no relevant jobs found, take random jobs
+      if (relevantJobs.length === 0) {
+        relevantJobs = createdJobs;
+      }
+      
+      // Apply to 2-3 jobs
+      const numApplications = Math.min(2 + Math.floor(Math.random() * 2), relevantJobs.length);
+      const shuffledRelevantJobs = [...relevantJobs].sort(() => 0.5 - Math.random());
+      
+      for (let i = 0; i < numApplications; i++) {
+        const job = shuffledRelevantJobs[i];
+        const statuses = ['Applied', 'Reviewing', 'Shortlisted', 'Rejected'];
         const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
         
         applications.push({
@@ -895,12 +715,13 @@ const seedDatabase = async () => {
           applicant: user._id,
           recruiter: job.postedBy,
           status: randomStatus,
-          cv: `https://example.com/cv/${user._id}.pdf`,
-          coverLetter: `I am excited to apply for the ${job.title} position at ${job.company}. With my experience in ${user.skills.slice(0, 3).join(', ')}, I believe I would be a great fit for this role.`,
-          notes: randomStatus === 'Shortlisted' ? 'Strong candidate, schedule for interview' : 
-                 randomStatus === 'Rejected' ? 'Not enough experience for this role' : 
-                 'Reviewing qualifications',
-          appliedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000) // Random date within last 30 days
+          cv: `https://example.com/cv/${user.fullName.replace(' ', '_')}.pdf`,
+          coverLetter: `Dear Hiring Manager,\n\nI am excited to apply for the ${job.title} position at ${job.company}. With my ${user.experience[0].duration} of experience in ${user.skills.slice(0, 3).join(', ')}, I believe I would be a valuable addition to your team.\n\nMy background includes ${user.experience[0].description}\n\nI am particularly drawn to this role because of my expertise in ${job.skills.filter(skill => user.skills.includes(skill)).slice(0, 2).join(' and ')}.\n\nThank you for considering my application.\n\nBest regards,\n${user.fullName}`,
+          notes: randomStatus === 'Shortlisted' ? `Strong candidate with relevant ${user.skills[0]} experience` : 
+                 randomStatus === 'Rejected' ? `Skills don't fully match requirements` : 
+                 randomStatus === 'Reviewing' ? `Good background, reviewing technical fit` :
+                 'Application received, initial review pending',
+          appliedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000)
         });
         
         // Update job applications count
@@ -911,78 +732,132 @@ const seedDatabase = async () => {
     const createdApplications = await Application.insertMany(applications);
     console.log(`${createdApplications.length} applications created`);
     
-    // Create pitches for users
+    // Create pitches for users (keep existing logic)
     const pitches = [];
-
-for (const user of createdUsers) {
-  // Find the original user data to get the video URL
-  const originalUserData = users.find(u => u.email === user.email);
-  
-  pitches.push({
-    user: user._id,
-    content: originalUserData.pitch || `Hi, I'm ${user.fullName}, a ${user.skills[0]} developer with ${user.experience[0].duration} of experience. I specialize in ${user.skills.slice(0, 3).join(', ')}. I'm passionate about building ${user.projects[0].tech.includes('React') ? 'web applications' : user.projects[0].tech.includes('Python') ? 'data-driven solutions' : 'innovative software'}. I'm currently ${user.availability.toLowerCase()} and looking for opportunities in ${user.location}.`,
-    videoUrl: originalUserData.video || `https://example.com/pitches/${user._id}.mp4`,
-    views: Math.floor(Math.random() * 200) + 50,
-    likes: Math.floor(Math.random() * 50) + 5
-  });
-  await User.findByIdAndUpdate(user._id, {
-    pitch: originalUserData.pitch,
-    videoUrl: originalUserData.video
-  });
-}
+    for (const user of createdUsers) {
+      const originalUserData = users.find(u => u.email === user.email);
+      
+      pitches.push({
+        user: user._id,
+        content: originalUserData.pitch,
+        videoUrl: originalUserData.video,
+        views: originalUserData.pitchViews || Math.floor(Math.random() * 10),
+        likes: Math.floor(Math.random() * 9)
+      });
+      
+      await User.findByIdAndUpdate(user._id, {
+        pitch: originalUserData.pitch,
+        videoUrl: originalUserData.video
+      });
+    }
     
     const createdPitches = await Pitch.insertMany(pitches);
     console.log(`${createdPitches.length} pitches created`);
     
-    // Create conversations and messages between recruiters and users
+    // IMPORTANT: Ensure every recruiter has bookmarked candidates
+    for (const recruiter of createdRecruiters) {
+      // Bookmark 2-3 random candidates for each recruiter
+      const numBookmarks = 2 + Math.floor(Math.random() * 2);
+      const shuffledCandidates = [...createdUsers].sort(() => 0.5 - Math.random());
+      const bookmarkedCandidates = shuffledCandidates.slice(0, numBookmarks).map(user => user._id);
+      
+      await Recruiter.findByIdAndUpdate(recruiter._id, {
+        bookmarkedCandidates
+      });
+    }
+    
+    // Create conversations and messages - Each recruiter talks to 2-3 relevant candidates
     const conversations = [];
     const messages = [];
     
-    // Each recruiter has conversations with 2-3 users
-    for (const recruiter of createdRecruiters) {
-      const numConversations = 2 + Math.floor(Math.random() * 2); // 2-3 conversations
-      const shuffledUsers = [...createdUsers].sort(() => 0.5 - Math.random());
+    for (let recruiterIndex = 0; recruiterIndex < createdRecruiters.length; recruiterIndex++) {
+      const recruiter = createdRecruiters[recruiterIndex];
+      const recruiterJobs = createdJobs.filter(job => job.postedBy.toString() === recruiter._id.toString());
       
-      for (let i = 0; i < Math.min(numConversations, shuffledUsers.length); i++) {
-        const user = shuffledUsers[i];
+      // Get candidates who applied to this recruiter's jobs
+      const relevantApplications = createdApplications.filter(app => 
+        app.recruiter.toString() === recruiter._id.toString()
+      );
+      
+      // Get unique users from applications
+      const candidateIds = [...new Set(relevantApplications.map(app => app.applicant.toString()))];
+      const relevantCandidates = createdUsers.filter(user => 
+        candidateIds.includes(user._id.toString())
+      );
+      
+      // If no relevant candidates, use bookmarked candidates
+      let selectedCandidates = relevantCandidates;
+      if (selectedCandidates.length === 0) {
+        const bookmarkedIds = await Recruiter.findById(recruiter._id).select('bookmarkedCandidates');
+        if (bookmarkedIds && bookmarkedIds.bookmarkedCandidates.length > 0) {
+          selectedCandidates = createdUsers.filter(user => 
+            bookmarkedIds.bookmarkedCandidates.some(id => id.toString() === user._id.toString())
+          );
+        } else {
+          // If still no candidates, use random candidates
+          selectedCandidates = createdUsers.slice(0, 2 + Math.floor(Math.random() * 2));
+        }
+      }
+      
+      // Create conversations with candidates
+      const numConversations = Math.min(2 + Math.floor(Math.random() * 2), selectedCandidates.length);
+      const candidatesForConversation = selectedCandidates.slice(0, numConversations);
+      
+      for (const candidate of candidatesForConversation) {
+        // Find a job this candidate could have applied for
+        let relatedJob = recruiterJobs[0]; // Default to first job if no specific match
+        
+        // Try to find a specific job match
+        const candidateApplication = relevantApplications.find(app => 
+          app.applicant.toString() === candidate._id.toString()
+        );
+        
+        if (candidateApplication) {
+          const jobMatch = recruiterJobs.find(job => 
+            job._id.toString() === candidateApplication.job.toString()
+          );
+          if (jobMatch) relatedJob = jobMatch;
+        }
         
         // Create conversation
         const conversation = {
           participants: [
             { user: recruiter._id, userModel: 'Recruiter' },
-            { user: user._id, userModel: 'User' }
+            { user: candidate._id, userModel: 'User' }
           ],
-          unreadCount: Math.floor(Math.random() * 5)
+          unreadCount: Math.floor(Math.random() * 3)
         };
         
         const createdConversation = await Conversation.create(conversation);
         conversations.push(createdConversation);
         
-        // Create 3-7 messages for this conversation
-        const numMessages = 3 + Math.floor(Math.random() * 5);
+        // Create realistic messages based on the actual job and candidate
         const messageContents = [
           // Recruiter messages
-          `Hi ${user.fullName}, I came across your profile and was impressed by your experience with ${user.skills[0]}. Would you be interested in discussing a ${createdJobs[0].title} role at ${createdJobs[0].company}?`,
-          `The position offers ${createdJobs[0].salary} and includes benefits like ${createdJobs[0].benefits[0]} and ${createdJobs[0].benefits[1]}.`,
-          `We're looking for someone with experience in ${createdJobs[0].skills.slice(0, 3).join(', ')}. Your background seems like a great fit.`,
-          `Would you be available for an initial call next week to discuss the opportunity further?`,
+          `Hi ${candidate.fullName}, I reviewed your profile and I'm impressed with your background in ${candidate.skills.slice(0, 2).join(' and ')}!`,
+          `We have a ${relatedJob.title} position at ${relatedJob.company} that offers ${relatedJob.salary}. Would you be interested?`,
+          `I noticed you have ${candidate.experience[0].duration} of experience at ${candidate.experience[0].company}. Could you tell me more about your work with ${candidate.skills[0]}?`,
+          `Would you be available for a brief call this week to discuss the opportunity in more detail?`,
           
-          // User messages
-          `Hi ${recruiter.fullName}, thanks for reaching out! I'm definitely interested in learning more about the role.`,
-          `My experience includes ${user.experience[0].duration} at ${user.experience[0].company} where I worked with ${user.skills.slice(0, 3).join(', ')}.`,
-          `The salary range and benefits sound good. I'm particularly interested in the ${createdJobs[0].type} nature of the role.`,
-          `Yes, I'm available for a call next week. How about Tuesday or Wednesday afternoon?`,
-          `Could you tell me more about the team I'd be working with and the current projects?`
+          // Candidate messages
+          `Hi ${recruiter.fullName}, thank you for reaching out! I'm very interested in learning more about the opportunity.`,
+          `At ${candidate.experience[0].company}, I worked extensively with ${candidate.skills.slice(0, 3).join(', ')} for ${candidate.experience[0].duration}. I believe this experience would be valuable for your team.`,
+          `The role sounds exciting! Could you share more details about the team and projects I would be working on?`,
+          `I'm available for a call on Tuesday or Wednesday afternoon. Looking forward to discussing this further!`,
+          `I've also worked on projects involving ${candidate.skills[0]}, which I think would be relevant for this position.`
         ];
         
+        // Create 4-6 messages for this conversation
+        const numMessages = 4 + Math.floor(Math.random() * 3);
+        
         for (let j = 0; j < numMessages; j++) {
-          const isRecruiterMessage = j % 2 === 0; // Alternate between recruiter and user
-          const messageDate = new Date(Date.now() - (numMessages - j) * 24 * 60 * 60 * 1000); // Older to newer
+          const isRecruiterMessage = j % 2 === 0;
+          const messageDate = new Date(Date.now() - (numMessages - j) * 12 * 60 * 60 * 1000); // Every 12 hours
           
           const message = {
-            sender: isRecruiterMessage ? recruiter._id : user._id,
+            sender: isRecruiterMessage ? recruiter._id : candidate._id,
             senderModel: isRecruiterMessage ? 'Recruiter' : 'User',
-            receiver: isRecruiterMessage ? user._id : recruiter._id,
+            receiver: isRecruiterMessage ? candidate._id : recruiter._id,
             receiverModel: isRecruiterMessage ? 'User' : 'Recruiter',
             content: messageContents[j % messageContents.length],
             read: j < numMessages - conversation.unreadCount,
@@ -1006,28 +881,42 @@ for (const user of createdUsers) {
     console.log(`${conversations.length} conversations created`);
     console.log(`${messages.length} messages created`);
     
-    // Update recruiters with shortlisted and bookmarked candidates
+    // Update recruiters with shortlisted and bookmarked candidates from actual applicants
     for (const recruiter of createdRecruiters) {
-  const shuffledUsers = [...createdUsers].sort(() => 0.5 - Math.random());
-  
-  // Shortlist 1-3 candidates
-  const shortlistedCount = 1 + Math.floor(Math.random() * 3);
-  const shortlistedCandidates = shuffledUsers.slice(0, shortlistedCount).map(user => user._id);
-  
-  // Bookmark 2-4 candidates (can include shortlisted ones)
-  const bookmarkedCount = 2 + Math.floor(Math.random() * 3);
-  const bookmarkedCandidates = shuffledUsers.slice(0, bookmarkedCount).map(user => user._id);
-  
-  // Reject 1-2 candidates (different from shortlisted)
-  const rejectedCount = 1 + Math.floor(Math.random() * 2);
-  const rejectedCandidates = shuffledUsers.slice(shortlistedCount + bookmarkedCount, shortlistedCount + bookmarkedCount + rejectedCount).map(user => user._id);
-  
-  await Recruiter.findByIdAndUpdate(recruiter._id, {
-    shortlistedCandidates,
-    bookmarkedCandidates,
-    rejectedCandidates
-  });
-}
+      const recruiterApplications = createdApplications.filter(app => 
+        app.recruiter.toString() === recruiter._id.toString()
+      );
+      
+      const applicantIds = recruiterApplications.map(app => app.applicant);
+      
+      // If no applications, use random candidates
+      if (applicantIds.length === 0) {
+        const randomCandidates = createdUsers
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 2 + Math.floor(Math.random() * 3))
+          .map(user => user._id);
+          
+        await Recruiter.findByIdAndUpdate(recruiter._id, {
+          shortlistedCandidates: randomCandidates.slice(0, 2),
+          bookmarkedCandidates: randomCandidates,
+          rejectedCandidates: []
+        });
+      } else {
+        // Shortlist some candidates
+        const shortlistedCount = Math.min(1 + Math.floor(Math.random() * 2), applicantIds.length);
+        const shortlistedCandidates = applicantIds.slice(0, shortlistedCount);
+        
+        // Bookmark some candidates
+        const bookmarkedCount = Math.min(1 + Math.floor(Math.random() * 3), applicantIds.length);
+        const bookmarkedCandidates = applicantIds.slice(0, bookmarkedCount);
+        
+        await Recruiter.findByIdAndUpdate(recruiter._id, {
+          shortlistedCandidates,
+          bookmarkedCandidates,
+          rejectedCandidates: []
+        });
+      }
+    }
     
     console.log("Recruiters updated with candidate lists");
     console.log("Database seeded successfully");

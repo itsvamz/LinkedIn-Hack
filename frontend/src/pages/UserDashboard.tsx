@@ -60,6 +60,9 @@ const UserDashboard: React.FC = () => {
   const [isEditingPitch, setIsEditingPitch] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [hasGeneratedVideo, setHasGeneratedVideo] = useState(false);
+  const [sentMessages, setSentMessages] = useState([]);
+  const [receivedMessages, setReceivedMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   
   const resumeFileRef = useRef<HTMLInputElement>(null);
   const avatarFileRef = useRef<HTMLInputElement>(null);
@@ -780,9 +783,9 @@ const UserDashboard: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-gray-800">Generated Pitch Video</h4>
             <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center relative overflow-hidden">
-              {userData?.videoUrl ? (
+              {(userData as UserData & { videoUrl?: string })?.videoUrl ? (
                 <iframe
-                  src={userData.videoUrl}
+                  src={userData?.videoUrl || ''}
                   className="w-full h-full"
                   allowFullScreen
                 />
@@ -828,6 +831,63 @@ const UserDashboard: React.FC = () => {
 
   const renderAnalyticsSection = () => <ProfileAnalytics user={userData} />;
   
+  // Add these state variables at the top of your component
+
+  
+  // Add this useEffect to fetch messages when the component mounts
+  useEffect(() => {
+    if (activeSection === "messaging") {
+      fetchMessages();
+    }
+  }, [activeSection]);
+  
+  // Add this function to fetch messages
+  const fetchMessages = async () => {
+    setLoadingMessages(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/messages', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Process messages into sent and received
+      const allMessages = response.data;
+      const sent = [];
+      const received = [];
+      
+      allMessages.forEach(msg => {
+        const messageObj = {
+          id: msg._id,
+          sender: msg.senderModel === 'Recruiter' 
+            ? (msg.sender?.fullName || 'Recruiter')
+            : 'You',
+          receiver: msg.receiverModel === 'Recruiter'
+            ? (msg.receiver?.fullName || 'Recruiter') 
+            : 'You',
+          content: msg.content,
+          timestamp: new Date(msg.createdAt).toLocaleString(),
+          status: msg.read ? 'read' : 'unread'
+        };
+        
+        if (msg.senderModel === 'User') {
+          sent.push(messageObj);
+        } else {
+          received.push(messageObj);
+        }
+      });
+      
+      setSentMessages(sent);
+      setReceivedMessages(received);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+  
+  // Update the renderMessagingSection function
   const renderMessagingSection = () => (
     <Card className="border-gray-200 shadow-lg bg-white">
       <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -843,40 +903,48 @@ const UserDashboard: React.FC = () => {
             <TabsTrigger value="sent">Sent</TabsTrigger>
           </TabsList>
           <TabsContent value="received" className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="border border-gray-200">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold">Recruiter Name</h4>
-                    <span className="text-sm text-gray-500">2h ago</span>
-                  </div>
-                  <p className="text-gray-600 mb-2">
-                    Hi! I viewed your profile and would like to connect...
-                  </p>
-                  <Button size="sm" variant="outline">
-                    Reply
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {loadingMessages ? (
+              <p className="text-center py-4">Loading messages...</p>
+            ) : receivedMessages.length === 0 ? (
+              <p className="text-center py-4">No messages received yet.</p>
+            ) : (
+              receivedMessages.map((message) => (
+                <Card key={message.id} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">From: {message.sender}</h4>
+                      <span className="text-sm text-gray-500">{message.timestamp}</span>
+                    </div>
+                    <p className="text-gray-600 mb-2">{message.content}</p>
+                    <Button size="sm" variant="outline">
+                      Reply
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
           <TabsContent value="sent" className="space-y-4">
-            {[1, 2].map((i) => (
-              <Card key={i} className="border border-gray-200">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold">To: Recruiter Name</h4>
-                    <span className="text-sm text-gray-500">1d ago</span>
-                  </div>
-                  <p className="text-gray-600 mb-2">
-                    Thank you for reaching out. I'm interested...
-                  </p>
-                  <Button size="sm" variant="outline">
-                    View Thread
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {loadingMessages ? (
+              <p className="text-center py-4">Loading messages...</p>
+            ) : sentMessages.length === 0 ? (
+              <p className="text-center py-4">No messages sent yet.</p>
+            ) : (
+              sentMessages.map((message) => (
+                <Card key={message.id} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold">To: {message.receiver}</h4>
+                      <span className="text-sm text-gray-500">{message.timestamp}</span>
+                    </div>
+                    <p className="text-gray-600 mb-2">{message.content}</p>
+                    <Button size="sm" variant="outline">
+                      View Thread
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -939,56 +1007,3 @@ const UserDashboard: React.FC = () => {
 };
 
 export default UserDashboard;
-
-// Update handleGenerateVideo to save the video URL
-const handleGenerateVideo = () => {
-  setIsGeneratingVideo(true);
-  const token = localStorage.getItem("token");
-  
-  // Call the backend to generate a video from the pitch text
-  axios.post("http://localhost:5000/api/generate-video", 
-    { pitch: pitchText },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  )
-  .then(response => {
-    setIsGeneratingVideo(false);
-    setHasGeneratedVideo(true);
-    
-    // Update userData with the new videoUrl
-    setUserData(prev => ({
-      ...prev,
-      videoUrl: response.data.videoUrl
-    }));
-    
-    // Save the video URL to the pitch
-    return axios.put("http://localhost:5000/api/user/pitch", 
-      { 
-        pitch: pitchText,
-        videoUrl: response.data.videoUrl 
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-  })
-    .then(response => {
-      setSaveMessage({ 
-        type: "success", 
-        text: "Video generated and saved successfully!" 
-      });
-    })
-    .catch(error => {
-      console.error("Error generating video:", error);
-      setIsGeneratingVideo(false);
-      setSaveMessage({ 
-        type: "error", 
-        text: "Failed to generate video. Please try again." 
-      });
-    });
-  };

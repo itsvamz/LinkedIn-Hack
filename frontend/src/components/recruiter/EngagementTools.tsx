@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bookmark, Star, Calendar, MessageSquare, Mail, Phone, Video, Clock, Users, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,58 +8,155 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import axios from 'axios';
+
+// Add these helper functions
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'bookmarked':
+      return 'bg-violet-100 text-violet-800 hover:bg-violet-200';
+    case 'shortlisted':
+      return 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200';
+    default:
+      return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+  }
+};
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'bookmarked':
+      return 'Saved';
+    case 'shortlisted':
+      return 'Shortlisted';
+    default:
+      return status;
+  }
+};
+
+// Add these missing data arrays
+const messageTemplates = [
+  {
+    name: 'Initial Outreach',
+    content: 'Hello [name], I came across your profile and was impressed by your experience as a [role]. I would love to discuss potential opportunities at our company. Are you open to a conversation?'
+  },
+  {
+    name: 'Interview Invitation',
+    content: 'Hi [name], Thank you for your interest in the position. We would like to invite you for an interview to discuss your experience and the role in more detail.'
+  },
+  {
+    name: 'Follow-up',
+    content: 'Hello [name], I wanted to follow up on our previous conversation about the [role] position. Do you have any questions or need any additional information?'
+  }
+];
+
+const interviewSlots = [
+  {
+    candidate: 'Alex Johnson',
+    type: 'Technical Interview',
+    date: '2023-11-15',
+    time: '10:00 AM'
+  },
+  {
+    candidate: 'Maria Garcia',
+    type: 'Initial Screening',
+    date: '2023-11-16',
+    time: '2:30 PM'
+  },
+  {
+    candidate: 'David Kim',
+    type: 'Final Round',
+    date: '2023-11-17',
+    time: '11:00 AM'
+  }
+];
 
 const EngagementTools = () => {
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const [messageTemplate, setMessageTemplate] = useState('');
   const [interviewDate, setInterviewDate] = useState('');
+  
+  // Add these new state variables
+  const [savedCandidates, setSavedCandidates] = useState([]);
+  const [stats, setStats] = useState({
+    savedProfiles: 0,
+    shortlisted: 0,
+    interviews: 0,
+    responseRate: 0
+  });
+  const [loading, setLoading] = useState(false);
 
-  const savedCandidates = [
-    { id: '1', name: 'Sarah Johnson', role: 'UX Designer', status: 'shortlisted', lastContact: '2 days ago' },
-    { id: '2', name: 'Michael Chen', role: 'Full Stack Developer', status: 'bookmarked', lastContact: '1 week ago' },
-    { id: '3', name: 'Emily Rodriguez', role: 'Product Manager', status: 'interview_scheduled', lastContact: 'Today' },
-    { id: '4', name: 'David Park', role: 'Data Scientist', status: 'shortlisted', lastContact: '3 days ago' },
-  ];
+  useEffect(() => {
+    fetchCandidates();
+    fetchStats();
+  }, []);
 
-  const interviewSlots = [
-    { date: '2024-02-15', time: '10:00 AM', candidate: 'Emily Rodriguez', type: 'Technical Interview' },
-    { date: '2024-02-16', time: '2:00 PM', candidate: 'Sarah Johnson', type: 'Culture Fit' },
-    { date: '2024-02-17', time: '11:00 AM', candidate: 'Michael Chen', type: 'Portfolio Review' },
-  ];
-
-  const messageTemplates = [
-    {
-      name: 'Initial Interest',
-      content: 'Hi [name], I came across your profile and was impressed by your experience in [role]. Would you be interested in discussing a new opportunity?'
-    },
-    {
-      name: 'Interview Invitation',
-      content: 'Hi [name], Thank you for your interest! We would like to schedule an interview to discuss the [role] position. When would be a good time for you?'
-    },
-    {
-      name: 'Follow Up',
-      content: 'Hi [name], I wanted to follow up on our previous conversation about the [role] position. Do you have any questions or would you like to proceed to the next step?'
-    }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'shortlisted': return 'bg-emerald-100 text-emerald-700';
-      case 'bookmarked': return 'bg-amber-100 text-amber-700';
-      case 'interview_scheduled': return 'bg-blue-100 text-blue-700';
-      default: return 'bg-gray-100 text-gray-700';
+  const fetchCandidates = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Fetch bookmarked candidates
+      const bookmarkedRes = await axios.get('http://localhost:5000/api/recruiter/bookmarked', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Fetch shortlisted candidates
+      const shortlistedRes = await axios.get('http://localhost:5000/api/recruiter/shortlisted', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Combine and format the data
+      const bookmarked = bookmarkedRes.data.map(candidate => ({
+        id: candidate._id,
+        name: candidate.fullName,
+        role: candidate.experience?.[0]?.position || 'Candidate',
+        status: 'bookmarked',
+        lastContact: 'Recently'
+      }));
+      
+      const shortlisted = shortlistedRes.data.map(candidate => ({
+        id: candidate._id,
+        name: candidate.fullName,
+        role: candidate.experience?.[0]?.position || 'Candidate',
+        status: 'shortlisted',
+        lastContact: 'Recently'
+      }));
+      
+      // Combine and remove duplicates
+      const allCandidates = [...bookmarked, ...shortlisted];
+      const uniqueCandidates = Array.from(new Map(allCandidates.map(item => [item.id, item])).values());
+      
+      setSavedCandidates(uniqueCandidates);
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'shortlisted': return 'Shortlisted';
-      case 'bookmarked': return 'Bookmarked';
-      case 'interview_scheduled': return 'Interview Scheduled';
-      default: return 'Unknown';
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/recruiter/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const recruiter = response.data;
+      
+      // Update stats
+      setStats({
+        savedProfiles: recruiter.bookmarkedCandidates?.length || 0,
+        shortlisted: recruiter.shortlistedCandidates?.length || 0,
+        interviews: 0, // You might need to add this to your model or calculate it
+        responseRate: recruiter.responseRate || 0
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
     }
   };
 
+  // Rest of your component remains the same
+  // Update the JSX to use the stats from state
   return (
     <div className="space-y-8">
       {/* Overview Stats */}
@@ -73,7 +170,7 @@ const EngagementTools = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Saved Profiles</p>
-                <p className="text-3xl font-bold text-gray-900">156</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.savedProfiles}</p>
               </div>
               <div className="p-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600">
                 <Bookmark className="w-6 h-6 text-white" />
@@ -87,7 +184,7 @@ const EngagementTools = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Shortlisted</p>
-                <p className="text-3xl font-bold text-gray-900">43</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.shortlisted}</p>
               </div>
               <div className="p-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600">
                 <Star className="w-6 h-6 text-white" />
@@ -101,9 +198,9 @@ const EngagementTools = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Interviews</p>
-                <p className="text-3xl font-bold text-gray-900">12</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.interviews}</p>
               </div>
-              <div className="p-3 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600">
+              <div className="p-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -115,9 +212,9 @@ const EngagementTools = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Response Rate</p>
-                <p className="text-3xl font-bold text-gray-900">78%</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.responseRate}%</p>
               </div>
-              <div className="p-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-600">
+              <div className="p-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
             </div>

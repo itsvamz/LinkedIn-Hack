@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   sendMessage,
   getConversations,
-  getMessages
+  getMessages,
+  getAllMessages
 } = require("../controllers/messageController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -12,6 +13,7 @@ router.use(authMiddleware);
 
 // Message routes
 router.post("/", sendMessage);
+router.get("/", getAllMessages); // Add this line
 router.get("/conversations", getConversations);
 router.get("/conversations/:conversationId", getMessages);
 

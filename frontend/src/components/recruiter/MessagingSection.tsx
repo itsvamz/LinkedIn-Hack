@@ -1,53 +1,66 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Search } from 'lucide-react';
+import axios from 'axios';
 
 const MessagingSection = () => {
   const [activeTab, setActiveTab] = useState('sent');
   const [messageText, setMessageText] = useState('');
+  const [sentMessages, setSentMessages] = useState([]);
+  const [receivedMessages, setReceivedMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const sentMessages = [
-    {
-      id: 1,
-      candidate: 'Sarah Johnson',
-      avatar: '/placeholder.svg',
-      lastMessage: 'Hi Sarah, I reviewed your profile and would like to discuss...',
-      timestamp: '2 hours ago',
-      status: 'read'
-    },
-    {
-      id: 2,
-      candidate: 'Mike Chen',
-      avatar: '/placeholder.svg',
-      lastMessage: 'Thank you for your interest in the Senior Developer position...',
-      timestamp: '1 day ago',
-      status: 'unread'
-    }
-  ];
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
-  const receivedMessages = [
-    {
-      id: 1,
-      candidate: 'Alex Rodriguez',
-      avatar: '/placeholder.svg',
-      lastMessage: 'Thank you for reaching out! I am very interested in learning more...',
-      timestamp: '30 minutes ago',
-      status: 'unread'
-    },
-    {
-      id: 2,
-      candidate: 'Emma Wilson',
-      avatar: '/placeholder.svg',
-      lastMessage: 'I would love to schedule a call to discuss the opportunity...',
-      timestamp: '3 hours ago',
-      status: 'read'
+  const fetchMessages = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/messages', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Process messages into sent and received
+      const allMessages = response.data;
+      const sent = [];
+      const received = [];
+      
+      allMessages.forEach(msg => {
+        const messageObj = {
+          id: msg._id,
+          candidate: msg.receiverModel === 'User' ? 
+            (msg.receiver?.fullName || 'Candidate') : 
+            (msg.sender?.fullName || 'Candidate'),
+          avatar: '/placeholder.svg',
+          lastMessage: msg.content,
+          timestamp: new Date(msg.createdAt).toLocaleString(),
+          status: msg.read ? 'read' : 'unread'
+        };
+        
+        if (msg.senderModel === 'Recruiter') {
+          sent.push(messageObj);
+        } else {
+          received.push(messageObj);
+        }
+      });
+      
+      setSentMessages(sent);
+      setReceivedMessages(received);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const MessageList = ({ messages }: { messages: any[] }) => (
     <div className="space-y-4">
