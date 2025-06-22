@@ -18,6 +18,8 @@ const About = () => {
 
   // Replace your existing handleContactSubmit function with this simple version:
 
+// Replace your existing handleContactSubmit function with this simple version:
+
 const handleContactSubmit = (e) => {
   e.preventDefault();
   
@@ -33,11 +35,14 @@ const handleContactSubmit = (e) => {
     `Best regards,\n${contactForm.fullName}`
   );
   
-  // Create mailto link
-  const mailtoLink = `mailto:vamika.mendiratta1304@gmail.com?subject=${subject}&body=${body}`;
+  // Create mailto link with multiple recipients
+  const mailtoLink = `mailto:abhipriya.kurasa@gmail.com, vamika.mendiratta1304@gmail.com?subject=${subject}&body=${body}`;
   
   // Open email client
   window.location.href = mailtoLink;
+  
+  // Show success popup
+  alert('Email client opened successfully! Please send the email from your email application.');
   
   // Reset form after showing popup
   setContactForm({
@@ -47,7 +52,6 @@ const handleContactSubmit = (e) => {
     message: ''
   });
 };
-
   const handleInputChange = (field: string, value: string) => {
     setContactForm(prev => ({ ...prev, [field]: value }));
   };
