@@ -42,7 +42,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange }: DashboardSidebarPr
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
+        {/* <div className="flex items-center mb-8 p-4 bg-gray-50 rounded-lg">
           <Avatar className="w-12 h-12 mr-3">
             <AvatarImage src="/placeholder.svg" alt="Profile" />
             <AvatarFallback className="bg-blue-600 text-white">SJ</AvatarFallback>
@@ -51,7 +51,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange }: DashboardSidebarPr
             <h3 className="font-semibold text-gray-900">Sarah Johnson</h3>
             <p className="text-sm text-gray-600">UX Designer</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation Menu */}
         <nav className="space-y-2">

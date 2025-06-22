@@ -54,7 +54,8 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
             email: user.email,
             phone: user.phone || 'Not provided',
             location: user.location || 'Remote',
-            profileLikes: user.profileLikes || 0
+            profileLikes: user.profileLikes || 0,
+            about: user.about || user.bio || 'No description provided.'
           }));
           
           setCandidates(transformedData);
@@ -67,7 +68,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
           });
           setLikes(initialLikes);
           
-          // Set all candidates as bookmarked
+          // Set all candidates as bookmarked since they're from bookmarked list
           const bookmarkedMap: {[key: string]: boolean} = {};
           transformedData.forEach((candidate: any) => {
             bookmarkedMap[candidate.id] = true;
@@ -89,7 +90,8 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
             email: user.email,
             phone: user.phone || 'Not provided',
             location: user.location || 'Remote',
-            profileLikes: user.profileLikes || 0
+            profileLikes: user.profileLikes || 0,
+            about: user.about || user.bio || 'No description provided.'
           }));
           
           setCandidates(transformedData);
@@ -102,23 +104,33 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
           });
           setLikes(initialLikes);
 
+          // Fetch bookmarks if user is recruiter
           if (role === "recruiter") {
-            const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            
-            const bookmarkedMap: {[key: string]: boolean} = {};
-            bookmarksRes.data.forEach((candidate: any) => {
-              bookmarkedMap[candidate._id] = true;
-            });
-            setBookmarks(bookmarkedMap);
+            try {
+              const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              
+              const bookmarkedMap: {[key: string]: boolean} = {};
+              bookmarksRes.data.forEach((candidate: any) => {
+                bookmarkedMap[candidate._id] = true;
+              });
+              setBookmarks(bookmarkedMap);
+            } catch (error) {
+              console.error("Error fetching bookmarks:", error);
+            }
           }
         }
 
         setLoading(false);
         
-        if (transformedData && transformedData.length > 0) {
-          onCandidateSelect(transformedData[0]);
+        // Select first candidate if available
+        const finalCandidates = isRecruiterDashboard && role === "recruiter" 
+          ? transformedData 
+          : transformedData;
+          
+        if (finalCandidates && finalCandidates.length > 0) {
+          onCandidateSelect(finalCandidates[0]);
         }
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -127,6 +139,21 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
     };
     
     fetchUsers();
+
+    // Listen for bookmark updates from other components
+    const handleBookmarkUpdate = (event: CustomEvent) => {
+      const { candidateId, isBookmarked } = event.detail;
+      setBookmarks(prev => ({
+        ...prev,
+        [candidateId]: isBookmarked
+      }));
+    };
+
+    window.addEventListener('bookmarkUpdated', handleBookmarkUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('bookmarkUpdated', handleBookmarkUpdate as EventListener);
+    };
   }, [onCandidateSelect, isRecruiterDashboard]);
 
   const handleAction = (candidateId: string, action: 'shortlist' | 'reject' | 'bookmark') => {
@@ -151,12 +178,14 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
   
       const token = localStorage.getItem("token");
       await axios.post(`http://localhost:5000/api/user/analytics/${candidateId}`, {
-        type: 'profileLike'  // Changed from action: 'like' to match backend expectation
+        type: 'profileLike',
+        action: 'like'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (error) {
       console.error("Error liking profile:", error);
+      // Revert optimistic update
       setLikes(prev => ({
         ...prev,
         [candidateId]: Math.max((prev[candidateId] || 0) - 1, 0)
@@ -165,24 +194,65 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
   };
 
   const handleBookmark = async (candidateId: string) => {
+    if (userRole !== "recruiter") {
+      console.log("Only recruiters can bookmark candidates");
+      return;
+    }
+
     try {
+      const isCurrentlyBookmarked = bookmarks[candidateId] || false;
+      
+      // Optimistic update
       setBookmarks(prev => ({
         ...prev,
-        [candidateId]: !prev[candidateId]
+        [candidateId]: !isCurrentlyBookmarked
       }));
 
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/recruiter/bookmark", {
-        candidateId
+      const response = await axios.post("http://localhost:5000/api/recruiter/bookmark", {
+        candidateId,
+        action: isCurrentlyBookmarked ? "remove" : "add"
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (response.status === 200) {
+        console.log(`Candidate ${candidateId} ${isCurrentlyBookmarked ? 'unbookmarked' : 'bookmarked'}`);
+        
+        // Update localStorage for consistency
+        const savedBookmarks = localStorage.getItem("bookmarkedUsers");
+        const bookmarkedSet = savedBookmarks ? new Set(JSON.parse(savedBookmarks)) : new Set();
+        
+        if (isCurrentlyBookmarked) {
+          bookmarkedSet.delete(candidateId);
+        } else {
+          bookmarkedSet.add(candidateId);
+        }
+        
+        localStorage.setItem("bookmarkedUsers", JSON.stringify([...bookmarkedSet]));
+
+        // Dispatch event to notify other components
+        window.dispatchEvent(new CustomEvent('bookmarkUpdated', {
+          detail: { candidateId, isBookmarked: !isCurrentlyBookmarked }
+        }));
+
+        // If we're on the recruiter dashboard and unbookmarking, remove from visible cards
+        if (isRecruiterDashboard && isCurrentlyBookmarked) {
+          setVisibleCards(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(candidateId);
+            return newSet;
+          });
+        }
+      }
     } catch (error) {
       console.error("Error bookmarking candidate:", error);
+      // Revert optimistic update
       setBookmarks(prev => ({
         ...prev,
         [candidateId]: !prev[candidateId]
       }));
+      alert("Failed to update bookmark. Please try again.");
     }
   };
 
@@ -201,8 +271,29 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
 
   const visibleCandidates = candidates.filter(candidate => visibleCards.has(candidate.id));
 
-  // Rest of the component remains the same...
-  // (Keep all the existing JSX and helper functions)
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg">Loading candidates...</div>
+      </div>
+    );
+  }
+
+  if (visibleCandidates.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <div className="text-4xl mb-4">📋</div>
+        <h3 className="text-lg font-semibold">
+          {isRecruiterDashboard ? "No bookmarked candidates" : "No candidates found"}
+        </h3>
+        <p>
+          {isRecruiterDashboard 
+            ? "Bookmark candidates from the talent page to see them here." 
+            : "Check back later for new talent."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -231,13 +322,32 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
                   className="h-full"
                 >
                   <Card className="h-full border-0 shadow-2xl overflow-hidden relative">
-                    {/* X Button */}
-                    <button
-                      onClick={() => handleAction(candidate.id, 'reject')}
-                      className="absolute top-4 right-4 z-10 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="absolute top-4 right-4 z-10 flex gap-2">
+                      {/* Bookmark Button - Only for recruiters */}
+                      {userRole === "recruiter" && (
+                        <button
+                          onClick={() => handleBookmark(candidate.id)}
+                          className={`rounded-full w-8 h-8 flex items-center justify-center transition-colors ${
+                            bookmarks[candidate.id] 
+                              ? "bg-amber-500 hover:bg-amber-600 text-white" 
+                              : "bg-white hover:bg-amber-50 text-amber-500 border border-amber-300"
+                          }`}
+                          title={bookmarks[candidate.id] ? "Remove bookmark" : "Bookmark candidate"}
+                        >
+                          <Bookmark className={`w-4 h-4 ${bookmarks[candidate.id] ? "fill-current" : ""}`} />
+                        </button>
+                      )}
+                      
+                      {/* X Button */}
+                      <button
+                        onClick={() => handleAction(candidate.id, 'reject')}
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                        title="Reject candidate"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
 
                     <div className="relative h-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
                       {/* Header */}
@@ -269,13 +379,13 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
                         <div className="mb-4">
                           <Badge className="bg-green-100 text-green-700 border-0">
                             <Clock className="w-3 h-3 mr-1" />
-                            {"Available Now"}
+                            Available Now
                           </Badge>
                         </div>
 
                         {/* Skills */}
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {candidate.skills.slice(0, 4).map((skill) => (
+                          {candidate.skills.slice(0, 4).map((skill: string) => (
                             <Badge key={skill} className="bg-blue-100 text-blue-700">
                               {skill}
                             </Badge>
@@ -309,6 +419,26 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
                         <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">
                           {candidate.about}
                         </p>
+                      </div>
+
+                      {/* Action Buttons at Bottom */}
+                      <div className="absolute bottom-4 left-6 right-6 flex gap-2">
+                        <Button
+                          onClick={() => handleLike(candidate.id)}
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-1 bg-white/80 backdrop-blur-sm hover:bg-white"
+                        >
+                          <Heart className="w-4 h-4" />
+                          {likes[candidate.id] || 0}
+                        </Button>
+                        <Button
+                          onClick={() => handleAction(candidate.id, 'shortlist')}
+                          size="sm"
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          Shortlist
+                        </Button>
                       </div>
                     </div>
                   </Card>
@@ -352,12 +482,9 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
               </Button>
             </CardContent>
           </Card>
-
-          
         </div>
       </div>
     </div>
-     
   );
 };
 

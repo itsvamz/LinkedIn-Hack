@@ -93,6 +93,73 @@ const RecruiterDashboard = () => {
   const handleAvatarUpload = () => {
     avatarFileRef.current?.click();
   };
+  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  // Show loading state
+  setSaveMessage({ type: "info", text: "Uploading avatar..." });
+
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  // Upload the avatar
+  axios.post("http://localhost:5000/api/recruiter/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+    .then(response => {
+      console.log("Avatar uploaded:", response.data);
+
+      // Update user data with new avatar URL
+      if (response.data.avatarUrl) {
+        setUserData(prev => ({
+          ...prev,
+          avatar: response.data.avatarUrl
+        }));
+      }
+
+      setSaveMessage({ 
+        type: "success", 
+        text: "Avatar uploaded successfully!" 
+      });
+    })
+    .catch(error => {
+      console.error("Error uploading avatar:", error);
+
+      // Extract the most useful error message
+      let errorMessage = "Failed to upload avatar. Please try again.";
+
+      if (error.response?.data?.error?.message) {
+        errorMessage = error.response.data.error.message;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setSaveMessage({ 
+        type: "error", 
+        text: errorMessage
+      });
+    });
+};
+
+const handleGenerateAvatar = () => {
+  if (avatarFileRef.current?.files?.length) {
+    handleAvatarFileChange({ 
+      target: { files: avatarFileRef.current.files } 
+    } as React.ChangeEvent<HTMLInputElement>);
+  } else {
+    setSaveMessage({ 
+      type: "error", 
+      text: "Please select an image first." 
+    });
+  }
+};
+
 
   const handleResumeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
@@ -100,10 +167,12 @@ const RecruiterDashboard = () => {
   
   // Show loading state
   setSaveMessage({ type: "info", text: "Uploading and parsing resume..." });
+
   
   const formData = new FormData();
   formData.append("file", file);
   
+
   // Upload and parse the resume
   axios.post("http://localhost:5000/api/parse-resume", formData, {
     headers: {
@@ -538,7 +607,12 @@ const RecruiterDashboard = () => {
             className="hidden"
           />
 
-          <Button className="w-full bg-blue-600 hover:bg-blue-700">Generate New Avatar</Button>
+          <Button 
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            onClick={handleGenerateAvatar}
+          >
+            Generate New Avatar
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -838,3 +912,5 @@ const RecruiterDashboard = () => {
 };
 
 export default RecruiterDashboard;
+
+// Add this function after handleResumeFileChange or near other handler functions

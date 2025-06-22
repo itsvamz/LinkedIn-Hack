@@ -276,7 +276,7 @@ const recruiters = [
     about: "Recruiting leader with expertise in emerging technologies. Specialized in building engineering teams for startups and scale-ups in regulated industries like finance and healthcare.",
     profileViews: 213,
     responseRate: 95,
-    avatar: "https://ik.imagekit.io/tpauozgxh/priya-recruiter.png?updatedAt=1750491534480"
+    avatar: "https://randomuser.me/api/portraits/women/1.jpg"
   },
   {
     email: "rajesh.kumar@techinnovators.com",
@@ -293,7 +293,7 @@ const recruiters = [
     about: "Passionate technical recruiter with deep understanding of software engineering roles. Expert in identifying top talent for high-growth tech companies and innovative startups.",
     profileViews: 189,
     responseRate: 92,
-    avatar: "https://ik.imagekit.io/tpauozgxh/rajesh-recruiter.png?updatedAt=1750491534480"
+    avatar: "https://randomuser.me/api/portraits/men/2.jpg"
   },
   {
     email: "anita.patel@hireVue.com",
@@ -310,7 +310,7 @@ const recruiters = [
     about: "Specialized in quality assurance and testing recruitment. Helping companies build robust QA teams with expertise in automation, manual testing, and embedded systems validation.",
     profileViews: 156,
     responseRate: 89,
-    avatar: "https://ik.imagekit.io/tpauozgxh/anita-recruiter.png?updatedAt=1750491534480"
+    avatar: "https://randomuser.me/api/portraits/women/2.jpg"
   },
   {
     email: "vikram.singh@cohere.com",
@@ -327,7 +327,7 @@ const recruiters = [
     about: "Expert in systems and infrastructure recruitment. Connecting talented engineers with companies building scalable, secure, and reliable technology platforms.",
     profileViews: 201,
     responseRate: 94,
-    avatar: "https://ik.imagekit.io/tpauozgxh/vikram-recruiter.png?updatedAt=1750491534480"
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg"
   },
   {
     email: "meera.reddy@cred.com",
@@ -344,7 +344,7 @@ const recruiters = [
     about: "Data science and ML recruitment specialist. Passionate about connecting data professionals with cutting-edge companies working on AI, analytics, and research initiatives.",
     profileViews: 178,
     responseRate: 91,
-    avatar: "https://ik.imagekit.io/tpauozgxh/meera-recruiter.png?updatedAt=1750491534480"
+    avatar: "https://randomuser.me/api/portraits/women/3.jpg"
   }
 ];
 
