@@ -84,7 +84,7 @@ const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onModeSelect, act
         <p className="text-gray-600 dark:text-gray-300 text-lg">Choose a mode to start discovering and engaging with top talent</p>
       </motion.div>
 
-      {/* Stats Overview */}
+      {/* Stats Overview
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onModeSelect, act
             </CardContent>
           </Card>
         ))}
-      </motion.div>
+      </motion.div> */}
 
       {/* Feature Cards */}
       <motion.div
