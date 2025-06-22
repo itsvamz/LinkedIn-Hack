@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Bookmark, Heart, X, Star, MapPin, Clock } from 'lucide-react';
+import axios from 'axios';
 
 interface Candidate {
   id: number;
@@ -27,9 +28,47 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, onClick }) => 
   const [isLiked, setIsLiked] = useState(false);
   const [notes, setNotes] = useState('');
 
-  const handleBookmark = (e: React.MouseEvent) => {
+  // Fetch initial bookmark status when component mounts
+  useEffect(() => {
+    const fetchBookmarkStatus = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/recruiter/bookmarked', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Check if this candidate is in the bookmarked list
+        const isBookmarked = response.data.some((bookmarkedCandidate: any) => 
+          bookmarkedCandidate._id === candidate.id.toString()
+        );
+        
+        setIsBookmarked(isBookmarked);
+      } catch (error) {
+        console.error('Error fetching bookmark status:', error);
+      }
+    };
+    
+    fetchBookmarkStatus();
+  }, [candidate.id]);
+
+  const handleBookmark = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsBookmarked(!isBookmarked);
+    
+    try {
+      // Optimistically update UI
+      setIsBookmarked(!isBookmarked);
+      
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/recruiter/bookmark', {
+        candidateId: candidate.id.toString()
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      // Revert UI if API call fails
+      console.error('Error toggling bookmark:', error);
+      setIsBookmarked(!isBookmarked);
+    }
   };
 
   const handleLike = (e: React.MouseEvent) => {

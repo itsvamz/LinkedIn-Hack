@@ -108,10 +108,7 @@ const CandidatePreview: React.FC<CandidatePreviewProps> = ({ candidate }) => {
                       <Briefcase className="w-4 h-4 mr-1" />
                       {candidate.experience}
                     </div>
-                    <div className="flex items-center text-yellow-500">
-                      <Star className="w-4 h-4 mr-1" />
-                      4.8 Rating
-                    </div>
+                    
                   </div>
                 </div>
               </div>

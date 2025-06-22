@@ -13,7 +13,7 @@ const {
   getPitch,
   createAvatar,
   getAvatar,
-  uploadAvatar, // ✅ Add this
+  uploadAvatar,
   applyForJob,
   getMyApplications,
   getAnalytics,
@@ -21,7 +21,8 @@ const {
   getPublicProfile,
   getPublicPitch,
   getUserById,
-  getAllUsers
+  getAllUsers,
+  getLeaderboard // Add this line
 } = require("../controllers/userController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -33,6 +34,9 @@ router.get("/all", getAllUsers);
 router.get("/public/:id", getPublicProfile);
 router.get("/public/:id/pitch", getPublicPitch);
 router.post("/analytics/:id", incrementAnalytics);
+
+// Add leaderboard route
+router.get("/leaderboard", authMiddleware, getLeaderboard);
 
 // 📌 Protected routes (require authentication)
 router.use(authMiddleware);

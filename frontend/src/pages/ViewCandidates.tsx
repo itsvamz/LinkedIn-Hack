@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import axios from 'axios';
 
 const ViewCandidates = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,14 +77,35 @@ const ViewCandidates = () => {
     (selectedSkill === '' || recruiter.skills.includes(selectedSkill))
   );
 
-  const toggleBookmark = (recruiterId: number) => {
-    const newBookmarked = new Set(bookmarkedRecruiters);
-    if (newBookmarked.has(recruiterId)) {
-      newBookmarked.delete(recruiterId);
-    } else {
-      newBookmarked.add(recruiterId);
+  const toggleBookmark = async (recruiterId: number) => {
+    try {
+      // Optimistically update UI
+      const newBookmarked = new Set(bookmarkedRecruiters);
+      if (newBookmarked.has(recruiterId)) {
+        newBookmarked.delete(recruiterId);
+      } else {
+        newBookmarked.add(recruiterId);
+      }
+      setBookmarkedRecruiters(newBookmarked);
+      
+      // Make API call to update bookmark status
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/recruiter/bookmark', {
+        candidateId: recruiterId.toString()
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      // Revert UI if API call fails
+      const revertBookmarked = new Set(bookmarkedRecruiters);
+      if (revertBookmarked.has(recruiterId)) {
+        revertBookmarked.delete(recruiterId);
+      } else {
+        revertBookmarked.add(recruiterId);
+      }
+      setBookmarkedRecruiters(revertBookmarked);
     }
-    setBookmarkedRecruiters(newBookmarked);
   };
 
   const ProfileModal = ({ recruiter }: { recruiter: any }) => (

@@ -117,33 +117,33 @@ const Leaderboard = () => {
     roleFilter === 'all' || item.role === roleFilter
   );
 
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="w-6 h-6 text-yellow-500" />;
-      case 2:
-        return <Medal className="w-6 h-6 text-gray-400" />;
-      case 3:
-        return <Award className="w-6 h-6 text-amber-600" />;
-      default:
-        return <span className="text-lg font-bold text-gray-600">#{rank}</span>;
-    }
-  };
+  // const getRankIcon = (rank: number) => {
+  //   switch (rank) {
+  //     case 1:
+  //       return <Crown className="w-6 h-6 text-yellow-500" />;
+  //     case 2:
+  //       return <Medal className="w-6 h-6 text-gray-400" />;
+  //     case 3:
+  //       return <Award className="w-6 h-6 text-amber-600" />;
+  //     default:
+  //       return <span className="text-lg font-bold text-gray-600">#{rank}</span>;
+  //   }
+  // };
 
-  const getBadgeColor = (badge: string | null) => {
-    switch (badge) {
-      case 'top-performer':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rising-star':
-        return 'bg-blue-100 text-blue-800';
-      case 'consistent':
-        return 'bg-green-100 text-green-800';
-      case 'fast-climber':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return '';
-    }
-  };
+  // const getBadgeColor = (badge: string | null) => {
+  //   switch (badge) {
+  //     case 'top-performer':
+  //       return 'bg-yellow-100 text-yellow-800';
+  //     case 'rising-star':
+  //       return 'bg-blue-100 text-blue-800';
+  //     case 'consistent':
+  //       return 'bg-green-100 text-green-800';
+  //     case 'fast-climber':
+  //       return 'bg-purple-100 text-purple-800';
+  //     default:
+  //       return '';
+  //   }
+  // };
 
   const getCurrentValue = (item: {
     views: number;
@@ -219,14 +219,14 @@ const Leaderboard = () => {
               </div>
               <div className="flex items-center mt-2 space-x-4">
                 <div className="flex items-center">
-                  <Trophy className="w-4 h-4 mr-1 text-yellow-500" />
+                  {/* <Trophy className="w-4 h-4 mr-1 text-yellow-500" /> */}
                   <span className="text-sm font-medium">Rank #{user.rank}</span>
                 </div>
-                {user.badge && (
+                {/* {user.badge && (
                   <Badge className={getBadgeColor(user.badge)}>
                     {user.badge.replace('-', ' ')}
                   </Badge>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -398,11 +398,11 @@ onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'm
               transition={{ delay: index * 0.1 }}
               className={`${index === 0 ? 'md:order-2' : index === 1 ? 'md:order-1' : 'md:order-3'}`}
             >
-              <Card className={`border-2 ${item.rank === 1 ? 'border-yellow-300 shadow-lg' : 'border-gray-200'} hover:shadow-xl transition-all`}>
+              <Card className={`border-2 ${item.rank === 1 ? ' shadow-lg' : 'border-gray-200'} hover:shadow-xl transition-all`}>
                 <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
+                  {/* <div className="flex justify-center mb-4">
                     {getRankIcon(item.rank)}
-                  </div>
+                  </div> */}
                   <Avatar className="w-20 h-20 mx-auto mb-4 border-4 border-white shadow-lg">
                     <AvatarImage src={item.avatar} alt={item.name} />
                     <AvatarFallback className="bg-blue-600 text-white text-xl">
@@ -411,11 +411,11 @@ onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'm
                   </Avatar>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{item.name}</h3>
                   <p className="text-blue-600 font-medium mb-3">{item.title}</p>
-                  {item.badge && (
+                  {/* {item.badge && (
                     <Badge className={`mb-3 ${getBadgeColor(item.badge)}`}>
                       {item.badge.replace('-', ' ')}
                     </Badge>
-                  )}
+                  )} */}
                   <div className="text-2xl font-bold text-gray-900 mb-1">
                     {getCurrentValue(item)}
                   </div>
@@ -448,9 +448,9 @@ onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'm
                     item.rank <= 3 ? 'bg-blue-25' : ''
                   }`}
                 >
-                  <div className="flex items-center justify-center w-12 h-12 mr-4">
+                  {/* <div className="flex items-center justify-center w-12 h-12 mr-4">
                     {getRankIcon(item.rank)}
-                  </div>
+                  </div> */}
                   
                   <Avatar className="w-12 h-12 mr-4">
                     <AvatarImage src={item.avatar} alt={item.name} />
@@ -462,11 +462,11 @@ onClick={() => setRoleFilter(option.key as 'all' | 'developer' | 'designer' | 'm
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                      {item.badge && (
+                      {/* {item.badge && (
                         <Badge className={`text-xs ${getBadgeColor(item.badge)}`}>
                           {item.badge.replace('-', ' ')}
                         </Badge>
-                      )}
+                      )} */}
                     </div>
                     <p className="text-sm text-gray-600">{item.title}</p>
                   </div>

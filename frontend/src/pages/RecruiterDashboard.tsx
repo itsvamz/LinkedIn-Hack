@@ -225,7 +225,8 @@ const handleGenerateAvatar = () => {
       portfolio: profileData.portfolio || extractProfileUrl(textContent, "portfolio") || "",
       education: response.data.education || profileData.education_qualifications || [],
       experience: response.data.experience || profileData.positions || [],
-      skills: skillsString || ""
+      skills: skillsString || "",
+      resumePath: response.data.resumePath || ""
     };
     
     // Update user data state
@@ -912,5 +913,3 @@ const handleGenerateAvatar = () => {
 };
 
 export default RecruiterDashboard;
-
-// Add this function after handleResumeFileChange or near other handler functions

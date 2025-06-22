@@ -6,6 +6,7 @@ const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 const User = require('../models/User');
+const Recruiter = require('../models/Recruiter'); // Add Recruiter model
 
 // Configure multer storage for resume uploads
 const storage = multer.diskStorage({
@@ -37,6 +38,9 @@ router.post('/parse-resume', resumeUpload.single('file'), async (req, res) => {
     }
 
     console.log('File received:', req.file.filename);
+    
+    // Store the resume file path
+    const resumeFilePath = req.file.path;
 
     // Create FormData to send file to Python service
     const formData = new FormData();
@@ -57,14 +61,40 @@ router.post('/parse-resume', resumeUpload.single('file'), async (req, res) => {
 
     console.log('Python service response:', response.data);
 
-    // Clean up uploaded file
-    fs.unlinkSync(req.file.path);
+    // Save the resume file path to the user/recruiter record if authenticated
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1];
+      if (token) {
+        try {
+          // Decode the token to get user ID and role
+          const jwt = require('jsonwebtoken');
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+          
+          // Update the appropriate model based on user role
+          if (decoded.role === 'user') {
+            await User.findByIdAndUpdate(decoded.id, { 
+              resumePath: resumeFilePath,
+              updatedAt: Date.now()
+            });
+          } else if (decoded.role === 'recruiter') {
+            await Recruiter.findByIdAndUpdate(decoded.id, { 
+              resumePath: resumeFilePath,
+              updatedAt: Date.now()
+            });
+          }
+        } catch (tokenErr) {
+          console.error('Token verification error:', tokenErr);
+          // Continue processing even if token verification fails
+        }
+      }
+    }
 
     // Return the parsed data from your Python service
     res.json({
       success: true,
       data: response.data,
-      message: 'Resume parsed successfully'
+      message: 'Resume parsed successfully',
+      resumePath: resumeFilePath
     });
 
   } catch (err) {

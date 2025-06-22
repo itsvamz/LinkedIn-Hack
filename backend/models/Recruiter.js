@@ -23,6 +23,8 @@ const RecruiterSchema = new mongoose.Schema(
     },
     phone: { type: String },
     location: { type: String },
+    // Add resume path
+    resumePath: { type: String },
     
     // Professional profiles
     linkedin: { type: String },

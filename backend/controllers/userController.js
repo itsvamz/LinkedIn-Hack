@@ -576,3 +576,116 @@ exports.getAvatar = async (req, res) => {
     res.status(500).json({ error: "Server error", details: err.message });
   }
 };
+
+// Leaderboard functionality
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const { timeframe, category, role } = req.query;
+    
+    // Default values if not provided
+    const selectedTimeframe = timeframe || 'month';
+    const selectedCategory = category || 'views';
+    const selectedRole = role || 'all';
+    
+    // Get all users with role 'user'
+    const users = await User.find({ role: 'user' }).select("-password");
+    
+    if (!users || users.length === 0) {
+      return res.status(404).json({ msg: "No users found" });
+    }
+    
+    // Process users for leaderboard
+    let processedUsers = users.map(user => {
+      // Calculate engagement score
+      const views = user.profileViews || 0;
+      const interactions = (user.profileLikes || 0) + (user.profileClicks || 0) + (user.profileBookmarks || 0);
+      const engagement = views > 0 ? Math.min(Math.round((interactions / views) * 100), 100) : 0;
+      
+      // Determine user role based on skills
+      let userRole = 'developer';
+      if (user.skills && user.skills.length > 0) {
+        if (user.skills.some(s => ['UI', 'UX', 'Figma', 'Design'].includes(s))) {
+          userRole = 'designer';
+        } else if (user.skills.some(s => ['Product', 'Manager', 'Agile', 'Scrum'].includes(s))) {
+          userRole = 'manager';
+        }
+      }
+      
+      // Determine title based on skills
+      let title = 'Professional';
+      if (user.skills && user.skills.length > 0) {
+        if (user.skills.some(s => ['React', 'Angular', 'Vue', 'JavaScript', 'TypeScript'].includes(s))) {
+          title = 'Frontend Developer';
+        } else if (user.skills.some(s => ['Node.js', 'Java', 'Python', 'C#', '.NET', 'PHP'].includes(s))) {
+          title = 'Backend Developer';
+        } else if (user.skills.some(s => ['UI', 'UX', 'Figma', 'Design'].includes(s))) {
+          title = 'UX Designer';
+        } else if (user.skills.some(s => ['Product', 'Manager', 'Agile', 'Scrum'].includes(s))) {
+          title = 'Product Manager';
+        } else if (user.skills.some(s => ['Data', 'Machine Learning', 'AI', 'Python', 'TensorFlow'].includes(s))) {
+          title = 'Data Scientist';
+        } else {
+          title = 'Full Stack Developer';
+        }
+      }
+      
+      // Generate about text if not provided
+      const about = user.about || `Professional with experience in ${user.skills ? user.skills.join(', ') : 'various technologies'}. Has worked on ${user.experience ? user.experience.length : 'several'} projects or roles.`;
+      
+      return {
+        id: user._id,
+        name: user.fullName,
+        title: title,
+        role: userRole,
+        avatar: user.avatar || '/placeholder.svg',
+        views: user.profileViews || 0,
+        likes: user.profileLikes || 0,
+        engagement: engagement,
+        email: user.email,
+        phone: user.phone || 'Not provided',
+        location: user.location || 'Not specified',
+        experience: user.experience ? `${user.experience.length}+ years experience` : 'Experience not specified',
+        skills: user.skills || [],
+        about: about
+      };
+    });
+    
+    // Apply role filter if specified
+    if (selectedRole !== 'all') {
+      processedUsers = processedUsers.filter(user => user.role === selectedRole);
+    }
+    
+    // Sort based on selected category
+    processedUsers.sort((a, b) => {
+      if (selectedCategory === 'views') return b.views - a.views;
+      if (selectedCategory === 'likes') return b.likes - a.likes;
+      return b.engagement - a.engagement;
+    });
+    
+    // Add rank and badges after sorting
+    processedUsers = processedUsers.map((user, index) => {
+      // Determine badge based on rank
+      let badge = null;
+      if (index === 0) badge = 'top-performer';
+      if (index === 1) badge = 'rising-star';
+      if (index === 2) badge = 'consistent';
+      if (index === 4) badge = 'fast-climber';
+      
+      // Add change percentage (placeholder for now)
+      // In a real implementation, this would compare current metrics with previous period
+      const change = '+' + (Math.floor(Math.random() * 20) + 1) + '%';
+      
+      return {
+        ...user,
+        rank: index + 1,
+        badge,
+        change
+      };
+    });
+    
+    res.json(processedUsers);
+  } catch (err) {
+    console.error("Error fetching leaderboard:", err);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+};

@@ -29,6 +29,23 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
   const [likes, setLikes] = useState<{[key: string]: number}>({});
   const [bookmarks, setBookmarks] = useState<{[key: string]: boolean}>({});
   const [userRole, setUserRole] = useState<string>("");
+  const [playingVideos, setPlayingVideos] = useState<{[key: string]: boolean}>({});
+
+  // Helper function to get display position
+  const getDisplayPosition = (user: any) => {
+    if (user.experience && user.experience.length > 0) {
+      // Sort experiences by end date (most recent first)
+      const sortedExperience = user.experience.sort((a: any, b: any) => {
+        if (!a.endDate && b.endDate) return -1; // Current job (no end date) comes first
+        if (a.endDate && !b.endDate) return 1;
+        if (!a.endDate && !b.endDate) return 0;
+        return new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
+      });
+      
+      return sortedExperience[0].position || 'Professional';
+    }
+    return 'Student';
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -38,34 +55,28 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
         const role = localStorage.getItem("userRole");
         setUserRole(role || "");
 
+        let transformedData: any[] = [];
+
         // If we're on the recruiter dashboard, only fetch bookmarked candidates
         if (isRecruiterDashboard && role === "recruiter") {
           const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
             headers: { Authorization: `Bearer ${token}` }
           });
           
-          const transformedData = bookmarksRes.data.map((user: any) => ({
+          transformedData = bookmarksRes.data.map((user: any) => ({
             id: user._id,
             name: user.fullName,
-            role: user.role || 'Professional',
+            role: getDisplayPosition(user), // Use the helper function instead of user.role
             experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
             avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
             skills: user.skills || ['React', 'JavaScript'],
             email: user.email,
             phone: user.phone || 'Not provided',
             location: user.location || 'Remote',
-            profileLikes: user.profileLikes || 0
+            profileLikes: user.profileLikes || 0,
+            videoUrl: user.videoUrl || null, // Include video URL
+            pitch: user.pitch || 'No pitch available'
           }));
-          
-          setCandidates(transformedData);
-          setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
-          
-          // Initialize likes
-          const initialLikes: {[key: string]: number} = {};
-          transformedData.forEach((user: any) => {
-            initialLikes[user.id] = user.profileLikes || 0;
-          });
-          setLikes(initialLikes);
           
           // Set all candidates as bookmarked
           const bookmarkedMap: {[key: string]: boolean} = {};
@@ -79,28 +90,20 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
             headers: { Authorization: `Bearer ${token}` },
           });
           
-          const transformedData = res.data.map((user: any) => ({
+          transformedData = res.data.map((user: any) => ({
             id: user._id,
             name: user.fullName,
-            role: user.role || 'Professional',
+            role: getDisplayPosition(user), // Use the helper function instead of user.role
             experience: user.experience?.length ? `${user.experience.length}+ years` : '1+ years',
             avatar: user.avatar || 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=face',
             skills: user.skills || ['React', 'JavaScript'],
             email: user.email,
             phone: user.phone || 'Not provided',
             location: user.location || 'Remote',
-            profileLikes: user.profileLikes || 0
+            profileLikes: user.profileLikes || 0,
+            videoUrl: user.videoUrl || null, // Include video URL
+            about: user.about || 'No description available'
           }));
-          
-          setCandidates(transformedData);
-          setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
-          
-          // Initialize likes
-          const initialLikes: {[key: string]: number} = {};
-          transformedData.forEach((user: any) => {
-            initialLikes[user.id] = user.profileLikes || 0;
-          });
-          setLikes(initialLikes);
 
           if (role === "recruiter") {
             const bookmarksRes = await axios.get("http://localhost:5000/api/recruiter/bookmarked", {
@@ -114,6 +117,16 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
             setBookmarks(bookmarkedMap);
           }
         }
+
+        setCandidates(transformedData);
+        setVisibleCards(new Set(transformedData.map((c: any) => c.id)));
+        
+        // Initialize likes
+        const initialLikes: {[key: string]: number} = {};
+        transformedData.forEach((user: any) => {
+          initialLikes[user.id] = user.profileLikes || 0;
+        });
+        setLikes(initialLikes);
 
         setLoading(false);
         
@@ -151,7 +164,7 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
   
       const token = localStorage.getItem("token");
       await axios.post(`http://localhost:5000/api/user/analytics/${candidateId}`, {
-        type: 'profileLike'  // Changed from action: 'like' to match backend expectation
+        type: 'profileLike'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -197,12 +210,55 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
     if (visibleCandidates[activeIndex]) {
       onCandidateSelect(visibleCandidates[activeIndex]);
     }
+    
+    // Pause all videos when sliding
+    setPlayingVideos({});
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      video.pause();
+      video.currentTime = 0;
+    });
+  };
+
+  const handleVideoClick = (candidateId: string) => {
+    // For iframes, we can't directly control play/pause
+    // We'll just use this to toggle the play button overlay
+    setPlayingVideos(prev => ({
+      ...prev,
+      [candidateId]: !prev[candidateId]
+    }));
+  };
+
+  const handleVideoEnded = (candidateId: string) => {
+    setPlayingVideos(prev => ({ ...prev, [candidateId]: false }));
   };
 
   const visibleCandidates = candidates.filter(candidate => visibleCards.has(candidate.id));
 
-  // Rest of the component remains the same...
-  // (Keep all the existing JSX and helper functions)
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full max-w-6xl mx-auto flex items-center justify-center h-[600px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading candidates...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no candidates
+  if (visibleCandidates.length === 0) {
+    return (
+      <div className="w-full max-w-6xl mx-auto flex items-center justify-center h-[600px]">
+        <div className="text-center">
+          <Bookmark className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">No Bookmarked Candidates</h3>
+          <p className="text-gray-500">Start bookmarking candidates to see them here.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -258,8 +314,11 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
                           </div>
                           <div className="text-right">
                             <div className="flex items-center text-yellow-500 mb-1">
-                              <Star className="w-4 h-4 mr-1" />
-                              <span className="font-semibold">4.8</span>
+                              <Heart 
+                                className="w-4 h-4 mr-1 cursor-pointer hover:fill-current transition-colors" 
+                                onClick={() => handleLike(candidate.id)}
+                              />
+                              <span className="text-sm">{likes[candidate.id] || 0}</span>
                             </div>
                             <p className="text-sm text-gray-600">{candidate.experience}</p>
                           </div>
@@ -290,26 +349,60 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
 
                       {/* Pitch Video */}
                       <div className="px-6 mb-4">
-                        <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl h-48 flex items-center justify-center overflow-hidden">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-white/20 backdrop-blur-sm text-white rounded-full p-6 hover:bg-white/30 transition-all duration-300"
-                          >
-                            <Play className="w-8 h-8" />
-                          </motion.button>
-                          <span className="absolute top-3 right-3 bg-black/70 text-white text-sm px-2 py-1 rounded">
-                            1:00
-                          </span>
+                        <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl h-48 overflow-hidden">
+                          {candidate.videoUrl ? (
+                            <div className="relative w-full h-full">
+                              <iframe
+                                src={candidate.videoUrl}
+                                className="w-full h-full object-cover rounded-xl"
+                                allowFullScreen
+                                title={`${candidate.name}'s Pitch Video`}
+                                frameBorder="0"
+                              />
+                              
+                              {/* Play Button Overlay - Only show when video isn't playing
+                              {!playingVideos[candidate.id] && (
+                                <div 
+                                  className="absolute inset-0 flex items-center justify-center cursor-pointer rounded-xl bg-black/30"
+                                  onClick={() => handleVideoClick(candidate.id)}
+                                >
+                                  <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="bg-white/20 backdrop-blur-sm text-white rounded-full p-6 hover:bg-white/30 transition-all duration-300"
+                                  >
+                                    <Play className="w-8 h-8" />
+                                  </motion.button>
+                                </div>
+                              )} */}
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-white/20 backdrop-blur-sm text-white rounded-full p-6 hover:bg-white/30 transition-all duration-300 opacity-50"
+                                disabled
+                              >
+                                <Play className="w-8 h-8" />
+                              </motion.button>
+                              <span className="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                No video available
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Pitch Content - Added below the video */}
+                        <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <h4 className="text-sm font-medium text-gray-700 mb-1">Elevator Pitch</h4>
+                          <p className="text-sm text-gray-600">
+                            {candidate.pitch || "No pitch information available."}
+                          </p>
                         </div>
                       </div>
 
-                      {/* About */}
-                      <div className="px-6 mb-4">
-                        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">
-                          {candidate.about}
-                        </p>
-                      </div>
+                     
                     </div>
                   </Card>
                 </motion.div>
@@ -352,12 +445,9 @@ const PitchCarousel: React.FC<PitchCarouselProps> = ({ onCandidateSelect, isRecr
               </Button>
             </CardContent>
           </Card>
-
-          
         </div>
       </div>
     </div>
-     
   );
 };
 

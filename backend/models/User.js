@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String },
   location: { type: String },
   avatar: { type: String },
+  // Add resume path
+  resumePath: { type: String },
   // Professional profiles
   linkedin: { type: String },
   github: { type: String },
