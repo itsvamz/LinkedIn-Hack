@@ -48,7 +48,7 @@ const Talent = () => {
           }
         }
       } else {
-        // If not a recruiter, just use localStorage (for consistency)
+        // If not a recruiter, just use localStorage
         const savedBookmarkedUsers = localStorage.getItem("bookmarkedUsers");
         if (savedBookmarkedUsers) {
           setBookmarkedUsers(new Set(JSON.parse(savedBookmarkedUsers)));
@@ -142,15 +142,10 @@ const Talent = () => {
         }
         setBookmarkedUsers(newBookmarkedUsers);
         
-        // Update localStorage to stay in sync
+        // Save to localStorage
         localStorage.setItem("bookmarkedUsers", JSON.stringify([...newBookmarkedUsers]));
         
         console.log(`Candidate ${userId} ${isCurrentlyBookmarked ? 'unbookmarked' : 'bookmarked'}`);
-        
-        // Dispatch custom event to notify other components
-        window.dispatchEvent(new CustomEvent('bookmarkUpdated', {
-          detail: { candidateId: userId, isBookmarked: !isCurrentlyBookmarked }
-        }));
       }
     } catch (error) {
       console.error("Error bookmarking/unbookmarking user:", error);
