@@ -49,14 +49,28 @@ Recruiters spend too much time on manual resume review, repetitive calls, and ou
 
 ## 📁 Folder Structure
 LinkedIn-Hack/
-├── Avatar/ # Talking avatar generation (SadTalker, etc.)
+
+├── Avatar/ # Talking avatar
+
+generation (SadTalker, etc.)
+
 ├── backend/ # Node.js backend
+
 │ ├── app.js
+
 │ └── routes/
+
 │ └── controllers/
-├── frontend/ # React-based frontend
+
+├── frontend/ # React-based 
+
+frontend
+
 ├── models/
-│ └── Elevator pitch/ # Parsed resume text , pitch scripts 
+
+│ └── Elevator pitch/ # Parsed
+
+resume text , pitch scripts 
 
 
 ---
@@ -84,6 +98,7 @@ npm run dev
 ⚠️ Make sure to configure .env with MongoDB URI, Hugging Face access token, and other credentials.
 
 📦 Key Dependencies
+
 react, axios, tailwindcss
 
 express, mongoose, nodemon
@@ -93,6 +108,7 @@ huggingface, transformers, python-shell
 formidable, ffmpeg-static, sadtalker
 
 edgetts, rembg, face_recognition
+
 ✅ Future Enhancements
 Real-time live agent interviews
 
