@@ -4,12 +4,13 @@ const resumeParserRoute = require("./routes/resumeParser");
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const startPitchService = require('./startPitchService');
-const fs = require('fs');
-const path = require('path');
-
+const startPitchService = require("./startPitchService");
+const fs = require("fs");
+const path = require("path");
+const pitchRoutes = require("./routes/pitchRoutes");
+const avatarRoutes = require("./routes/avatarRoutes");
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -21,7 +22,7 @@ connectDB();
 const pitchService = startPitchService();
 
 // Gracefully shut down the pitch service when the Node.js process exits
-process.on('exit', () => {
+process.on("exit", () => {
   if (pitchService) {
     pitchService.kill();
   }
@@ -47,18 +48,18 @@ app.use(cookieParser());
 // app.use('/api/resume', resumeParserRoutes);
 
 // Replace with this single registration
-app.use('/api', resumeParserRoute);
+app.use("/api", resumeParserRoute);
 
 // Serve static files from the uploads directory
 // Add this line after the CORS middleware setup
 // Add this with your other route imports
-const resumeParserRoutes = require('./routes/resumeParser');
+const resumeParserRoutes = require("./routes/resumeParser");
 
 // Add this with your other app.use statements
-app.use('/api/resume', resumeParserRoutes);
+app.use("/api/resume", resumeParserRoutes);
 
 // Make uploads directory accessible
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/recruiter", require("./routes/recruiterRoutes"));
@@ -66,6 +67,10 @@ app.use("/api/mixpanel", require("./routes/mixpanelRoutes"));
 app.use("/api/jobs", require("./routes/jobRoutes"));
 app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/recommendations", require("./routes/recommendationRoutes"));
+app.use("/avatar_video_output", express.static("avatar_video_output"));
+app.use("/api", pitchRoutes);
+
+app.use("/api/avatar", avatarRoutes);
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(Server running on port ${PORT}));

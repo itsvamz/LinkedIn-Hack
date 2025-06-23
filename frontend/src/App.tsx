@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,7 +24,7 @@ import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
 import Jobs from "./pages/Jobs";
 import Recruiters from "./pages/Recruiters";
-
+import AvatarVideo from "./pages/AvatarVideo";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,8 +43,15 @@ const App = () => (
               <Route path="/signup" element={<SignUp />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-dashboard" element={<UserDashboard />} />
-              <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
-              <Route path="/bookmarked-candidates" element={<BookmarkedCandidates />} />
+              <Route path="/avatar-video" element={<AvatarVideo />} />
+              <Route
+                path="/recruiter-dashboard"
+                element={<RecruiterDashboard />}
+              />
+              <Route
+                path="/bookmarked-candidates"
+                element={<BookmarkedCandidates />}
+              />
               <Route path="/job-management" element={<JobManagement />} />
               <Route path="/job-application" element={<JobApplication />} />
               <Route path="/users" element={<Users />} />
@@ -67,4 +73,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-export default App;
+export default App;
