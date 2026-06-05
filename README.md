@@ -1,3 +1,5 @@
+DEMO LINK:-https://drive.google.com/file/d/1NYM678yor7DQ5xMeLFnsbnA3cLJe6g86/view?usp=sharing
+
 # AVIRI - Authentic Virtual Identity Recruitment Interface
 
 AVIRI transforms hiring by converting resumes into engaging AI-driven video pitches. Recruiters interact with candidate avatars via real-time chat, making talent discovery fast, visual, and interactive.
